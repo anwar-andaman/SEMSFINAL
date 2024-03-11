@@ -1,0 +1,223 @@
+﻿@model SearchEelectorModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "SearchElector";
+    byte[] uid;
+    if (Context.Session.TryGetValue("logUserID",out uid))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_FormLayout.cshtml";
+    }
+    
+    DataSet eList = ViewBag.eList;
+}
+
+<script>
+    function submitForm() 
+    { 
+        document.getElementById('frmSearchElector').submit();
+    }
+</script>
+<form id="frmSearchElector" method="post">
+    <input type="hidden" asp-for="postCause" id="hidPostCause" />
+    <div class="container">
+        <h2 class="pageheading">Search Elector</h2>
+       
+        <div class="row">
+          @*   @{
+                if (!Context.Session.TryGetValue("logUserID", out uid))
+                {
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-8 border" style="border-radius:10px;padding:10px;">
+                }
+                else
+                {
+                    <div class="col-sm-10 border" style="border-radius:10px;padding:10px;">
+                }
+             }
+                *@             <div class="col-sm-2"></div>
+                            <div class="col-sm-8 border" style="border-radius:10px;padding:10px;">
+
+
+
+
+                                <div class="row">
+                    <div class="col-sm-3">
+                        <select asp-for="panMun" id="ddwnPanMun" name="panMun" class="form-select mycontrol" onchange="document.getElementById('hidPostCause').value='option';submitForm();" >
+                            <option value="P">Panchayat Roll</option>
+                            <option value="M">Municipal Roll</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" asp-for="searchBy" id="radByPart" value="P" name="searchBy" onchange="document.getElementById('hidPostCause').value='option';submitForm();" />
+                        <label for="radByPart" class="form-label mylabel">By Part No. & Sl.No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        @{
+                            if (Context.Request.Method=="POST")
+                            {
+                                <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" onchange="document.getElementById('hidPostCause').value='option';submitForm();"  />
+                            }
+                            else
+                            {
+                                <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" checked onchange="document.getElementById('hidPostCause').value='option';submitForm();" />
+                            }
+                        }
+                        
+                        <label for="radByEpic" class="form-label mylabel">By Voter ID No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" asp-for="searchBy" id="radByName" value="N" name="searchBy" onchange="document.getElementById('hidPostCause').value='option';submitForm();" />
+                        <label for="radByName" class="form-label mylabel">By Name</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px;">
+                    @{
+                        switch (ViewBag.searchBy)
+                        {
+                            case "P":
+                                {
+                                    <div class="col-sm-2">
+                                        <label for="txtPartNo" class="form-label mylabel">Part No.</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input class="form-control mycontrol" type="number" id="txtPartNo" asp-for="partNo" min="1" max="@ViewBag.maxPart" required />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="txtSlNo" class="form-label mylabel">Sl. No.</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input class="form-control mycontrol" type="number" id="txtSlNo" asp-for="slNo" min="1" max="@ViewBag.slNo" required />
+                                    </div>
+                                    break;
+                                }
+                            case "E":
+                                {
+                                    <div class="col-sm-3"></div>
+                                    <div class="col-sm-2">
+                                        <label for="txtEpic" class="form-label mylabel">Voter ID No.</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input class="form-control mycontrol" type="text" id="txtEpic" asp-for="epic" maxlength="10" asp-for="epic" name="epic" required/>
+                                    </div>
+                                    <div class="col-sm-3"></div>
+                                    break;
+                                }
+                            case "N":
+                                {
+                                    <div class="col-sm-2">
+                                        <label for="txtName" class="form-label mylabel">Name</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input class="form-control mycontrol" type="text" id="txtName" asp-for="ename" name="ename" required />
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="txtRlnName" class="form-label mylabel">S/o, W/o, D/o</label>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input class="form-control mycontrol" type="text" id="txtRlnName" asp-for="rlnName" name="rlnName" required/>
+                                    </div>
+                                    break;
+                                }
+                        }
+                    }
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+            
+            @{
+                if (!Context.Session.TryGetValue("logUserID", out uid))
+                {
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-2" style="text-align:left">
+                        <button type="submit" class="btn btn-primary form-control" asp-action="SearchVoter" onclick="document.getElementById('hidPostCause').value='search'">Search</button>
+                    </div>
+                    <div class="col-sm-2" style="text-align:left">
+                        <button type="submit" class="btn btn-danger form-control" asp-action="Home" formnovalidate>Go Back</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-5"></div>
+                    <div class="col-sm-2" style="text-align:left">
+                        <button type="submit" class="btn btn-primary form-control" asp-action="SearchVoter" onclick="document.getElementById('hidPostCause').value='search'">Search</button>
+                    </div>
+                   
+                }
+            }
+           
+            
+            <div class="col-sm-4"></div>
+        </div>
+        @{
+            string panMun, ward;
+            if (ViewBag.panMun == "P")
+            {
+                panMun = "Panchayat";
+                ward = "Ward";
+            }
+            else
+            {
+                panMun = "Municipal Ward";
+                ward = "Part Name";
+            }
+            if (Context.Request.Method=="POST" && Model.postCause=="search")
+            {
+               
+                if (eList.Tables[0].Rows.Count > 0)
+                {
+                    <hr />
+                    <div class="row">
+                        <table class="table table-bordered " style="text-align:center">
+                            <tr style="text-align:center;background-color:midnightblue;color:white;">
+                                <th>Name</th>
+                                <th>S/o, W/o, D/o</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Voter ID No.</th>
+                                <th>Part No.</th>
+                                <th>Sl. No.</th>
+                                <th>@panMun</th>
+                                <th>@ward</th>
+                            </tr>
+                            @{
+                                foreach (DataRow row in eList.Tables[0].Rows)
+                                {
+                                    <tr class="mycontrol">
+                                        <td>@row["ENAME"]</td>
+                                        <td>@row["RLN_NAME"]</td>
+                                        <td>@row["GENDER"]</td>
+                                        <td>@row["AGE"]</td>
+                                        <td>@row["EPIC_NO"]</td>
+                                        <td>@row["PART_NO"]</td>
+                                        <td>@row["SLNOINPART"]</td>
+                                        <td>@row["PAN_NAME"]</td>
+                                        <td>@row["PART_NAME"]</td>
+                                    </tr>
+                                    
+                                }
+                            }
+                        </table>
+                    </div>
+                }
+                else
+                {
+                   
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5"></div>
+                        <div class="col-sm-4">
+                            <span style="color:red;font-size:large;font-weight:bold;">No Record Found</span>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                }
+            }
+        }
+    </div>
+</form>

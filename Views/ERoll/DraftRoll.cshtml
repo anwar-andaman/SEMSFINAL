@@ -1,0 +1,136 @@
+﻿@model SEMS.Models.Reports.RepDraftRollModel;
+@{
+    @using System.Data;
+    ViewData["Title"] = "DraftRoll";
+}
+@{
+    DataSet panchayats = ViewBag.panchayats;
+    DataSet wards = ViewBag.wards;
+    DataSet revisionYears = ViewBag.revisionYears;
+    string panMun = Context.Session.GetString("electionType");
+    string panch="", ward="";
+    if (panMun=="P")
+    {
+        panch = "Panchayat";
+        ward = "Ward";
+    }
+    else if (panMun=="M")
+    {
+        panch = "Ward";
+        ward = "Polling Station";
+    }
+}
+
+<form id="fmmDraftRoll" method="post">
+    <script>
+        function Panchayat() 
+        {
+           
+            var pan = document.getElementById('ddwnPanchayat');
+            var pantext = pan.options[pan.selectedIndex].text;
+            document.getElementById('hidPanchayat').value = pantext; 
+            document.getElementById('hidPostCause').value = 'panchayat'; 
+            document.getElementById('fmmDraftRoll').submit();
+        }
+        function Ward() 
+        {
+            var ward = document.getElementById('ddwnWard');
+            var wardtext = ward.options[ward.selectedIndex].text;
+            document.getElementById('hidWard').value = wardtext;
+        }
+        function Generateroll() 
+        {
+            var ward = document.getElementById('ddwnWard').value;
+            var newurl = "https://" + window.location.host + "/Reports/DraftRoll/" + ward;
+            window.open(newurl);
+        }
+        
+    </script>
+<div class="containder">
+    <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <input type="hidden" id="hidPanchayat" asp-for="paramPanchayat" />
+    <input type="hidden" id="hidward" asp-for="paramWard" />
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col-sm-6">
+            <h4 class="pageheading">Electoral Roll Parameters</h4>
+        </div>
+        </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <hr />
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col-sm-2">
+            <label for="ddwnRevisionYear" class="form-label mylabel">Revision Year</label>
+        </div>
+        <div class="col-sm-4">
+            @{
+                List<SelectListItem>
+                items = new List<SelectListItem>();
+                foreach (DataRow row in revisionYears.Tables[0].Rows)
+                {
+                    SelectListItem s = new SelectListItem();
+                    s.Text = row[0].ToString();
+                    s.Value = row[0].ToString();
+                    // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                    items.Add(s);
+                }
+            }
+            <select asp-for="revsionYear" id="ddwnYear" name="revisionYear" class="form-select mycontrol" asp-items="@items"></select>
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+        <div class="col-sm-2">
+            <label for="ddwnPanchayat" class="form-label mylabel">@panch</label>
+        </div>
+        <div class="col-sm-4">
+            @{
+                items.Clear();
+                foreach (DataRow row in panchayats.Tables[0].Rows)
+                {
+                    SelectListItem s = new SelectListItem();
+                    s.Text = row["PAN_NAME"].ToString();
+                    s.Value = row["PCODE"].ToString();
+                    // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                    items.Add(s);
+                }
+            }
+                <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" 
+                asp-items="@items" onchange="Panchayat();"></select>
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px;">
+        <div class="col-sm-2">
+            <label class="form-label mylabel" for="ddwnWard">@ward</label>
+        </div>
+        <div class="col-sm-4">
+            @{
+                items.Clear();
+                foreach (DataRow row in wards.Tables[0].Rows)
+                {
+                    SelectListItem s = new SelectListItem();
+                    s.Text = row["WARD_NAME"].ToString();
+                    s.Value = row["CONST_NO"].ToString();
+                    // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                    items.Add(s);
+                }
+            }
+            <select asp-for="ward" id="ddwnWard" name="ward" onchange="Ward();" class="form-select mycontrol" asp-items="@items"></select>
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col-sm-6">
+            <hr />
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col-4">
+        </div>
+        <div class="col-sm-2">
+                <button type="button" onclick="Generateroll();" class="btn btn-danger form-control">Generate Roll</button>
+        </div>
+    </div>
+</div>
+</form>

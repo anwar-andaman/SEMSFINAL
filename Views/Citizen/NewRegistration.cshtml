@@ -1,0 +1,431 @@
+﻿@model RegistrationModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "NewRegistration";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+@{
+    DataSet panchayats = ViewBag.panchayats, wards = ViewBag.wards, tehsils = ViewBag.tehsils;
+    DataSet rlnTypes = ViewBag.rlnTypes,villages = ViewBag.villages, addressTehsils=ViewBag.addressTehsils;
+    string logUserType = Context.Session.GetString("logUserType");
+    string selectedPanchayat = ViewBag.selectedPanchayat;
+    DataSet selectedWard = ViewBag.selectedWard;
+    string pattern = "^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+}
+
+<script>
+    
+    /*function validate() {
+
+        const emailPattern = "/^[\w.%+-]+@@[\w.-]+\.[a-zA-Z]{2,}$/";
+       
+        var em = document.getElementById("txtEmail");
+        if (em.value != "") {
+            const isValid = emailPattern.test(em);
+           if (isValid == false) {
+                alert("Please Enter a valid email address");
+                return false;
+            }
+        }
+        return false;
+    }*/
+    function CheckSize(myfile,size) { 
+    
+        if (!window.FileReader) {
+            alert("The file API isn't supported on this browser yet.");
+            return;
+        }
+       // var myfile = document.getElementById('addressProof');
+        //var input = document.getElementById('fileinput');
+        if (!myfile.files) {
+            alert("This browser doesn't seem to support the 'files' property of file inputs.");
+        } 
+        else if (!myfile.files[0]) {
+            
+        } 
+        else 
+        {
+            var file = myfile.files[0];
+            var fileSizeKB = file.size / 1024; // Convert bytes to kilobytes
+            if (fileSizeKB > size) { 
+                alert("File size exceeds the limit (maximum " + size + " KB)");
+                myfile.value = "";
+            }
+                
+        }
+    }
+    
+    function SelectAgeDob() {
+
+        var selectedValue = document.querySelector('input[name="ageDob"]:checked').value;
+
+        if (selectedValue == "A") {
+            document.getElementById("dateDob").style.display = "none";
+            document.getElementById("numAge").style.display = "block";
+        }
+        else {
+            document.getElementById("dateDob").style.display = "block";
+            document.getElementById("numAge").style.display = "none";
+        }
+    }
+    function displayPhoto(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#photo').attr('src', e.target.result).width(100).height(120);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function SetVisibility() {
+
+       
+        var div1 = document.getElementById('divPerDetails');
+        var div2 = document.getElementById('divAddress');
+        var div3 = document.getElementById('divAttach');
+        var dd1 = document.getElementById('ddwnWard').value;
+        var dd2 = document.getElementById('ddwnTehsil').value;
+        var dd3 = document.getElementById('ddwnPanchayat').value;
+        if (dd1 == "" || dd2 == "" || dd3 == "") {
+            div1.style.display = "none";
+            div2.style.display = "none";
+            div3.style.display = "none";
+        }
+        else {
+            div1.style.display = "block";
+            div2.style.display = "block";
+            div3.style.display = "block";
+        }
+    }
+    function GetAge() {
+        var dob = document.getElementById('dateDob').value;
+        var qualdate = document.getElementById('hidQualDate').value;
+        var qd = new Date(qualdate);
+        var db = new Date(dob);
+        var year = db.getFullYear();
+        var month = db.getMonth();
+        var day = db.getDate();
+        var age = qd.getFullYear() - year;
+        if (qd.getMonth() < month || (qd.getMonth() == month && qd.getDate() < day)) {
+            age--;
+        }
+       
+        document.getElementById('numAge').value = age;
+    }
+
+</script>
+<form id="frm_Registration" method="post" enctype="multipart/form-data" >
+   
+    <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <div class="container border" style="background-color:lightgoldenrodyellow; ">
+        <h2 class="pageheading">Registration Form</h2>
+       
+        <div class="container border" style="padding:0px;border-top-left-radius:10px;border-top-right-radius:10px;padding-bottom:10px;border-color:darkcyan;">
+            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;">
+                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                        Polling Station
+                    </div>
+               </div>
+            
+                <div class="row" style="margin-left:0px;">
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="ddwnTehsil">Tehsil</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="ddwnPanchayat">Panchayat</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="ddwnWard">Ward</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-left:0px;">
+                    <div class="col-sm-4">
+                        @{
+                            List<SelectListItem>
+                            items = new List<SelectListItem>();
+                            SelectListItem listItem = new SelectListItem();
+                            listItem.Text = "<----Select---->";
+                        listItem.Value = "";
+                            items.Add(listItem);
+                            foreach (DataRow row in tehsils.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["TNAME"].ToString();
+                                s.Value = row["TCODE"].ToString();
+                                // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                                items.Add(s);
+                            }
+                        }
+                    <select asp-for="tehsil" id="ddwnTehsil" name="tehsil" class="form-select mycontrol" asp-items="@items" onchange="SetVisibility();document.getElementById('hidPostCause').value='tehsil';document.getElementById ('frm_Registration').submit ();"></select>
+                    </div>
+                    <div class="col-sm-4">
+                    @{
+                        items.Clear();
+                        listItem.Text = "<----Select---->";
+                        listItem.Value = "";
+                        items.Add(listItem);
+                            foreach (DataRow row in panchayats.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["PAN_NAME"].ToString();
+                                s.Value = row["PCODE"].ToString();
+                                items.Add(s);
+                            }
+                        }
+                    <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="SetVisibility();document.getElementById('hidPostCause').value='panchayat';document.getElementById ('frm_Registration').submit ();"></select>
+                    </div>
+                    <div class="col-sm-4">
+                        @{
+                            items.Clear();
+                            listItem.Text = "<----Select---->";
+                        listItem.Value = "";
+                            items.Add(listItem);
+                            foreach (DataRow row in wards.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["WARD_NAME"].ToString();
+                                s.Value = row["CONST_NO"].ToString();
+                                // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                                items.Add(s);
+                            }
+                        }
+                    <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="SetVisibility();"></select>
+                    </div>
+                </div>
+        </div>
+
+        <div id="divPerDetails" class="container border" style="padding:0px;border-top-left-radius:10px;border-top-right-radius:10px;padding-bottom:10px;margin-top:10px;">
+            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;">
+                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                    Personal Details
+                </div>
+            </div>
+
+            <div class="row" style="margin-left:0px;">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <label class="form-label mylabel " for="txtName">Name</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="form-label mylabel " for="ddwnRlnType">Relation Type</label>
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="form-label mylabel" for="txtRlnName">Relative Name</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-left:0px;">
+                    <div class="col-sm-5">
+                        <input type="text" id="txtName" placeholder="Enter Your Name" asp-for="ename" name="ename" class="form-control" oninvalid="this.setCustomValidity('Please Enter Name')" oninput="setCustomValidity('')" required/>
+                    </div>
+                    <div class="col-sm-2">
+                        @{
+                            items.Clear();
+
+                            foreach (DataRow row in rlnTypes.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["RLN"].ToString();
+                                s.Value = row["RLNTYPE"].ToString();
+                                // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                                items.Add(s);
+                            }
+                        }
+                        <select asp-for="rlnType" id="ddwnRlnType" name="rlnType" class="form-select mycontrol" asp-items="@items"></select>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="text" id="txtRlnName" placeholder="Enter Relative Name" asp-for="rlnName" name="rlnName" class="form-control" oninvalid="this.setCustomValidity('Please Enter Relative Name')" oninput="setCustomValidity('')" required />
+                    </div>
+                </div>
+                @{
+                    DateTime t = (DateTime)ViewBag.qualifyingDate;
+                    string mindate = t.Year.ToString() + "-" + t.Month.ToString().PadLeft(2, '0') + "-" + t.Day.ToString().PadLeft(2, '0');
+                }
+                <input type="hidden" asp-for="revisionNo" value="@ViewBag.revisionNo" />
+                <input type="hidden" asp-for="revisionYear" value="@ViewBag.revisionYear" />
+                <input id="panmun" type="hidden" asp-for="panMun" value=@Context.Session.GetString("pan_mun") />
+                <input id="hidQualDate" type="date" asp-for="qualifyingDate" value="@mindate" style="display:none" />
+                <div class="row" style="margin-left:0px;margin-top:10px;">
+                    <div class="col-sm-3">
+                        <input type="radio" id="radDob" asp-for="ageDob" name="ageDob" value="D" checked onchange="SelectAgeDob();" />
+                        <label class="form-label mylabel " for="radDob">Date of Birth</label>
+                        <input type="radio" id="radAge" asp-for="ageDob" name="ageDob" value="A" onchange="SelectAgeDob();" />
+                        <label class="form-label mylabel " for="radAge">Age</label>
+                        @{
+
+                            t = t.AddYears(-18);
+                            string maxdate = t.Year.ToString() + "-" + t.Month.ToString().PadLeft(2, '0') + "-" + t.Day.ToString().PadLeft(2, '0');
+                            t=t.AddYears(-107);
+                            mindate =  t.Year.ToString() + "-" + t.Month.ToString().PadLeft(2, '0') + "-" + t.Day.ToString().PadLeft(2, '0');
+
+                        }
+                        <input type="date" id="dateDob" asp-for="dob" name="dob" class="form-control" min="@mindate" max="@maxdate" onchange="GetAge();"/>
+                        <input type="number" id="numAge" asp-for="age" name="age" class="form-control"  min="18" max="130" style="display:none" />
+                    </div>
+
+                    <div class="col-sm-2">
+                        <label class="form-label mylabel " for="selGender">Gender</label>
+                        @{
+                            items.Clear();
+                            SelectListItem s1, s2, s3;
+                            s1 = new SelectListItem();
+                            s2 = new SelectListItem();
+                            s3 = new SelectListItem();
+                            s1.Text = "Male";
+                            s1.Value = "M";
+                            s2.Text = "Female";
+                            s2.Value = "F";
+                            s3.Text = "Third Gender";
+                            s3.Value = "T";
+                            items.Add(s1);
+                            items.Add(s2);
+                            items.Add(s3);
+                        }
+                        <select asp-for="gender" id="ddwnGender" name="gender" class="form-select mycontrol" asp-items="@items"></select>
+                    </div>
+                </div>
+            </div>    
+        </div>
+
+        <div id="divAddress" class="container border" style="padding:0px;border-top-left-radius:10px;border-top-right-radius:10px;padding-bottom:10px;margin-top:10px;">
+            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;">
+                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                    Address & Contact Details
+                </div>
+            </div>
+
+            <div class="row" style="margin-left:0px;">
+                <div class="col-sm-2">
+                    <label class="form-label mylabel " for="txtHouseNo">House No.</label>
+                    <input type="text" id="txtHouseNo" placeholder="Enter House No." asp-for="houseNo" name="houseNo" class="form-control" oninvalid="this.setCustomValidity('Please Enter House No.')" oninput="setCustomValidity('')" required />
+                </div>
+                <div class="col-sm-5">
+                    <label class="form-label mylabel " for="txtAddLine1">Address Line1</label>
+                    <input type="text" id="txtAddLine1" placeholder="Enter Addddress Line1" asp-for="addLine1" name="addLine1" class="form-control" />
+                </div>
+                <div class="col-sm-5">
+                    <label class="form-label mylabel" for="txtAddLine2">Address Line2</label>
+                    <input type="text" id="txtAddLine2" placeholder="Enter Addddress Line2" asp-for="addLine2" name="addLine2" class="form-control" />
+                </div>
+            </div>
+            <div class="row" style="margin-left:0px;">
+                <div class="col-sm-4">
+                    <label class="form-label mylabel " for="ddwnAddressTehsil">Tehsil</label>
+                    @{
+                        items.Clear();
+                       items.Add(listItem);
+                        foreach (DataRow row in addressTehsils.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["TNAME"].ToString();
+                            s.Value = row["TCODE"].ToString();
+                            
+                            items.Add(s);
+                        }
+                    }
+                    <select asp-for="addressTehsil" id="ddwnAddressTehsil" name="addressTehsil" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('hidPostCause').value='addressTehsil';document.getElementById ('frm_Registration').submit ();"></select>
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label mylabel " for="ddwnVillage">Village</label>
+                    @{
+                        items.Clear();
+                        foreach (DataRow row in villages.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["VNAME"].ToString();
+                            s.Value = row["VCODE"].ToString();
+
+                            items.Add(s);
+                        }
+                    }
+                    <select asp-for="village" id="ddwnAddressVillage" name="village" class="form-select mycontrol" asp-items="@items"></select>
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label mylabel" for="txtPost">Post Office</label>
+                    <input type="text" id="txtPost" placeholder="Enter Post Office" asp-for="post" name="post" class="form-control" />
+                </div>
+                <div class="col-sm-3">
+                    <label class="form-label mylabel " for="txtMobile">Mobile No.</label>
+                    <input type="tel" id="txtMobile" placeholder="Enter Mobile No." asp-for="mobileNo" name="mobileNo" class="form-control" maxlength="10" min="1000000000" />
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label mylabel " for="txtEmail">Email ID</label>
+                    <input type="email" id="txtEmail" placeholder="Enter Email ID" asp-for="email" name="email" class="form-control"  />
+                    <span asp-validation-for="email" style="color:red"></span>
+                </div>
+               
+            </div>
+        </div>
+        
+        <div id="divAttach" class="container border" style="padding:0px;border-top-left-radius:10px;border-top-right-radius:10px;padding-bottom:10px;margin-top:10px;">
+            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;">
+                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                    Attachments
+                </div>
+            </div>
+
+            <div class="row" style="margin-left:0px;">
+                <div class="col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="form-label mylabel" for="ageProof">Upload Age Proof</label>
+                            <input type="file" accept="image/gif, image/jpeg, image/png" asp-for="ageProof" class="form-control" id="ageProof" onchange="CheckSize(this,150);" oninvalid="this.setCustomValidity('Please provide Age Proof')" oninput="setCustomValidity('')" required />
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label mylabel" for="addressProof">Upload Address Proof</label>
+                            <input type="file" accept="image/gif, image/jpeg, image/png" asp-for="addressProof" class="form-control" id="addressProof" onchange="CheckSize(this,150);" oninvalid="this.setCustomValidity('Please provide Address Proof')" oninput="setCustomValidity('')" required />
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:15px;">
+
+                        <div class="col-sm-4">
+                        </div>
+                        <div class="col-sm-2">
+
+                            <input type="submit" class="btn btn-primary form-control" value="Submit" style="height:50px;" asp-action="Register" onclick="document.getElementById('hidPostCause').value='register';" />
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="submit" class="btn btn-danger form-control" value="Cancel" style="height:50px;" asp-action="Home" formnovalidate />
+                        </div>
+                        <div class="col-sm-4">
+                        </div>
+                    </div>
+                </div>
+               
+               
+                <div class="col-sm-2">
+                    <div class="border" style="width:100px;height:120px;">
+                        <img id="photo"  alt="Your Photo" style="object-fit:contain" />
+                    </div>
+                    <input id="imgPhoto" type="file" accept="image/gif, image/jpeg, image/png" asp-for="photo" name="photo" class="form-control" onchange="CheckSize(this,15);displayPhoto(this);" oninvalid="this.setCustomValidity('Please provide Age Proof')" oninput="setCustomValidity('')" required style="display:none" />
+                    <label class="form-label mylabel btn-success" for="imgPhoto" style="color:white">Upload Photo</label>
+                </div>
+            </div>
+           
+            
+    </div>
+        @{
+            string formno = "";
+            if (TempData.ContainsKey("formNo"))
+            {
+                formno = TempData["formNo"].ToString();
+                DateTime formDate = (DateTime)TempData["formDate"];
+                formno = "ON" + formDate.Day.ToString().PadLeft(2, '0') + formDate.Month.ToString().PadLeft(2, '0') + formDate.Year.ToString() + formno.PadLeft(5,'0');
+            }
+        }
+    <script>
+       
+        //var newurl = "https://" + window.location.host + "/Citizen/Home/";
+       // alert(newurl);
+       // location.replace(newurl);
+        SetVisibility();
+            if (document.getElementById('hidPostCause').value == 'register') {
+                alert("Form Successfully Submitted. Please note the Form No. for any future Reference. Your Form No. is: @formno");
+                
+             }
+        
+    </script>
+    </div>
+</form>

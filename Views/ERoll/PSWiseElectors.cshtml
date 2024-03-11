@@ -1,0 +1,214 @@
+﻿@model PSWiseElectorsModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "PSWiseElectors";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet districts=ViewBag.districts, tehsils=ViewBag.tehsils, panchayats=ViewBag.panchayats,revisionYear=ViewBag.revisionYear;
+}
+<script>
+    function SubmitForm() {
+        document.getElementById('frmPSWiseElectors').submit();
+    }
+    function CallReport() { 
+        var radios = document.getElementsByName("reportLevel");
+        repLevel = "1";
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                repLevel = radios[i].value;
+            }
+        }
+        panMun = document.getElementById("ddwnPanMun").value;
+        revYear = document.getElementById("ddwnRevisionYear").value;
+        dataUpto = document.getElementById("ddwnDataUpto").value;
+        switch (repLevel) 
+        { 
+            case "1":
+                keyValue = "1";
+                break;
+            case "2":
+                keyValue = document.getElementById("ddwnDistrict").value;
+                break;
+            case "3":
+                keyValue = document.getElementById("ddwnTehsil").value;
+                break;
+            case "4":
+                keyValue = document.getElementById("ddwnPanchayat").value;
+                break;
+            
+        }
+        
+            var newurl = "https://" + window.location.host + "/Reports/PSWiseElectors/" + repLevel + "?panmun=" + panMun + "&revYear=" + revYear + "&dataUpto=" + dataUpto + "&keyValue=" + keyValue;
+            window.open(newurl);
+        
+    }
+</script>
+
+<form id="frmPSWiseElectors" method="post">
+    <div class="container">
+       
+        <div class="row">
+            <div class="col-sm-8">
+                <h2 class="pageheading">Report Parameters</h2>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-3">
+                        <input type="radio" id="radState" name="reportLevel" value="1" asp-for="reportLevel" checked onchange="SubmitForm();" />
+                        <label class="form-label mylabel" for="radState">State Level</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" id="radDistrict" name="reportLevel" value="2" asp-for="reportLevel" onchange="SubmitForm();"  />
+                        <label class="form-label mylabel" for="radDistrict">District Level</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" id="radTehsil" name="reportLevel" value="3" asp-for="reportLevel" onchange="SubmitForm();"  />
+                        <label class="form-label mylabel" for="radTehsil">Tehsil Level</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" id="radPanchayat" name="reportLevel" value="4" asp-for="reportLevel" onchange="SubmitForm();" />
+                        <label class="form-label mylabel" for="radPanchayat">Panchayat Level</label>
+                    </div>
+                    <div class="col">
+                        <hr />
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    @{
+                        string electionType = Context.Session.GetString("electionType");
+                        if (electionType=="A")
+                        {
+                                <div class="col-sm-3">
+                                    <label class="form-label mylabel" for="ddwnPanMun">Panchayat/Municipal</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <select id="ddwnPanMun" class="form-select mycontrol" asp-for="panMun">
+                                        <option value="P">Panchayat</option>
+                                        <option value="M">Municipal</option>
+                                    </select>
+                                </div>
+                        }
+                        else
+                        {
+                            Model.panMun = electionType;
+                        }
+                    }
+                </div>
+                @{
+                    List<SelectListItem>
+                    items = new List<SelectListItem>();
+                    foreach (DataRow row in revisionYear.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["REVISIONYEAR"].ToString();
+                        s.Value = row["REVISIONYEAR"].ToString();
+                        items.Add(s);
+                    }
+                }
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-sm-3">
+                        <label class="form-label mylabel" for="ddwnRevisionYear">Revision Year</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <select id="ddwnRevisionYear" class="form-select mycontrol" asp-for="revisionYear" asp-items="@items">
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-sm-3">
+                        <label class="form-label mylabel" for="ddwnDataUpto">Elector Data Upto</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <select id="ddwnDataUpto" class="form-select mycontrol" asp-for="dataUpto">
+                            <option value="0">Draft Electoral Roll</option>
+                            <option value="1">Final Electoral Roll</option>
+                        </select>
+                    </div>
+                </div>
+                @{
+                    if (Model.reportLevel!="1")
+                    {
+                            <div class="row" style="margin-top:6px;">
+                                <div class="col-sm-3">
+                                    <label class="form-label mylabel" for="ddwnDistrict">District</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    @{
+                                    items.Clear();
+                                    foreach (DataRow row in districts.Tables[0].Rows)
+                                    {
+                                        SelectListItem s = new SelectListItem();
+                                        s.Text = row["DIST_NAME"].ToString();
+                                        s.Value = row["DIST_CODE"].ToString();
+                                        items.Add(s);
+                                    }
+                                    }
+
+                                    <select id="ddwnDistrict" class="form-select mycontrol" asp-for="district" asp-items="@items" onchange="SubmitForm();">
+                                    </select>
+                                </div>
+                            </div>
+                        if (Model.reportLevel=="3" || Model.reportLevel=="4")
+                        {
+                                <div class="row" style="margin-top:6px;">
+                                    <div class="col-sm-3">
+                                        <label class="form-label mylabel" for="ddwnTehsil">Tehsil</label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                    @{
+                                    items.Clear();
+                                    foreach (DataRow row in tehsils.Tables[0].Rows)
+                                    {
+                                        SelectListItem s = new SelectListItem();
+                                        s.Text = row["TNAME"].ToString();
+                                        s.Value = row["TCODE"].ToString();
+                                        items.Add(s);
+                                    }
+                                    }
+
+                                        <select id="ddwnTehsil" class="form-select mycontrol" asp-for="tehsil" asp-items="@items" onchange="SubmitForm();">
+                                        </select>
+                                    </div>
+                                </div>
+                            if (Model.reportLevel=="4")
+                            {
+                                <div class="row" style="margin-top:6px;">
+                                    <div class="col-sm-3">
+                                        <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        @{
+                                            items.Clear();
+                                            foreach (DataRow row in panchayats.Tables[0].Rows)
+                                            {
+                                                SelectListItem s = new SelectListItem();
+                                                s.Text = row["PAN_NAME"].ToString();
+                                                s.Value = row["PCODE"].ToString();
+                                                items.Add(s);
+                                            }
+                                        }
+
+                                        <select id="ddwnPanchayat" class="form-select mycontrol" asp-for="panchayat" asp-items="@items" onchange="SubmitForm();">
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                }
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-sm-12">
+                        <hr />
+                    </div>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-danger form-control" onclick="CallReport();">Generate Report</button>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+       
+    </div>
+</form>

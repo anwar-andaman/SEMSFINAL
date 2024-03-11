@@ -1,0 +1,99 @@
+﻿@model SEMS.Models.LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+}
+
+<form method="post" asp-controller="Home" asp-action="Login" >
+       
+    <div class="container">
+
+        <div class="row" style="margin-top:50px;">
+            
+            
+            <div class="col-sm-8" style="background-image:url('../images/menubackd4.png'); background-color:lightblue; border-top-left-radius:20px;border-bottom-left-radius:20px;">
+                <!-- <p class="intro">
+                     This is a web-based application viz. <b>Randomization of EVMs & Polling Officials</b>
+                 </p>-->
+                 <p style="color:darkred; font-style:italic; font-size:large;">
+                    &emsp; This is a web application viz. <b>State Election Management System.</b> Conduct of Election invloves many different
+                    activities. By implementating this web application, the Directorate of Panchayat & Municipal Elections, Andaman and 
+                    Nicobar Islands has fully computerized few such activities which involves Preparation of Electoral Roll, Preparation 
+                    of Ballot Paper, Counting &amp Results. 
+                </p>
+                <p style="color:darkred; font-style:italic; font-size:large;">
+                    &emsp; Most of the functionalities in this application would require you to log into the system using your login credentials.
+                    However, few functionalities which are accessible to citizens as well doesn't require you to log into the system.  
+                    You can directly access these functionalities by clicking here <a href="Citizen/Home" style="color:navy;">Citizen's Corner</a>:
+                
+            </div>
+            <div class="col-sm-4" style="border-top-right-radius:20px;border-bottom-right-radius:20px; background-color:darkcyan">
+
+
+                <div style="align-items:center;width:auto;">
+                    <image src="/images/usericon.jpg" style="height:150px;display: block;margin-left: auto;margin-right: auto;width: 50%; border-radius:50%;"></image>
+                </div>
+                <br />
+                <div class="row" style=" margin:10px;">
+                    <table class="container">
+                        <tr>
+                            <td><label for="txtuid" class="form-label" style="font-weight:bold; color:maroon;">Login ID</label></td>
+                            <td>
+                                <input asp-for="uid" id="uid" name="uid" type="text" placeholder="Enter Username" class="form-control" style="margin:0px;" autofocus/>
+                                <span class="validateitem" asp-validation-for="uid"></span>
+
+                                <br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="txtpwd" class="form-label" style="font-weight:bold;color:maroon;"> Password</label></td>
+                            <td>
+                                <input asp-for="pwd" id="pwd" name="pwd" type="password" placeholder="Enter Password" class="form-control" style="margin:0px;" />
+                                <span class="validateitem" asp-validation-for="pwd"></span>
+                                <br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><div class="col-6 ms-auto"><input type="submit" value="Login" class="form-control btn btn-primary" style="border-radius:20px;"></div> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+
+
+            </div>
+            <!--<div class="col-sm-4"></div>-->
+        </div>
+
+        <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            @{
+                if (ViewBag.validUser == false)
+                {
+                    <script lang="text/javascript">
+                        alert('Invalid Username or Password. Please try Again!');
+                    </script>
+                }
+            }
+        </div>
+    </div>
+</form>

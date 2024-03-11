@@ -1,0 +1,111 @@
+﻿@model PanchayatHeaderModel
+@{
+    @using System.Data
+    ViewData["Title"] = "Serialize";
+}
+@{
+    DataSet panchayats = ViewBag.panchayats, wards = ViewBag.wards, eList = ViewBag.eList,revisions=ViewBag.revisions;
+    string logUserType = Context.Session.GetString("logUserType");
+    
+}
+<form id="frmSerialize" method="post">
+    @{
+        if (ViewBag.numberGenerated == true)
+        {
+            <script>
+                alert("Serial Numbers generated Successully!");
+            </script>
+        }
+    }
+    
+    <div class="container">
+        <input type="hidden" id="hidPostCause" asp-for="postCause" />
+        <div class="row" style="margin-top:20px;">
+            <div class="col-sm-9">
+                <h3 class="pageheading">Serial Number Generation</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <label class="form-label mylabel " for="ddwnRevisions">Roll Type</label>
+            </div>
+            <div class="col-sm-3">
+                @{
+                    List<SelectListItem>
+                    items = new List<SelectListItem>();
+                    foreach (DataRow row in revisions.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["SUPPLEMENTNAME"].ToString();
+                        s.Value = row["REVISIONNO"].ToString();
+                        // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="revisionNo" id="ddwnRevisions" name="revisionNo" class="form-select mycontrol" asp-items="@items"></select>
+            </div>
+            <div class="col-sm-2">
+                <input type="radio" id="radIndividual" asp-for="radio" name="radio" value="I" checked/>
+                <label class="form-label mylabel " for="radIndividual">Individual Wards</label>
+            </div>
+            <div class="col-sm-2">
+                <input type="radio" id="radAll" asp-for="radio" name="radio" value="A" />
+                <label class="form-label mylabel " for="radAll">All Wards</label>
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px;">
+            <div class="col-sm-2">
+                <label class="form-label mylabel " for="ddwnPanchayat">Panchayat</label>
+            </div>
+            <div class="col-sm-3">
+                @{
+                    items.Clear();
+                    foreach (DataRow row in panchayats.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["PAN_NAME"].ToString();
+                        s.Value = row["PCODE"].ToString();
+                        // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('hidPostCause').value='panchayat';document.getElementById ('frmSerialize').submit ();"></select>
+            </div>
+            <div class="col-sm-1">
+                <label class="form-label mylabel" for="ddwnWard">Ward</label>
+            </div>
+            <div class="col-sm-3">
+                @{
+                    items.Clear();
+                    foreach (DataRow row in wards.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["WARD_NAME"].ToString();
+                        s.Value = row["CONST_NO"].ToString();
+                        // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3">
+                <button class="btn btn-success form-control" style="height:50px;" onclick="getElementById('hidPostCause').value='genSlNo';" asp-action="GenerateSlNo">Generate Serial Numbers</button>
+            </div>
+        </div>
+    </div>
+    
+</form>
+

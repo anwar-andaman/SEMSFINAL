@@ -1,0 +1,204 @@
+﻿@model ProcessFormModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "ProcessForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet forms = ViewBag.forms;
+  
+}
+<script>
+    function EnableDisable() {
+        var curr = Number(document.getElementById('hidFirstRow').value);
+        var last = Number(document.getElementById('hidLastRow').value);
+       
+        if (curr > 10) {
+           
+            document.getElementById("btnFirst").disabled = false;
+            document.getElementById("btnPrev").disabled = false;
+        }
+        
+        else 
+        {
+            document.getElementById("btnFirst").disabled = true;
+            document.getElementById("btnPrev").disabled = true;
+        }
+        if ((curr + 9) <= last) {
+            document.getElementById("btnNext").disabled = false;
+            document.getElementById("btnLast").disabled = false;
+        }
+        else 
+        { 
+            document.getElementById("btnNext").disabled = true;
+            document.getElementById("btnLast").disabled = true;
+        }
+
+    }
+    function SubmitForm() {
+        document.getElementById('frmProcessForm').submit();
+    }
+    function GoNext() { 
+        var curr = Number(document.getElementById('hidFirstRow').value);
+        var last = Number(document.getElementById('hidLastRow').value);
+        var t = curr + 10;
+        if (t >= last) {
+            
+        }
+        else {
+            for (let i = curr; i < t; i++) {
+               
+                document.getElementById('row' + i).style.display = "none";
+                
+            }
+            for (let i = t; i <= t+10 && i<=last; i++) {
+                document.getElementById('row' + i).style.display = "table-row";
+            }
+           
+        }
+       
+        document.getElementById('hidFirstRow').value = t;
+        EnableDisable();
+        
+    }
+    function GoPrev() {
+        var curr = Number(document.getElementById('hidFirstRow').value);
+        var last = Number(document.getElementById('hidLastRow').value);
+        var t = curr - 10;
+        
+        if (t < 1) {
+
+        }
+        else {
+            for (let i = curr; i <= last; i++) {
+
+                document.getElementById('row' + i).style.display = "none";
+
+            }
+            for (let i = t; i <= 10 && i <= last; i++) {
+                document.getElementById('row' + i).style.display = "table-row";
+            }
+
+        }
+        document.getElementById('hidFirstRow').value = t;
+        EnableDisable();
+
+    }
+</script>
+
+<form id="frmProcessForm" method="post">
+    <input type="hidden" id="hidPanMun" asp-for="panMun" />
+    <div class="container">
+        <h2 class="pageheading">Form Processing </h2>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="ddwnFormType">Form Type</label>
+                <select id="ddwnFormType" class="form-select mycontrol" onchange="SubmitForm();" asp-for="formType">
+                    <option value="A">Addition</option>
+                    <option value="D">Deletion</option>
+                    <option value="C">Correction</option>
+                    <option value="T">Shifting</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label mylabel" for="SearchBy">Search By</label>
+                <select id="ddwnSearchBy" class="form-select mycontrol" asp-for="searchBy">
+                    <option value="F">Form No.</option>
+                    <option value="V">Voter ID No.</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="txtSearch">Search Value</label>
+                <input type="text" id="txtSearch" class="form-control mycontrol" placeholder="Enter value for search" asp-for="searchValue" />
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label mylabel" for="txtSearch" style="color:white">.</label>
+                <button class="btn btn-outline-primary form-control">Search</button>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <span class="mycontrol" style="font-size:small;">2 Forms Pending</span>
+            @{
+                if (Model.rowCount != 0)
+                {
+                    <table class="table table-bordered" style="text-align:center">
+                        <tr style="text-align:center">
+                            <th>S. No</th>
+                            <th>Form No.</th>
+                            <th>Panchayat</th>
+                            <th>Ward</th>
+                            <th>Elector Name</th>
+                            <th>Relative Name</th>
+                            @{
+                                if (Model.formType != "A")
+                                {
+                                    <th>Voter ID. No.</th>
+                                }
+                            }
+                            <th></th>
+                        </tr>
+                        @{
+                            string formno;
+                            DateTime formdate;
+                            int cnt=0;
+                            foreach (DataRow row in forms.Tables[0].Rows)
+                            {
+                                formno = row["FORM_NO"].ToString();
+                                formdate = (DateTime)row["FORM_DATE"];
+                                formno = row["ONLINEFORM"] + formdate.Day.ToString().PadLeft(2, '0') + formdate.Month.ToString().PadLeft(2, '0') + formdate.Year.ToString() + formno.PadLeft(5, '0');
+                                 string rowid = "row" + (++cnt).ToString();
+                                string disp;
+                                if (cnt<11)
+                                {
+                                    disp = "table-row";
+                                }
+                                else
+                                {
+                                    disp = "none";
+                                }
+                                <tr class="mycontrol" id="@rowid" style="display:@disp">
+                                    <td>@row["SNO"]</td>
+                                    <td>@formno</td>
+                                    <td>@row["PAN_NAME"]</td>
+                                    <td>@row["PART_NAME"]</td>
+                                    <td>@row["ENAME"]</td>
+                                    <td>@row["RLN_NAME"]</td>
+                                    @{
+                                        if (Model.formType != "A")
+                                        {
+                                            <td>@row["EPIC_NO"]</td>
+                                        }
+                                                                                    }
+                                    <td><input type="submit" class="btn btn-link" value="Process" style="padding:0px;"></input></td>
+
+                                </tr>
+                            }
+                        }
+                        <tr style="text-align:center">
+                            <td colspan="8">
+                                <button id="btnFirst" type="button" disabled>First</button>
+                                <button id="btnPrev" type="button" disabled onclick="GoPrev();">Prev</button>
+                                                        
+                                @{
+                                    if (cnt<=10)
+                                    {
+                                        <button id="btnNext" type="button" onclick="GoNext();" disabled>Next</button>
+                                        <button id="btnLast" type="button" disabled>Last</button>
+                                    }
+                                    else
+                                    {
+                                        <button id="btnNext" type="button" onclick="GoNext();">Next</button>
+                                        <button id="btnLast" type="button">Last</button>
+                                    }
+                                }
+                                                       
+                            </td>
+                        </tr>
+                    </table>
+                    <input id="hidFirstRow" type="hidden" value="1" />
+                    <input id="hidLastRow" type="hidden" value="@cnt" />
+                }
+            }
+
+        </div>
+    </div>
+   
+</form>

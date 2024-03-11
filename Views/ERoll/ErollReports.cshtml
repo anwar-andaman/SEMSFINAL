@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewData["Title"] = "ErollReports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<form id="frmErollReports" method="post">
+    <div class="container">
+        <h2 class="pageheading">ELECTORAL ROLL REPORTS</h2>
+        
+        <div class="row" style="margin-top:20px;">
+            <div class="col-sm-4">
+                <button class=" btn form-control" style="height:100px;border-radius:20px;padding:10px;background-image:url('../images/bgBlue3.jpg');font-size:25px;color:white; background-size:cover;" asp-action="DraftRoll">Draft Electoral Roll</button>
+            </div>
+            <div class="col-sm-4">
+                <button class=" btn form-control" style="height:100px;border-radius:20px;padding:10px;background-image:url('../images/bgGreen1.png');font-size:25px;color:white; background-size:cover;" asp-action="FinalRoll">Final Electoral Roll</button>
+            </div>
+            <div class="col-sm-4">
+                <button class=" btn form-control" style="height:100px;border-radius:20px;padding:10px;background-image:url('../images/bgRed2.jpg');font-size:25px;color:white; background-size:cover;" asp-action="PSWiseElectors">PS Wise Elector Details</button>
+            </div>
+            
+        </div>
+        <div class="row" style="margin-top:20px;">
+            <div class="col-sm-4">
+                <button class=" btn form-control" style="height:100px;border-radius:20px;padding:10px;background-image:url('../images/bgRed2.jpg');font-size:25px; color:white; background-size:cover;">Tehsil Wise Electors Summary</button>
+            </div>
+            <div class="col-sm-4">
+                <button class=" btn form-control" style="height:100px;border-radius:20px;padding:10px;background-image:url('../images/bgBlue4.jpg');font-size:25px;color:white; background-size:cover;">PS Wise Additions & Deletions</button>
+            </div>
+            <div class="col-sm-4">
+                <button class=" btn form-control" style="height:100px;border-radius:20px;padding:10px;background-image:url('../images/bgGreen1.png');font-size:25px;color:white; background-size:cover;">Draft Electoral Roll</button>
+            </div>
+        </div>
+    </div>
+</form>
+

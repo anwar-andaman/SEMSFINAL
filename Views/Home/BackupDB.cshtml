@@ -1,0 +1,46 @@
+﻿@using System.Data;
+@{
+    ViewData["Title"] = "BackupDB";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="frmBackup" method="post">
+    @{
+        if (ViewBag.backup=="success")
+        {
+            <script>
+                alert("Database Backed Up Successfully........");
+            </script>
+        }
+        if (ViewBag.backup == "failed")
+        {
+            <script>
+                alert("Database BackUp Failed.  Please Try Again Later........");
+            </script>
+        }
+    }
+    
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h4 class="pageheading">Backup & Download Database</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <button type="submit" class="btn btn-success form-control" asp-action="DoBackupDB" style="height:70px;">Backup Database</button>
+            </div>
+            <div class="col-sm-3">
+                <button type="submit" class="btn btn-primary form-control" asp-action="DownloadDB" style="height:70px;">Download Backup</button>
+            </div>
+        </div>
+        
+    </div>
+</form>
+

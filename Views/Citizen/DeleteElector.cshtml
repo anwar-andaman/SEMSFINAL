@@ -1,0 +1,269 @@
+﻿@model DeleteModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "DeleteElector";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+  
+    DataSet villages = ViewBag.villages, addressTehsils = ViewBag.addressTehsils;
+
+}
+<script>
+    function submitForm() {
+        document.getElementById('frmDeleteElector').submit();
+    }
+</script>
+<form id="frmDeleteElector" method="post">
+    <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <input type="hidden" id="hidPanMun" asp-for="panMun" />
+    <input type="hidden" id="hidFetchStatus" asp-for="fetch" />
+    <input type="hidden" asp-for="revisionNo"/>
+    <input type="hidden" asp-for="revisionYear"/>
+    <div class="container" style="background-color:lightyellow">
+        <h2 class="pageheading">Deletion of Names</h2>
+        <div class="row border" style="padding-bottom:10px;">
+            <div class="row formrow">
+                <div>
+                    Applicant Details
+                </div>
+            </div>
+            <div class="col-sm-2">
+               <label for="txtApplicantID" class="form-label mylabel">Applicant ID</label>
+               <input type="text" class="form-control mycontrol" asp-for="applEpic" readonly/>
+            </div>
+            <div class="col-sm-5">
+                <label for="txtApplicantName" class="form-label mylabel">Applicant Name</label>
+                <input type="text" class="form-control mycontrol" asp-for="applEname" readonly />
+            </div>
+            <div class="col-sm-5">
+                <label for="txtApplicantRlnName" class="form-label mylabel">Relative Name</label>
+                <input type="text" class="form-control mycontrol" asp-for="applRlnName" readonly />
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel">Panchayat</label>
+                <input type="text" class="form-control mycontrol" asp-for="applPanchayat" readonly />
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel">Ward</label>
+                <input type="text" class="form-control mycontrol" asp-for="applWard" readonly />
+            </div>
+        </div>
+        <div class="row border" style="padding-bottom:10px;">
+            <div class="row formrow">
+                <div>
+                    Address & Contact Details
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label mylabel " for="txtHouseNo">House No.</label>
+                <input type="text" id="txtHouseNo" placeholder="Enter House No." asp-for="houseNo" name="houseNo" class="form-control" oninvalid="this.setCustomValidity('Please Enter House No.')" oninput="setCustomValidity('')" required />
+            </div>
+            <div class="col-sm-5">
+                <label class="form-label mylabel " for="txtAddLine1">Address Line1</label>
+                <input type="text" id="txtAddLine1" placeholder="Enter Addddress Line1" asp-for="addLine1" name="addLine1" class="form-control" />
+            </div>
+            <div class="col-sm-5">
+                <label class="form-label mylabel" for="txtAddLine2">Address Line2</label>
+                <input type="text" id="txtAddLine2" placeholder="Enter Addddress Line2" asp-for="addLine2" name="addLine2" class="form-control" />
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel " for="ddwnAddressTehsil">Tehsil</label>
+                @{
+                    List<SelectListItem>
+                    items = new List<SelectListItem>();
+                    SelectListItem listItem = new SelectListItem();
+                    listItem.Text = "<----Select---->";
+                    listItem.Value = "0";
+                    items.Add(listItem);
+
+                    foreach (DataRow row in addressTehsils.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["TNAME"].ToString();
+                        s.Value = row["TCODE"].ToString();
+
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="addressTehsil" id="ddwnAddressTehsil" name="addressTehsil" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('hidPostCause').value='addressTehsil';submitForm();"></select>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel " for="ddwnVillage">Village</label>
+                @{
+                    items.Clear();
+                    foreach (DataRow row in villages.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["VNAME"].ToString();
+                        s.Value = row["VCODE"].ToString();
+
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="village" id="ddwnAddressVillage" name="village" class="form-select mycontrol" asp-items="@items"></select>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="txtPost">Post Office</label>
+                <input type="text" id="txtPost" placeholder="Enter Post Office" asp-for="post" name="post" class="form-control" />
+            </div>
+            <div class="col-sm-3">
+                <label class="form-label mylabel " for="txtMobile">Mobile No.</label>
+                <input type="tel" id="txtMobile" placeholder="Enter Mobile No." asp-for="mobileNo" name="mobileNo" class="form-control" maxlength="10" min="1000000000" />
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel " for="txtEmail">Email ID</label>
+                <input type="email" id="txtEmail" placeholder="Enter Email ID" asp-for="email" name="email" class="form-control"  />
+                <span asp-validation-for="email" style="color:red"></span>
+            </div>
+
+        </div>
+        <div class="row border" style="padding-bottom:10px;">
+           
+            <div class="row formrow">
+                <div>
+                    Details of Elector to be Deleted
+                </div>
+                
+            </div>
+  
+        
+            <div class="col-sm-3">
+                <input type="radio" asp-for="searchBy" id="radByPart" value="P" name="searchBy" onchange="document.getElementById('hidPostCause').value='searchBy';submitForm();" />
+                <label for="radByPart" class="form-label mylabel">By Part No. & Sl.No.</label>
+            </div>
+            <div class="col-sm-3">
+                @{
+                    if (Context.Request.Method == "POST")
+                    {
+                        <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" onchange="document.getElementById('hidPostCause').value='searchBy'; submitForm();" />
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" checked onchange="document.getElementById('hidPostCause').value='searchBy';submitForm();" />
+                    }
+                }
+
+                <label for="radByEpic" class="form-label mylabel">By Voter ID No.</label>
+            </div>
+            <div class="row" style="margin-top:10px;">
+                @{
+                    switch (Model.searchBy)
+                    {
+                        case "P":
+                            {
+                                <div class="col-sm-1">
+                                    <label for="txtPartNo" class="form-label mylabel">Part No.</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input class="form-control mycontrol" type="number" id="txtPartNo" asp-for="partNo" min="1" max="@ViewBag.maxPart" required />
+                                </div>
+                                <div class="col-sm-1">
+                                    <label for="txtSlNo" class="form-label mylabel">Sl. No.</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input class="form-control mycontrol" type="number" id="txtSlNo" asp-for="slNo" min="1" max="@ViewBag.slNo" required />
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-success form-control" asp-action="FetchRecord" onclick="document.getElementById('hidPostCause').value='fetch';document.getElementById('hidFetchStatus').value='true';">Fetch Record</button>
+                                </div>
+                                break;
+                            }
+                        case "E":
+                        {
+                           
+                            <div class="col-sm-2">
+                                <label for="txtEpic" class="form-label mylabel">Voter ID No.</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input class="form-control mycontrol" type="text" id="txtEpic" asp-for="epic" maxlength="10" asp-for="epic" name="epic" required />
+                            </div>
+                            <div class="col-sm-2">
+                                    <button type="submit" class="btn btn-success form-control" asp-action="FetchRecord" onclick="document.getElementById('hidPostCause').value='fetch';document.getElementById('hidFetchStatus').value='true';">Fetch Record</button>
+                            </div>
+                            break;
+                        }
+                    }
+                    
+                }
+            </div>
+           
+                @{
+                    if (Model.fetch == "true") 
+                    {
+                        if (Model.ename!="a")
+                        {
+                            <div class="row " style="padding-bottom:10px;">
+                                <div class="col-sm-2">
+                                    <label for="txtApplicantID" class="form-label mylabel">Applicant ID</label>
+                                    <input type="text" class="form-control mycontrol" asp-for="epic" readonly />
+                                </div>
+                                <div class="col-sm-5">
+                                    <label for="txtApplicantName" class="form-label mylabel">Applicant Name</label>
+                                    <input type="text" class="form-control mycontrol" asp-for="ename" readonly />
+                                </div>
+                                <div class="col-sm-5">
+                                    <label for="txtApplicantRlnName" class="form-label mylabel">Relative Name</label>
+                                    <input type="text" class="form-control mycontrol" asp-for="rlnName" readonly />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="form-label mylabel">Panchayat</label>
+                                    <input type="text" class="form-control mycontrol" asp-for="panchayat" readonly />
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="form-label mylabel">Ward</label>
+                                    <input type="text" class="form-control mycontrol" asp-for="ward" readonly />
+                                </div>
+                            </div>
+                            <div class="row formrow">
+                            <div>
+                                Other Details
+                            </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-sm-4">
+                                    <label for="ddwnReason" class="form-label mylabel">Remarks</label>
+                                    <select id="ddwnReason" class="form-select mycontrol" asp-for="reason">
+                                    @{
+                                        if (Model.epic!=Model.applEpic)
+                                        {
+                                            <option value="E">Expired</option>
+                                        }
+                                    }
+                                        <option value="N">Not residing in this Ward</option>
+                                        <option value="O">Other Reasons</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-5">
+                                    <label for="txtRemarks" class="form-label mylabel mycontrol">Remarks</label>
+                                    <textarea id="txtRemarks" class="form-control mycontrol" asp-for="remarks" maxlength="100" required></textarea>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2">
+                                <button type="submit" class="btn btn-primary form-control" style="height:60px;" asp-action="SubmitDelete">Submit</button>
+                                </div>
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-danger form-control" style="height:60px;" asp-action="Home" formnovalidate>Cancel</button>
+                            </div>
+                           
+                                <div class="col-sm-4"></div>
+                            </div>
+                        }
+                        else
+                        {
+                            
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-4">
+                               <span style="color:red;font-weight:bold;font-size:large;">No Record Found</span>
+                           </div>
+                            
+                        }
+                    
+                    }
+               
+               }
+            
+        </div>
+    </div>
+</form>
+

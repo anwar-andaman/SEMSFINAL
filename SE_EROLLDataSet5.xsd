@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="SE_EROLLDataSet5" targetNamespace="http://tempuri.org/SE_EROLLDataSet5.xsd" xmlns:mstns="http://tempuri.org/SE_EROLLDataSet5.xsd" xmlns="http://tempuri.org/SE_EROLLDataSet5.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=.;Initial Catalog=SE_EROLL;Persist Security Info=True;User ID=sa;Password=sa@Admin;TrustServerCertificate=True" IsAppSettingsProperty="false" Modifier="Assembly" Name="anwar.SE_EROLL.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+          <Connection ConnectionStringObject="Data Source=.;Initial Catalog=STATE_ELECTION;User ID=sa;Password=sa@Admin;Encrypt=False" IsAppSettingsProperty="false" Modifier="Assembly" Name="anwar.STATE_ELECTION.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="PSLISTTableAdapter" GeneratorDataComponentClassName="PSLISTTableAdapter" Name="PSLIST" UserDataComponentName="PSLISTTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT D.DIST_CODE,D.DIST_NAME,T.TNAME,T.TNO,E.PART_NO,PL.PART_NAME,SUM(CASE GENDER WHEN 'M' THEN 1 ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,
+SUM(CASE GENDER WHEN 'T' THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN
+JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE WHERE E.PAN_MUN='P' AND PL.AREA_TYPE='P' 
+GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,E.PART_NO,PL.PART_NAME ORDER BY E.PART_NO</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="DIST_CODE" DataSetColumn="DIST_CODE" />
+              <Mapping SourceColumn="DIST_NAME" DataSetColumn="DIST_NAME" />
+              <Mapping SourceColumn="TNAME" DataSetColumn="TNAME" />
+              <Mapping SourceColumn="TNO" DataSetColumn="TNO" />
+              <Mapping SourceColumn="PART_NO" DataSetColumn="PART_NO" />
+              <Mapping SourceColumn="PART_NAME" DataSetColumn="PART_NAME" />
+              <Mapping SourceColumn="MALE" DataSetColumn="MALE" />
+              <Mapping SourceColumn="FEMALE" DataSetColumn="FEMALE" />
+              <Mapping SourceColumn="TG" DataSetColumn="TG" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="PARAMETERSTableAdapter" GeneratorDataComponentClassName="PARAMETERSTableAdapter" Name="PARAMETERS" UserDataComponentName="PARAMETERSTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT CAST(2024 AS VARCHAR) AS REVYEAR,'HEADER' AS HEADER</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="HEADER" DataSetColumn="HEADER" />
+              <Mapping SourceColumn="REVYEAR" DataSetColumn="REVYEAR" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="SE_EROLLDataSet5" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="SE_EROLLDataSet5" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="SE_EROLLDataSet5">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="PSLIST" msprop:Generator_RowEvHandlerName="PSLISTRowChangeEventHandler" msprop:Generator_RowDeletedName="PSLISTRowDeleted" msprop:Generator_RowDeletingName="PSLISTRowDeleting" msprop:Generator_RowEvArgName="PSLISTRowChangeEvent" msprop:Generator_TablePropName="PSLIST" msprop:Generator_RowChangedName="PSLISTRowChanged" msprop:Generator_UserTableName="PSLIST" msprop:Generator_RowChangingName="PSLISTRowChanging" msprop:Generator_RowClassName="PSLISTRow" msprop:Generator_TableClassName="PSLISTDataTable" msprop:Generator_TableVarName="tablePSLIST">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DIST_CODE" msprop:Generator_ColumnPropNameInTable="DIST_CODEColumn" msprop:Generator_ColumnPropNameInRow="DIST_CODE" msprop:Generator_UserColumnName="DIST_CODE" msprop:Generator_ColumnVarNameInTable="columnDIST_CODE" type="xs:unsignedByte" />
+              <xs:element name="DIST_NAME" msprop:Generator_ColumnPropNameInTable="DIST_NAMEColumn" msprop:Generator_ColumnPropNameInRow="DIST_NAME" msprop:Generator_UserColumnName="DIST_NAME" msprop:Generator_ColumnVarNameInTable="columnDIST_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TNAME" msprop:Generator_ColumnPropNameInTable="TNAMEColumn" msprop:Generator_ColumnPropNameInRow="TNAME" msprop:Generator_UserColumnName="TNAME" msprop:Generator_ColumnVarNameInTable="columnTNAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TNO" msprop:Generator_ColumnPropNameInTable="TNOColumn" msprop:Generator_ColumnPropNameInRow="TNO" msprop:Generator_UserColumnName="TNO" msprop:Generator_ColumnVarNameInTable="columnTNO" type="xs:unsignedByte" />
+              <xs:element name="PART_NO" msprop:Generator_ColumnPropNameInTable="PART_NOColumn" msprop:Generator_ColumnPropNameInRow="PART_NO" msprop:Generator_UserColumnName="PART_NO" msprop:Generator_ColumnVarNameInTable="columnPART_NO" type="xs:int" />
+              <xs:element name="PART_NAME" msprop:Generator_ColumnPropNameInTable="PART_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PART_NAME" msprop:Generator_UserColumnName="PART_NAME" msprop:Generator_ColumnVarNameInTable="columnPART_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="MALEColumn" msprop:Generator_ColumnPropNameInRow="MALE" msprop:Generator_UserColumnName="MALE" msprop:Generator_ColumnVarNameInTable="columnMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="FEMALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="FEMALEColumn" msprop:Generator_ColumnPropNameInRow="FEMALE" msprop:Generator_UserColumnName="FEMALE" msprop:Generator_ColumnVarNameInTable="columnFEMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="TG" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="TGColumn" msprop:Generator_ColumnPropNameInRow="TG" msprop:Generator_UserColumnName="TG" msprop:Generator_ColumnVarNameInTable="columnTG" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="PARAMETERS" msprop:Generator_RowClassName="PARAMETERSRow" msprop:Generator_RowEvHandlerName="PARAMETERSRowChangeEventHandler" msprop:Generator_RowDeletedName="PARAMETERSRowDeleted" msprop:Generator_RowDeletingName="PARAMETERSRowDeleting" msprop:Generator_RowEvArgName="PARAMETERSRowChangeEvent" msprop:Generator_TablePropName="PARAMETERS" msprop:Generator_RowChangedName="PARAMETERSRowChanged" msprop:Generator_UserTableName="PARAMETERS" msprop:Generator_RowChangingName="PARAMETERSRowChanging" msprop:Generator_TableClassName="PARAMETERSDataTable" msprop:Generator_TableVarName="tablePARAMETERS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="HEADER" msdata:ReadOnly="true" msprop:Generator_UserColumnName="HEADER" msprop:Generator_ColumnPropNameInTable="HEADERColumn" msprop:Generator_ColumnPropNameInRow="HEADER" msprop:Generator_ColumnVarNameInTable="columnHEADER" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="6" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="REVYEAR" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="REVYEAR" msprop:Generator_ColumnPropNameInTable="REVYEARColumn" msprop:Generator_ColumnVarNameInTable="columnREVYEAR" msprop:Generator_UserColumnName="REVYEAR" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:PSLIST" />
+      <xs:field xpath="mstns:DIST_CODE" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

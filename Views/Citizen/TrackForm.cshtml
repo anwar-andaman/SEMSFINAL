@@ -1,0 +1,104 @@
+﻿@model TrackModel
+@using System.Data;
+@{
+    ViewData["Title"] = "TrackForm";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+    DataSet status = ViewBag.status;
+    DataSet levels = ViewBag.levels;
+}
+
+<form method="post">
+    <div class="container">
+        <h4 class="pageheading">Track Your Application</h4>
+        <div class="row">
+            <div class="col-sm-1">
+
+            </div>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right;">
+                        <label class="form-label mylabel">Form No.</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <input id="txtFormNo" type="text" class="form-control" asp-for="formNo" placeholder="Enter Your Form No." maxlength="15" />
+                        <span asp-validation-for="formNo" style="color:red;"></span>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="submit" class="btn btn-outline-primary form-control" type="button">Track</button>
+                    </div>
+                    <div class="col-sm-2" style="text-align:left">
+                        <button type="submit" class="btn btn-outline-danger form-control" asp-action="Home" formnovalidate>Go To Home</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+            
+        </div>
+        @{
+            if (Context.Request.Method=="POST" && ViewBag.mdState==true)
+            {
+                <div id="trackStatus" class="row" style="margin-top:15px;">
+                   
+                    @{
+                        if (status.Tables[0].Rows.Count == 0)
+                        {
+                            <h4 style="text-align:center; color:red; font-size:large">Application Form not found. Please check the Form No. and Try Again!</h4>
+                        }
+                        else
+                        {
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-4" >
+                                @{
+                                    int arrow = 1;
+                                    foreach(DataRow row in status.Tables[0].Rows)
+                                    {
+                                        if (arrow>1)
+                                        {
+                                            <div class="row">
+                                                <div class="col" style="text-align:center">
+                                                    <img src="~/images/down-arrow.png" style="block-size:40px;" />
+                                                </div>
+                                            </div>
+                                        }
+                                        arrow++;
+                                        <div class="row">
+                                            <div class="col" style="text-align:center">
+                                                <img src="~/images/correct.png" style="block-size:30px;" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col" style="text-align:center">
+                                                <span style="font-size:large">@row["STAGE"]</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    foreach (DataRow row in levels.Tables[0].Rows)
+                                    {
+                                        <div class="row">
+                                            <div class="col" style="text-align:center">
+                                                <img src="~/images/down-arrow.png" style="block-size:40px;" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col" style="text-align:center">
+                                                <img src="~/images/pending.jpg" style="block-size:35px;" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col" style="text-align:center">
+                                                <span style="font-size:large">@row["STAGE"]</span>
+                                            </div>
+                                        </div>
+                                    }
+
+                                }
+                            </div>
+                            <div class="col-sm-4"></div>
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+</form>
+

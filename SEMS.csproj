@@ -1,0 +1,108 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Reports\PSWiseElectors.cshtml" />
+    <Content Remove="wwwroot\Reports\RepDraftRoll.rdlc" />
+    <Content Remove="wwwroot\Reports\RepFinalRoll.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\Reports\RepDraftRoll.rdlc" />
+    <EmbeddedResource Include="wwwroot\Reports\RepPSWiseElectorsMunicipal.rdlc" />
+    <EmbeddedResource Include="wwwroot\Reports\RepFinalRoll.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.19" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+    <Folder Include="Database\" />
+    <Folder Include="Views\Reports\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\lib\bootstrap\" />
+    <Folder Include="wwwroot\lib\bootstrap\dist\js\" />
+    <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
+    <Folder Include="wwwroot\lib\jquery-validation\" />
+    <Folder Include="wwwroot\lib\jquery-validation\dist\" />
+    <Folder Include="wwwroot\lib\jquery\" />
+    <Folder Include="wwwroot\lib\jquery\dist\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DataSets\SE_EROLLDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SE_EROLLDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="DataSets\SE_EROLLDataSet11.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SE_EROLLDataSet11.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="DataSets\SE_EROLLDataSet21.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SE_EROLLDataSet21.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="DataSets\SE_EROLLDataSet3.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SE_EROLLDataSet3.xsd</DependentUpon>
+    </Compile>
+    <Compile Update="SE_EROLLDataSet5.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SE_EROLLDataSet5.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DataSets\SE_EROLLDataSet.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>SE_EROLLDataSet.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="DataSets\SE_EROLLDataSet11.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>SE_EROLLDataSet11.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="DataSets\SE_EROLLDataSet21.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>SE_EROLLDataSet21.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="DataSets\SE_EROLLDataSet3.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>SE_EROLLDataSet3.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="SE_EROLLDataSet5.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SE_EROLLDataSet5.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

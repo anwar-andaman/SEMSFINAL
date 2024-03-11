@@ -1,0 +1,223 @@
+﻿@model PanchayatHeaderModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "ReOrganizeElectors";
+}
+
+
+<form id="frmReOrganize" method="post">
+    <input type="hidden" id="hidDeleteItem" name="hidDeleteItem" />
+    <script>
+        function setDeleteItem(item) {
+            document.getElementById('hidDeleteItem').value = item;
+        }
+    </script>
+    @{
+        DataSet panchayats = ViewBag.panchayats, wards = ViewBag.wards, eList = ViewBag.eList; ;
+        string logUserType = Context.Session.GetString("logUserType");
+        string selectedPanchayat = ViewBag.selectedPanchayat;
+        DataSet selectedWard = ViewBag.selectedWard;
+    }
+    <div class="container">
+        <h2 class="pageheading">Pre-Draft Re-Organization of Electors</h2>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="form-label mylabel " for="ddwnPanchayat">Panchayat</label>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="ddwnWard">Ward</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @{
+                    List<SelectListItem>
+                    items = new List<SelectListItem>();
+                    foreach (DataRow row in panchayats.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["PAN_NAME"].ToString();
+                        s.Value = row["PCODE"].ToString();
+                       // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('hidpostCause').value='panchayat';document.getElementById ('frmReOrganize').submit ();"></select>
+            </div>
+            <div class="col-sm-4">
+                @{
+                    items.Clear();
+                    foreach (DataRow row in wards.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["WARD_NAME"].ToString();
+                        s.Value = row["CONST_NO"].ToString();
+                        // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items"></select>
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-primary form-control" onclick="getElementById('hidpostCause').value='Go';">Go</button>
+            </div>
+        </div>
+        <input type="hidden" id="hidpostCause" asp-for="postCause" name="postCause"/>
+        <input type="hidden" id="hidEid" asp-for="eid" name="eid" />
+        <div class="row">
+            <div class="table-responsive-md">
+                @{
+                        <table class="table table-hover table-sm align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Sl. No.</th>
+                                    <th>Elector Name</th>
+                                    <th>Relation</th>
+                                    <th>Relation Name</th>
+                                    <th>Voter ID Car No.</th>
+                                    <th>Proposed Panchayat</th>
+                                    <th>Proposed Ward</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            @{
+                            int cnt = 0;
+                            foreach (DataRow row in eList.Tables[0].Rows)
+                            {
+                                cnt++;
+                                string huid = "hid_stageID" + cnt;
+                                string trid = "tr" + cnt;
+                                        <tr id="@trid">
+                                            @{
+                                        if (row["PART_NO"].ToString() != Model.ward.ToString())
+                                        {
+                                                        <script>
+                                                            document.getElementById('@trid').style.color = "red";
+                                                        </script>
+                                        }
+                                            }
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="DeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Confirmation</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure to delete the Form Stage?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                                                            <button type="submit" class="btn btn-danger">Yes</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @{
+                                                    <td>
+                                                        <input hidden id="@huid" name="@huid" value="@row["EID"]" />
+                                                        @row["SLNOINPART"]
+                                                    </td>
+                                                    <td>
+                                                        @row["ENAME"]
+                                                    </td>
+                                                    <td>
+                                                        @row["RLN_TYPE"]
+                                                    </td>
+                                                    <td>
+                                                        @row["RLN_NAME"]
+                                                    </td>
+                                                    <td>
+                                                        @row["EPIC_NO"]
+                                                    </td>
+                                        if (ViewBag.edit == true)
+                                        {
+                                            if (Model.eid.ToString() == row["EID"].ToString())
+                                            {
+                                                            <td>
+                                                                @{
+                                                        items.Clear();
+                                                        foreach (DataRow row1 in panchayats.Tables[0].Rows)
+                                                        {
+                                                            SelectListItem s = new SelectListItem();
+                                                            s.Text = row1["PAN_NAME"].ToString();
+                                                            s.Value = row1["PCODE"].ToString();
+                                                            s.Selected = row1["PCODE"].ToString() == row["PCODE"].ToString() ? true : false;
+                                                            items.Add(s);
+                                                        }
+                                                                }
+                                                                <select id="ddwneditPanchayat" asp-for="selectedPanchayat" name="selectedPanchayat" class="form-select" asp-items="@items" onchange="getElementById('hidpostCause').value='edit' ;document.getElementById ('frmReOrganize').submit ();"></select>
+                                                            </td>
+                                                            <td>
+                                                                @{
+                                                        items.Clear();
+                                                        foreach (DataRow row1 in selectedWard.Tables[0].Rows)
+                                                        {
+                                                            SelectListItem s = new SelectListItem();
+                                                            
+                                                            s.Text = row1["WARD_NAME"].ToString();
+                                                            s.Value = row1["CONST_NO"].ToString();
+                                                            s.Selected = row1["CONST_NO"].ToString() == row["CONST_NO"].ToString() ? true : false;
+                                                            items.Add(s);
+                                                        }
+                                                                }
+                                                                <select id="ddwneditWard" asp-for="selectedWard" name="selectedWard" class="form-select" asp-items="@items"></select>
+                                                            </td>
+                                                            <td>
+                                                                <button class="btn btn-link" onclick="getElementById('hidpostCause').value='update';">Update</button>
+                                                                <button class="btn btn-link" style="color:red;" formnovalidate onclick="getElementById('hidpostCause').value='cancel';">Cancel</button>
+                                                            </td>
+                                            }
+                                            else
+                                            {
+                                              
+                                                                <td>
+                                                                    @row["PAN_NAME"]
+                                                                </td>
+                                                                <td>
+                                                                    @row["WARD_NAME"]
+                                                                </td>
+                                                
+
+                                                
+
+                                                            <td><button class="btn btn-link" onclick="getElementById('hidpostCause').value='edit'; getElementById('hidEid').value=@row["EID"];">Edit</button></td>
+
+                                                            <td>
+                                                                
+                                                            </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                           
+                                                            <td>
+                                                                @row["PAN_NAME"]
+                                                            </td>
+                                                            <td>
+                                                                @row["WARD_NAME"]
+                                                            </td>
+                                            
+                                           
+
+                                                        <td><button class="btn btn-link" onclick="getElementById('hidpostCause').value='edit';getElementById('hidEid').value=@row["EID"];">Edit</button></td>
+
+                                                        <td>
+                                                        </td>
+
+                                        }
+
+                                            }
+                                        </tr>
+                            }
+                            }
+                        </table>
+
+                }
+            </div>
+        </div>
+            
+    </div>
+   
+</form>

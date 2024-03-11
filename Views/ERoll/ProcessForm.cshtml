@@ -1,0 +1,98 @@
+﻿@model ProcessFormModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "ProcessForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet forms = ViewBag.forms;
+}
+<script>
+    function SubmitForm() { 
+        document.getElementById('frmProcessForm').submit();
+    }
+</script>
+
+<form id="frmProcessForm" method="post">
+    <div class="container">
+        <h2 class="pageheading">Form Processing </h2>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="ddwnFormType">Form Type</label>
+               <select id="ddwnFormType" class="form-select mycontrol" onchange="SubmitForm();" asp-for="formType">
+                   <option value="A">Addition</option>
+                   <option value="D">Deletion</option>
+                   <option value="C">Correction</option>
+                   <option value="T">Shifting</option>
+               </select>
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label mylabel" for="SearchBy">Search By</label>
+                <select id="ddwnSearchBy" class="form-select mycontrol" asp-for="searchBy">
+                    <option value="F">Form No.</option>
+                    <option value="V">Voter ID No.</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="txtSearch">Search Value</label>
+               <input type="text" id="txtSearch" class="form-control mycontrol" placeholder="Enter value for search" asp-for="searchValue"/>
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label mylabel" for="txtSearch" style="color:white">.</label>
+                <button class="btn btn-outline-primary form-control">Search</button>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <span class="mycontrol" style="font-size:small;">2 Forms Pending</span>
+            @{
+                if (Model.rowCount!=0)
+                {
+                    <table class="table" style="font-size:smaller">
+                        <tr style="text-align:center">
+                            <th>S. No</th>
+                            <th>Form No.</th>
+                            <th>Elector Name</th>
+                            <th>Relative Name</th>
+                            @{
+                                if (Model.formType != "A")
+                                {
+                                    <th>Voter ID. No.</th>
+                                }
+                            }
+                            <th></th>
+                        </tr>
+                        @{
+                            int cnt = 0;
+                            foreach(DataRow row in forms.Tables[0].Rows)
+                            {
+                                string rowid = "row" + cnt.ToString();
+                                string disp;
+                                if (cnt<10)
+                                {
+                                    disp = "table-row";
+                                }
+                                else
+                                {
+                                    disp = "none";
+                                }
+                                <tr id="@rowid" style="display:none;color:red">
+                                    <td>@row["SNO"]</td>
+                                    <td>@row["ENAME"]</td>
+                                    <td>@row["RLN_NAME"]</td>
+                                    <td></td>
+                                    @{
+                                        if (Model.formType != "A")
+                                        {
+                                            <td>@row["EPIC_NO"]</td>
+                                        }
+                                    }
+                                    <td></td>
+
+                                </tr>
+                            }
+                        }
+                    </table>
+                }
+            }
+            
+        </div>
+    </div>
+</form>

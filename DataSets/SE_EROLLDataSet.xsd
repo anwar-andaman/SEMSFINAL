@@ -1,0 +1,386 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="SE_EROLLDataSet" targetNamespace="http://tempuri.org/SE_EROLLDataSet.xsd" xmlns:mstns="http://tempuri.org/SE_EROLLDataSet.xsd" xmlns="http://tempuri.org/SE_EROLLDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="2" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="SE_EROLLConnectionString" IsAppSettingsProperty="true" Modifier="Assembly" Name="SE_EROLLConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.SEMS.Properties.Settings.GlobalReference.Default.SE_EROLLConnectionString" Provider="System.Data.SqlClient" />
+          <Connection ConnectionStringObject="Data Source=.;Initial Catalog=SE_EROLL;User ID=sa;Password=sa@Admin;TrustServerCertificate=True" IsAppSettingsProperty="false" Modifier="Assembly" Name="Connection1" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+          <Connection ConnectionStringObject="Data Source=.;Initial Catalog=SE_EROLL;User ID=sa;Password=sa@Admin;TrustServerCertificate=True" IsAppSettingsProperty="false" Modifier="Assembly" Name="anwar.SE_EROLL.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="DRAFTROLLTableAdapter" GeneratorDataComponentClassName="DRAFTROLLTableAdapter" Name="DRAFTROLL" UserDataComponentName="DRAFTROLLTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="Connection1" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT SNO, EID, PART_NO, SLNOINPART, ENAME, RLN_TYPE, RLN_NAME, AGE, EPIC_NO,HOUSE_NO,PHOTO,P.PAN_NAME,W.WARD_NAME,STATUSTYPE,ROLL_STATUSTYPE,REVISIONNO,GENDER FROM 
+SE_EROLL.dbo.DRAFTROLL AS E JOIN STATE_ELECTION..PAN_WARD AS W ON E.PART_NO=W.CONST_NO JOIN STATE_ELECTION..PANCHAYAT AS P ON W.PCODE=P.PCODE
+WHERE E.PART_NO=100 AND ((SNO % 3) =1) ORDER BY SNO</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="SNO" DataSetColumn="SNO" />
+              <Mapping SourceColumn="EID" DataSetColumn="EID" />
+              <Mapping SourceColumn="PART_NO" DataSetColumn="PART_NO" />
+              <Mapping SourceColumn="SLNOINPART" DataSetColumn="SLNOINPART" />
+              <Mapping SourceColumn="ENAME" DataSetColumn="ENAME" />
+              <Mapping SourceColumn="RLN_TYPE" DataSetColumn="RLN_TYPE" />
+              <Mapping SourceColumn="RLN_NAME" DataSetColumn="RLN_NAME" />
+              <Mapping SourceColumn="AGE" DataSetColumn="AGE" />
+              <Mapping SourceColumn="EPIC_NO" DataSetColumn="EPIC_NO" />
+              <Mapping SourceColumn="HOUSE_NO" DataSetColumn="HOUSE_NO" />
+              <Mapping SourceColumn="PHOTO" DataSetColumn="PHOTO" />
+              <Mapping SourceColumn="PAN_NAME" DataSetColumn="PAN_NAME" />
+              <Mapping SourceColumn="WARD_NAME" DataSetColumn="WARD_NAME" />
+              <Mapping SourceColumn="STATUSTYPE" DataSetColumn="STATUSTYPE" />
+              <Mapping SourceColumn="ROLL_STATUSTYPE" DataSetColumn="ROLL_STATUSTYPE" />
+              <Mapping SourceColumn="REVISIONNO" DataSetColumn="REVISIONNO" />
+              <Mapping SourceColumn="GENDER" DataSetColumn="GENDER" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="SUPROLLTableAdapter" GeneratorDataComponentClassName="SUPROLLTableAdapter" Name="SUPROLL" UserDataComponentName="SUPROLLTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="Connection1" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT SNO, EID, PART_NO, SLNOINPART, ENAME, RLN_TYPE, RLN_NAME, AGE, EPIC_NO,HOUSE_NO,PHOTO,P.PAN_NAME,W.WARD_NAME,STATUSTYPE,ROLL_STATUSTYPE,REVISIONNO,GENDER FROM 
+SE_EROLL.dbo.DRAFTROLL AS E JOIN STATE_ELECTION..PAN_WARD AS W ON E.PART_NO=W.CONST_NO JOIN STATE_ELECTION..PANCHAYAT AS P ON W.PCODE=P.PCODE
+WHERE E.PART_NO=100 AND ((SNO % 3) =1) ORDER BY SNO</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="SNO" DataSetColumn="SNO" />
+              <Mapping SourceColumn="EID" DataSetColumn="EID" />
+              <Mapping SourceColumn="PART_NO" DataSetColumn="PART_NO" />
+              <Mapping SourceColumn="SLNOINPART" DataSetColumn="SLNOINPART" />
+              <Mapping SourceColumn="ENAME" DataSetColumn="ENAME" />
+              <Mapping SourceColumn="RLN_TYPE" DataSetColumn="RLN_TYPE" />
+              <Mapping SourceColumn="RLN_NAME" DataSetColumn="RLN_NAME" />
+              <Mapping SourceColumn="AGE" DataSetColumn="AGE" />
+              <Mapping SourceColumn="EPIC_NO" DataSetColumn="EPIC_NO" />
+              <Mapping SourceColumn="HOUSE_NO" DataSetColumn="HOUSE_NO" />
+              <Mapping SourceColumn="PHOTO" DataSetColumn="PHOTO" />
+              <Mapping SourceColumn="PAN_NAME" DataSetColumn="PAN_NAME" />
+              <Mapping SourceColumn="WARD_NAME" DataSetColumn="WARD_NAME" />
+              <Mapping SourceColumn="STATUSTYPE" DataSetColumn="STATUSTYPE" />
+              <Mapping SourceColumn="ROLL_STATUSTYPE" DataSetColumn="ROLL_STATUSTYPE" />
+              <Mapping SourceColumn="REVISIONNO" DataSetColumn="REVISIONNO" />
+              <Mapping SourceColumn="GENDER" DataSetColumn="GENDER" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="DELETIONTableAdapter" GeneratorDataComponentClassName="DELETIONTableAdapter" Name="DELETION" UserDataComponentName="DELETIONTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="Connection1" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT SNO, EID, PART_NO, SLNOINPART, ENAME, RLN_TYPE, RLN_NAME, AGE, EPIC_NO,HOUSE_NO,PHOTO,P.PAN_NAME,W.WARD_NAME,STATUSTYPE,ROLL_STATUSTYPE,REVISIONNO,GENDER FROM 
+SE_EROLL.dbo.DRAFTROLL AS E JOIN STATE_ELECTION..PAN_WARD AS W ON E.PART_NO=W.CONST_NO JOIN STATE_ELECTION..PANCHAYAT AS P ON W.PCODE=P.PCODE
+WHERE E.PART_NO=100 AND ((SNO % 3) =1) ORDER BY SNO</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="SNO" DataSetColumn="SNO" />
+              <Mapping SourceColumn="EID" DataSetColumn="EID" />
+              <Mapping SourceColumn="PART_NO" DataSetColumn="PART_NO" />
+              <Mapping SourceColumn="SLNOINPART" DataSetColumn="SLNOINPART" />
+              <Mapping SourceColumn="ENAME" DataSetColumn="ENAME" />
+              <Mapping SourceColumn="RLN_TYPE" DataSetColumn="RLN_TYPE" />
+              <Mapping SourceColumn="RLN_NAME" DataSetColumn="RLN_NAME" />
+              <Mapping SourceColumn="AGE" DataSetColumn="AGE" />
+              <Mapping SourceColumn="EPIC_NO" DataSetColumn="EPIC_NO" />
+              <Mapping SourceColumn="HOUSE_NO" DataSetColumn="HOUSE_NO" />
+              <Mapping SourceColumn="PHOTO" DataSetColumn="PHOTO" />
+              <Mapping SourceColumn="PAN_NAME" DataSetColumn="PAN_NAME" />
+              <Mapping SourceColumn="WARD_NAME" DataSetColumn="WARD_NAME" />
+              <Mapping SourceColumn="STATUSTYPE" DataSetColumn="STATUSTYPE" />
+              <Mapping SourceColumn="ROLL_STATUSTYPE" DataSetColumn="ROLL_STATUSTYPE" />
+              <Mapping SourceColumn="REVISIONNO" DataSetColumn="REVISIONNO" />
+              <Mapping SourceColumn="GENDER" DataSetColumn="GENDER" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="SE_EROLLDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="SE_EROLLDataSet" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="SE_EROLLDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="DRAFTROLL" msprop:Generator_RowEvHandlerName="DRAFTROLLRowChangeEventHandler" msprop:Generator_RowDeletedName="DRAFTROLLRowDeleted" msprop:Generator_RowDeletingName="DRAFTROLLRowDeleting" msprop:Generator_RowEvArgName="DRAFTROLLRowChangeEvent" msprop:Generator_TablePropName="DRAFTROLL" msprop:Generator_RowChangedName="DRAFTROLLRowChanged" msprop:Generator_UserTableName="DRAFTROLL" msprop:Generator_RowChangingName="DRAFTROLLRowChanging" msprop:Generator_RowClassName="DRAFTROLLRow" msprop:Generator_TableClassName="DRAFTROLLDataTable" msprop:Generator_TableVarName="tableDRAFTROLL">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SNO" msprop:Generator_ColumnPropNameInTable="SNOColumn" msprop:Generator_ColumnPropNameInRow="SNO" msprop:Generator_UserColumnName="SNO" msprop:Generator_ColumnVarNameInTable="columnSNO" type="xs:long" minOccurs="0" />
+              <xs:element name="EID" msprop:Generator_ColumnPropNameInTable="EIDColumn" msprop:Generator_ColumnPropNameInRow="EID" msprop:Generator_UserColumnName="EID" msprop:Generator_ColumnVarNameInTable="columnEID" type="xs:long" />
+              <xs:element name="PART_NO" msprop:Generator_ColumnPropNameInTable="PART_NOColumn" msprop:Generator_ColumnPropNameInRow="PART_NO" msprop:Generator_UserColumnName="PART_NO" msprop:Generator_ColumnVarNameInTable="columnPART_NO" type="xs:int" />
+              <xs:element name="SLNOINPART" msprop:Generator_ColumnPropNameInTable="SLNOINPARTColumn" msprop:Generator_ColumnPropNameInRow="SLNOINPART" msprop:Generator_UserColumnName="SLNOINPART" msprop:Generator_ColumnVarNameInTable="columnSLNOINPART" type="xs:short" />
+              <xs:element name="ENAME" msprop:Generator_ColumnPropNameInTable="ENAMEColumn" msprop:Generator_ColumnPropNameInRow="ENAME" msprop:Generator_UserColumnName="ENAME" msprop:Generator_ColumnVarNameInTable="columnENAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RLN_TYPE" msprop:Generator_ColumnPropNameInTable="RLN_TYPEColumn" msprop:Generator_ColumnPropNameInRow="RLN_TYPE" msprop:Generator_UserColumnName="RLN_TYPE" msprop:Generator_ColumnVarNameInTable="columnRLN_TYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RLN_NAME" msprop:Generator_ColumnPropNameInTable="RLN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="RLN_NAME" msprop:Generator_UserColumnName="RLN_NAME" msprop:Generator_ColumnVarNameInTable="columnRLN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="AGE" msprop:Generator_ColumnPropNameInTable="AGEColumn" msprop:Generator_ColumnPropNameInRow="AGE" msprop:Generator_UserColumnName="AGE" msprop:Generator_ColumnVarNameInTable="columnAGE" type="xs:unsignedByte" />
+              <xs:element name="EPIC_NO" msprop:Generator_ColumnPropNameInTable="EPIC_NOColumn" msprop:Generator_ColumnPropNameInRow="EPIC_NO" msprop:Generator_UserColumnName="EPIC_NO" msprop:Generator_ColumnVarNameInTable="columnEPIC_NO">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="HOUSE_NO" msprop:Generator_ColumnPropNameInTable="HOUSE_NOColumn" msprop:Generator_ColumnPropNameInRow="HOUSE_NO" msprop:Generator_UserColumnName="HOUSE_NO" msprop:Generator_ColumnVarNameInTable="columnHOUSE_NO" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PHOTO" msprop:Generator_ColumnPropNameInTable="PHOTOColumn" msprop:Generator_ColumnPropNameInRow="PHOTO" msprop:Generator_UserColumnName="PHOTO" msprop:Generator_ColumnVarNameInTable="columnPHOTO" type="xs:base64Binary" minOccurs="0" />
+              <xs:element name="PAN_NAME" msprop:Generator_ColumnPropNameInTable="PAN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PAN_NAME" msprop:Generator_UserColumnName="PAN_NAME" msprop:Generator_ColumnVarNameInTable="columnPAN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="WARD_NAME" msprop:Generator_ColumnPropNameInTable="WARD_NAMEColumn" msprop:Generator_ColumnPropNameInRow="WARD_NAME" msprop:Generator_UserColumnName="WARD_NAME" msprop:Generator_ColumnVarNameInTable="columnWARD_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="STATUSTYPE" msprop:Generator_ColumnPropNameInTable="STATUSTYPEColumn" msprop:Generator_ColumnPropNameInRow="STATUSTYPE" msprop:Generator_UserColumnName="STATUSTYPE" msprop:Generator_ColumnVarNameInTable="columnSTATUSTYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ROLL_STATUSTYPE" msprop:Generator_ColumnPropNameInTable="ROLL_STATUSTYPEColumn" msprop:Generator_ColumnPropNameInRow="ROLL_STATUSTYPE" msprop:Generator_UserColumnName="ROLL_STATUSTYPE" msprop:Generator_ColumnVarNameInTable="columnROLL_STATUSTYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="REVISIONNO" msprop:Generator_ColumnPropNameInTable="REVISIONNOColumn" msprop:Generator_ColumnPropNameInRow="REVISIONNO" msprop:Generator_UserColumnName="REVISIONNO" msprop:Generator_ColumnVarNameInTable="columnREVISIONNO" type="xs:unsignedByte" />
+              <xs:element name="GENDER" msprop:Generator_ColumnPropNameInRow="GENDER" msprop:Generator_ColumnPropNameInTable="GENDERColumn" msprop:Generator_ColumnVarNameInTable="columnGENDER" msprop:Generator_UserColumnName="GENDER">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="SUPROLL" msprop:Generator_RowEvHandlerName="SUPROLLRowChangeEventHandler" msprop:Generator_RowDeletedName="SUPROLLRowDeleted" msprop:Generator_RowDeletingName="SUPROLLRowDeleting" msprop:Generator_RowEvArgName="SUPROLLRowChangeEvent" msprop:Generator_TablePropName="SUPROLL" msprop:Generator_RowChangedName="SUPROLLRowChanged" msprop:Generator_UserTableName="SUPROLL" msprop:Generator_RowChangingName="SUPROLLRowChanging" msprop:Generator_RowClassName="SUPROLLRow" msprop:Generator_TableClassName="SUPROLLDataTable" msprop:Generator_TableVarName="tableSUPROLL">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SNO" msprop:Generator_ColumnPropNameInTable="SNOColumn" msprop:Generator_ColumnPropNameInRow="SNO" msprop:Generator_UserColumnName="SNO" msprop:Generator_ColumnVarNameInTable="columnSNO" type="xs:long" minOccurs="0" />
+              <xs:element name="EID" msprop:Generator_ColumnPropNameInTable="EIDColumn" msprop:Generator_ColumnPropNameInRow="EID" msprop:Generator_UserColumnName="EID" msprop:Generator_ColumnVarNameInTable="columnEID" type="xs:long" />
+              <xs:element name="PART_NO" msprop:Generator_ColumnPropNameInTable="PART_NOColumn" msprop:Generator_ColumnPropNameInRow="PART_NO" msprop:Generator_UserColumnName="PART_NO" msprop:Generator_ColumnVarNameInTable="columnPART_NO" type="xs:int" />
+              <xs:element name="SLNOINPART" msprop:Generator_ColumnPropNameInTable="SLNOINPARTColumn" msprop:Generator_ColumnPropNameInRow="SLNOINPART" msprop:Generator_UserColumnName="SLNOINPART" msprop:Generator_ColumnVarNameInTable="columnSLNOINPART" type="xs:short" />
+              <xs:element name="ENAME" msprop:Generator_ColumnPropNameInTable="ENAMEColumn" msprop:Generator_ColumnPropNameInRow="ENAME" msprop:Generator_UserColumnName="ENAME" msprop:Generator_ColumnVarNameInTable="columnENAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RLN_TYPE" msprop:Generator_ColumnPropNameInTable="RLN_TYPEColumn" msprop:Generator_ColumnPropNameInRow="RLN_TYPE" msprop:Generator_UserColumnName="RLN_TYPE" msprop:Generator_ColumnVarNameInTable="columnRLN_TYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RLN_NAME" msprop:Generator_ColumnPropNameInTable="RLN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="RLN_NAME" msprop:Generator_UserColumnName="RLN_NAME" msprop:Generator_ColumnVarNameInTable="columnRLN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="AGE" msprop:Generator_ColumnPropNameInTable="AGEColumn" msprop:Generator_ColumnPropNameInRow="AGE" msprop:Generator_UserColumnName="AGE" msprop:Generator_ColumnVarNameInTable="columnAGE" type="xs:unsignedByte" />
+              <xs:element name="EPIC_NO" msprop:Generator_ColumnPropNameInTable="EPIC_NOColumn" msprop:Generator_ColumnPropNameInRow="EPIC_NO" msprop:Generator_UserColumnName="EPIC_NO" msprop:Generator_ColumnVarNameInTable="columnEPIC_NO">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="HOUSE_NO" msprop:Generator_ColumnPropNameInTable="HOUSE_NOColumn" msprop:Generator_ColumnPropNameInRow="HOUSE_NO" msprop:Generator_UserColumnName="HOUSE_NO" msprop:Generator_ColumnVarNameInTable="columnHOUSE_NO" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PHOTO" msprop:Generator_ColumnPropNameInTable="PHOTOColumn" msprop:Generator_ColumnPropNameInRow="PHOTO" msprop:Generator_UserColumnName="PHOTO" msprop:Generator_ColumnVarNameInTable="columnPHOTO" type="xs:base64Binary" minOccurs="0" />
+              <xs:element name="PAN_NAME" msprop:Generator_ColumnPropNameInTable="PAN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PAN_NAME" msprop:Generator_UserColumnName="PAN_NAME" msprop:Generator_ColumnVarNameInTable="columnPAN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="WARD_NAME" msprop:Generator_ColumnPropNameInTable="WARD_NAMEColumn" msprop:Generator_ColumnPropNameInRow="WARD_NAME" msprop:Generator_UserColumnName="WARD_NAME" msprop:Generator_ColumnVarNameInTable="columnWARD_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="STATUSTYPE" msprop:Generator_ColumnPropNameInTable="STATUSTYPEColumn" msprop:Generator_ColumnPropNameInRow="STATUSTYPE" msprop:Generator_UserColumnName="STATUSTYPE" msprop:Generator_ColumnVarNameInTable="columnSTATUSTYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ROLL_STATUSTYPE" msprop:Generator_ColumnPropNameInTable="ROLL_STATUSTYPEColumn" msprop:Generator_ColumnPropNameInRow="ROLL_STATUSTYPE" msprop:Generator_UserColumnName="ROLL_STATUSTYPE" msprop:Generator_ColumnVarNameInTable="columnROLL_STATUSTYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="REVISIONNO" msprop:Generator_ColumnPropNameInTable="REVISIONNOColumn" msprop:Generator_ColumnPropNameInRow="REVISIONNO" msprop:Generator_UserColumnName="REVISIONNO" msprop:Generator_ColumnVarNameInTable="columnREVISIONNO" type="xs:unsignedByte" />
+              <xs:element name="GENDER" msprop:Generator_ColumnPropNameInRow="GENDER" msprop:Generator_ColumnPropNameInTable="GENDERColumn" msprop:Generator_ColumnVarNameInTable="columnGENDER" msprop:Generator_UserColumnName="GENDER">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DELETION" msprop:Generator_RowEvHandlerName="DELETIONRowChangeEventHandler" msprop:Generator_RowDeletedName="DELETIONRowDeleted" msprop:Generator_RowDeletingName="DELETIONRowDeleting" msprop:Generator_RowEvArgName="DELETIONRowChangeEvent" msprop:Generator_TablePropName="DELETION" msprop:Generator_RowChangedName="DELETIONRowChanged" msprop:Generator_UserTableName="DELETION" msprop:Generator_RowChangingName="DELETIONRowChanging" msprop:Generator_RowClassName="DELETIONRow" msprop:Generator_TableClassName="DELETIONDataTable" msprop:Generator_TableVarName="tableDELETION">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SNO" msprop:Generator_ColumnPropNameInTable="SNOColumn" msprop:Generator_ColumnPropNameInRow="SNO" msprop:Generator_UserColumnName="SNO" msprop:Generator_ColumnVarNameInTable="columnSNO" type="xs:long" minOccurs="0" />
+              <xs:element name="EID" msprop:Generator_ColumnPropNameInTable="EIDColumn" msprop:Generator_ColumnPropNameInRow="EID" msprop:Generator_UserColumnName="EID" msprop:Generator_ColumnVarNameInTable="columnEID" type="xs:long" />
+              <xs:element name="PART_NO" msprop:Generator_ColumnPropNameInTable="PART_NOColumn" msprop:Generator_ColumnPropNameInRow="PART_NO" msprop:Generator_UserColumnName="PART_NO" msprop:Generator_ColumnVarNameInTable="columnPART_NO" type="xs:int" />
+              <xs:element name="SLNOINPART" msprop:Generator_ColumnPropNameInTable="SLNOINPARTColumn" msprop:Generator_ColumnPropNameInRow="SLNOINPART" msprop:Generator_UserColumnName="SLNOINPART" msprop:Generator_ColumnVarNameInTable="columnSLNOINPART" type="xs:short" />
+              <xs:element name="ENAME" msprop:Generator_ColumnPropNameInTable="ENAMEColumn" msprop:Generator_ColumnPropNameInRow="ENAME" msprop:Generator_UserColumnName="ENAME" msprop:Generator_ColumnVarNameInTable="columnENAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RLN_TYPE" msprop:Generator_ColumnPropNameInTable="RLN_TYPEColumn" msprop:Generator_ColumnPropNameInRow="RLN_TYPE" msprop:Generator_UserColumnName="RLN_TYPE" msprop:Generator_ColumnVarNameInTable="columnRLN_TYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="RLN_NAME" msprop:Generator_ColumnPropNameInTable="RLN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="RLN_NAME" msprop:Generator_UserColumnName="RLN_NAME" msprop:Generator_ColumnVarNameInTable="columnRLN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="250" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="AGE" msprop:Generator_ColumnPropNameInTable="AGEColumn" msprop:Generator_ColumnPropNameInRow="AGE" msprop:Generator_UserColumnName="AGE" msprop:Generator_ColumnVarNameInTable="columnAGE" type="xs:unsignedByte" />
+              <xs:element name="EPIC_NO" msprop:Generator_ColumnPropNameInTable="EPIC_NOColumn" msprop:Generator_ColumnPropNameInRow="EPIC_NO" msprop:Generator_UserColumnName="EPIC_NO" msprop:Generator_ColumnVarNameInTable="columnEPIC_NO">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="HOUSE_NO" msprop:Generator_ColumnPropNameInTable="HOUSE_NOColumn" msprop:Generator_ColumnPropNameInRow="HOUSE_NO" msprop:Generator_UserColumnName="HOUSE_NO" msprop:Generator_ColumnVarNameInTable="columnHOUSE_NO" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PHOTO" msprop:Generator_ColumnPropNameInTable="PHOTOColumn" msprop:Generator_ColumnPropNameInRow="PHOTO" msprop:Generator_UserColumnName="PHOTO" msprop:Generator_ColumnVarNameInTable="columnPHOTO" type="xs:base64Binary" minOccurs="0" />
+              <xs:element name="PAN_NAME" msprop:Generator_ColumnPropNameInTable="PAN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PAN_NAME" msprop:Generator_UserColumnName="PAN_NAME" msprop:Generator_ColumnVarNameInTable="columnPAN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="WARD_NAME" msprop:Generator_ColumnPropNameInTable="WARD_NAMEColumn" msprop:Generator_ColumnPropNameInRow="WARD_NAME" msprop:Generator_UserColumnName="WARD_NAME" msprop:Generator_ColumnVarNameInTable="columnWARD_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="STATUSTYPE" msprop:Generator_ColumnPropNameInTable="STATUSTYPEColumn" msprop:Generator_ColumnPropNameInRow="STATUSTYPE" msprop:Generator_UserColumnName="STATUSTYPE" msprop:Generator_ColumnVarNameInTable="columnSTATUSTYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ROLL_STATUSTYPE" msprop:Generator_ColumnPropNameInTable="ROLL_STATUSTYPEColumn" msprop:Generator_ColumnPropNameInRow="ROLL_STATUSTYPE" msprop:Generator_UserColumnName="ROLL_STATUSTYPE" msprop:Generator_ColumnVarNameInTable="columnROLL_STATUSTYPE">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="REVISIONNO" msprop:Generator_ColumnPropNameInTable="REVISIONNOColumn" msprop:Generator_ColumnPropNameInRow="REVISIONNO" msprop:Generator_UserColumnName="REVISIONNO" msprop:Generator_ColumnVarNameInTable="columnREVISIONNO" type="xs:unsignedByte" />
+              <xs:element name="GENDER" msprop:Generator_ColumnPropNameInRow="GENDER" msprop:Generator_ColumnPropNameInTable="GENDERColumn" msprop:Generator_ColumnVarNameInTable="columnGENDER" msprop:Generator_UserColumnName="GENDER">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:DRAFTROLL" />
+      <xs:field xpath="mstns:EID" />
+    </xs:unique>
+    <xs:unique name="SUPROLL_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:SUPROLL" />
+      <xs:field xpath="mstns:EID" />
+    </xs:unique>
+    <xs:unique name="DELETION_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:DELETION" />
+      <xs:field xpath="mstns:EID" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

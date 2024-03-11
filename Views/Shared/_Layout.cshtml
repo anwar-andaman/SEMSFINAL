@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SEMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SEMS.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mystyle.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+
+        <div class="flex-container">
+           
+            <div class="row">
+                <div class="row" style="background-image:url('../images/headerbg1.jpg'); background-repeat:no-repeat; background-size:cover;">
+
+                    <div class="col">
+
+                        <h1 class="aligncenter" style="color:white;">State Election Commission</h1>
+                        <h2 class="aligncenter" style="color:white;">Andaman & Nicobar Islands</h2>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row" style="background-image:url('../images/headerbg2.jpg');background-color:darkcyan; color:white; font-size:larger; font-display:block;">
+                <marquee style="color:greenyellow"><i><b>State Election Management System</b></i></marquee>
+
+            </div>
+        </div>
+
+    </header>   
+
+    <div class="flex-container" style="min-height:100vh; ">
+        <div class="row">
+            <div class="col-sm-2" style="min-height:100vh;background-image:url('../images/headerbg1.jpg'); background-color:darkcyan; ">
+              
+                <div class="btn-group-vertical dropend d-flex" role="group">
+
+                    @{
+                        if (Context.Session.GetString("logUserType") == "ADMIN" || Context.Session.GetString("logUserType") == "CONTROL")
+                        {
+                            <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle menubutton" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </button>
+                        }
+                        else
+                        {
+                            <button disabled id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle menubutton" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Admin
+                            </button>
+                        }
+                    }
+                    <div class="dropdown-menu " aria-labelledby="btnGroupDrop1">
+                        <a class="dropdown-item mymenuitem" href="/Home/ManageUsers">Manage Users </a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/FlowSettings">Form Flow Settings </a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/ScheduleRevision">Schedule E-Roll Revision </a>
+                        <a class="dropdown-item mymenuitem" href="/Home/ManageParties">Manage Political Parties</a>
+                        <a class="dropdown-item mymenuitem" href="/Home/ManageSymnbols">Manage Symbols</a>
+                        <a class="dropdown-item mymenuitem" href="/Home/FreezeData">Freeze/Unfreeze Data</a>
+                        <a class="dropdown-item mymenuitem" href="/Home/GrantRevokeFeatures">Grant/Revoke Application Features</a>
+                        <a class="dropdown-item mymenuitem" href="/Home/BackupDB">Backup Database</a>
+                    </div>
+                </div>
+
+                <div class="btn-group-vertical dropend d-flex" role="group">
+                    <button id="btnGroupDrop2" type="button" class="btn btn-outline-primary dropdown-toggle menubutton" data-bs-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       Electoral Roll
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+                        <a class="dropdown-item mymenuitem" href="/ERoll/ReOrganizeElectorsPanchayat">Re-Organize Electors in Pre-Draft</a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/AddRemoveElectors">Add/Remove Electors in Pre-Draft</a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/Serialize">Generate Serial Numbers</a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/OfflineForm">Offline Forms</a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/ListForms">Process Forms</a>
+                        <a class="dropdown-item mymenuitem" href="/ERoll/AcceptReject">Accept/Reject Forms</a>
+                        <a class="dropdown-item mymenuitem" href="/Eroll/DraftRoll">Generate Draft Electoral Roll</a>
+                        <a class="dropdown-item mymenuitem" href="/Eroll/FinalRoll">Generate Final Electoral Roll</a>
+                       
+                    </div>
+                </div>
+                
+
+
+                <div class="btn-group-vertical dropend d-flex" role="group">
+                    <button id="btnGroupDrop2" type="button" class="btn btn-outline-primary dropdown-toggle menubutton" data-bs-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Ballot Paper
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+                        <a class="dropdown-item mymenuitem" href="/Ballot/Candidates">Manage Candidates</a>
+                        <a class="dropdown-item mymenuitem" href="/Ballot/BallotPaper">Generate Ballot Paper</a>
+                        <a class="dropdown-item mymenuitem" href="/Ballot/CandidateList">Candidate List</a>
+                    </div>
+                </div>
+
+                <div class="btn-group-vertical dropend d-flex" role="group">
+                    <button id="btnGroupDrop2" type="button" class="btn btn-outline-primary dropdown-toggle menubutton" data-bs-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Counting & Results
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+                        <a class="dropdown-item mymenuitem" href="/Counting/PostalVotes">Postal Votes</a>
+                        <a class="dropdown-item mymenuitem" href="/Counting/NormalVotes">Normal Votes</a>
+                        <a class="dropdown-item mymenuitem" href="/Results/DisplayResults">Display Results</a>
+                        <a class="dropdown-item mymenuitem" href="/Results/Certificate">Generate Certificate for Winners</a>
+                        <a class="dropdown-item mymenuitem" href="/Counting/Reports">Reports</a>
+                    </div>
+                </div>
+
+                <div class="btn-group-vertical dropend d-flex" role="group">
+
+                    <button id="btnGroupDrop5" type="button" class="btn btn-outline-primary dropdown-toggle menubutton" data-bs-toggle="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Reports
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop2">
+                        <a class="dropdown-item mymenuitem" href="/ERoll/ErollReports">Eroll Reports</a>
+                       
+
+                    </div>
+                </div>
+
+                <div class="btn-group-vertical dropend d-flex" role="group">
+                    
+                    <a id="btnGroupDrop6" href="/Home/Login" type="button" class="btn btn-outline-primary menubutton " aria-haspopup="true" aria-expanded="false">
+                        <span style="color:greenyellow">Log Out</span>
+                    </a>
+
+                </div>
+              
+            </div>
+            <div class="col-10" style="background-color:lightyellow">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+
+    </div>
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - State Election Managment System
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

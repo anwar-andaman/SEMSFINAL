@@ -1,0 +1,49 @@
+﻿.aligncenter
+{
+    text-align:center;
+}
+body {
+    background-image: url("headerbg.png");
+}
+.headerrow {
+    background-image: url("headerbg.png");
+    background-color: lightcyan;
+}
+.menubutton {
+    border:none;
+       min-height: 50px;
+       color:greenyellow;
+}
+.mymenuitem {
+    
+    color:purple;
+}
+.fset{
+    border-inline:inset;
+    border-top:dashed;
+    
+}
+.pageheading{
+    text-align:center;
+    color:red;
+}
+.validateitem
+{
+    color:red;
+}
+.mylabel {
+    color: navy;
+   
+}
+.mycontrol {
+    color: brown;
+        
+}
+.formrow {
+    background-color: midnightblue;
+    text-align: center;
+    color: white;
+    margin-left: 0px;
+    font-size:large;
+    font-weight:bold;
+}

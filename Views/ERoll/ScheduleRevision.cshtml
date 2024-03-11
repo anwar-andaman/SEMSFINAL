@@ -1,0 +1,205 @@
+﻿@model RevisionModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "ScheduleRevision";
+}
+
+
+<form id="frmRevision" method="post">
+    <script>
+        if (performance.navigation.type == 1) 
+        {
+            window.location.replace(window.location.href);
+        } 
+    </script>
+   
+    <div class="container">
+        @{
+            if (TempData.ContainsKey("inserted"))
+            {
+                if ((bool)TempData["inserted"]==true)
+                {
+                    <script>
+                        alert("Revision Created Successfully");
+                    </script>
+                }
+            }
+            if (TempData.ContainsKey("updated"))
+            {
+                if ((bool)TempData["updated"] == true)
+                {
+                    <script>
+                        alert("Revision Updated Successfully");
+                    </script>
+                }
+            }
+        }
+   
+        <input id="hidFormStatus" type="hidden" value="new" />
+        <div class="row">
+            <div class="col-sm-10">
+                    <h1 class="pageheading">Schedule Revisions</h1>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10">
+                <hr />
+            </div>
+        </div>
+        @{
+            if (Context.Request.Method != "POST")
+            {
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label for="ddwnRevisionYear" class="form-label mylabel" for="default_password">Revision Year</label>
+                    </div>
+                    <div class="col-sm-3">
+                        @{
+                            List<SelectListItem>
+                            items = new List<SelectListItem>();
+                            int yr = DateTime.Today.Year;
+                            SelectListItem s = new SelectListItem();
+                            s.Text = yr.ToString();
+                            s.Value = yr.ToString();
+                            items.Add(s);
+                            SelectListItem s1 = new SelectListItem();
+                            s1.Text = (yr + 1).ToString();
+                            s1.Value = (yr + 1).ToString();
+                            s1.Selected = true;
+                            items.Add(s1);
+                        }
+                        <select asp-for="revisionYear" id="ddwnRevisionYear" name="revisionYear" class="form-select mycontrol" asp-items="@items"></select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <label for="txtRevisionNo" class="form-label mylabel">Revision No.</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type=number asp-for="revisionNo" id="txtRevisionNo" name="revisionNo" placeholder="Enter Revision No." class="form-control mycontrol" min="0" max="9" required />
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="submit" class="btn btn-primary form-control" asp-action="FetchRevision">Fetch</button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label for="ddwnRevisionYear" class="form-label mylabel" for="default_password">Revision Year</label>
+                    </div>
+                    <div class="col-sm-3">
+                        @{
+                            List<SelectListItem>
+                                    items = new List<SelectListItem>();
+                            int yr = DateTime.Today.Year;
+                            SelectListItem s = new SelectListItem();
+                            s.Text = yr.ToString();
+                            s.Value = yr.ToString();
+                            s.Disabled = true;
+                            items.Add(s);
+                            SelectListItem s1 = new SelectListItem();
+                            s1.Text = (yr + 1).ToString();
+                            s1.Value = (yr + 1).ToString();
+                            s1.Disabled = true;
+                            items.Add(s1);
+                        }
+                        <select asp-for="revisionYear" id="ddwnRevisionYear" name="revisionYear" class="form-select mycontrol" asp-items="@items"></select>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <label for="txtRevisionNo" class="form-label mylabel">Revision No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input readonly type=number asp-for="revisionNo" id="txtRevisionNo" name="revisionNo" placeholder="Enter Revision No." class="form-control mycontrol" min="0" max="9" required />
+                    </div>
+                    
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-sm-2">
+                        <label for="dateRevisionDate" class="form-label mylabel">Revision Date</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="date" asp-for=revisionDate id="dateRevisionDate" name="revisionDate" class="form-control mycontrol" required />
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="dateAgeAsOn" class="form-label mylabel">Age As On</label>
+                    </div>
+                    <div class="col-sm-3">
+                        @{
+                            DateTime currDate = DateTime.Now.AddDays(1);
+                            string minPubDate = currDate.Year.ToString() + "-" + currDate.Month.ToString().PadLeft(2,'0') + "-" + currDate.Day.ToString().PadLeft(2,'0');
+                            int yr1 = DateTime.Now.Year;
+                            string mindate = yr1.ToString() + "-01-01";
+                            string maxdate = (yr1+1).ToString() + "-01-01";
+                        }
+                        <input type="date" asp-for=ageAsOn id="dateAgeAsOn" name="ageAsOn" class="form-control mycontrol" required min="@mindate" max="@maxdate" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-sm-2">
+                        <label for="txtSupplementName" class="form-label mylabel">Supplement Name</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" asp-for=supplementName id="txtSupplementName" name="supplementName" placeholder="eg: Supplement-1" class="form-control mycontrol" oninvalid="this.setCustomValidity('Please enter Supplement Name.')" oninput="setCustomValidity('')" required title="eg.: Supplement-1" />
+                       
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="txtErollHeader" class="form-label mylabel">Eroll Header</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" asp-for=erollHeader id="txtErollHeader" name="erollHeader" placeholder="Enter Eroll Header" class="form-control mycontrol" oninvalid="this.setCustomValidity('Please enter Eroll Header.')" oninput="setCustomValidity('')" required title="eg.: ELECTORAL ROLL - 2025" />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-sm-2">
+                        <label for="dateQualifyingDate" class="form-label mylabel">Qualifying Date</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="date" asp-for=qualifyingDate id="dateQualifyingDate" name="qualifyingDate" class="form-control mycontrol" required min="@mindate" max="@maxdate" />
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="datePublication" class="form-label mylabel">Publication Date</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="date" asp-for=publicationDate id="datePublication" name="publicationDate" class="form-control mycontrol" min="@minPubDate" required />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-sm-2">
+                        <label for="txtSupplementType" class="form-label mylabel">Supplement Type</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="text" asp-for=supplementType id="txtSupplementType" name="supplementType" placeholder="Enter Supplement Type" class="form-control mycontrol" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                    </div>
+                    <div class="col-sm-3">
+                        @{
+                            if (ViewBag.recordFound==true)
+                            {
+                                <button type="submit" class="btn btn-primary form-control" asp-action="UpdateRevision">Update Revision</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-primary form-control" asp-action="CreateRevision">Create Revision</button>
+                            }
+                        }    
+                    
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-danger form-control" asp-action="ClearRevision" formnovalidate>Clear</button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</form>

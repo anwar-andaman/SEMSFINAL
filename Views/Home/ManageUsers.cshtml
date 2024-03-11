@@ -1,0 +1,232 @@
+﻿@model SEMS.Models.UserModel
+
+@{
+    @using System.Data;
+    ViewData["Title"] = "ManageUsers";
+}
+
+<h1 class="pageheading">Manage Users</h1>
+
+<form id="frmManageUsers" method="post" asp-controller="Home" asp-action="ManageUsersPost">
+    <input type="hidden" id="hidDeleteItem" name="hidDeleteItem" />
+    <script>
+        function setDeleteItem(item) {
+            document.getElementById('hidDeleteItem').value = item;
+        }
+    </script>
+    <div class="container">
+        @{
+            DataSet userType = ViewBag.userType, userList = ViewBag.userList;
+            string logUserType = Context.Session.GetString("logUserType");
+            string selectedUserType = ViewBag.selectedUserType;
+            string selectedElectionType = ViewBag.selectedElectionType;
+        }
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="ddwnUserType">User Type</label>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="ddwnElectionType">Election Type</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                @{
+                    List<SelectListItem>
+                    items = new List<SelectListItem>();
+                    foreach (DataRow row in userType.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["USER_TYPE"].ToString();
+                        s.Value = row["TYPE_ID"].ToString();
+                        s.Selected = row["TYPE_ID"].ToString() == selectedUserType ? true : false;
+                        items.Add(s);
+                    }
+                }
+                <select asp-for="type_id" id="ddwnUserType" name="type_id" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById ('frmManageUsers').submit ();"></select>
+            </div>
+            <div class="col-sm-4">
+                @{
+                    items.Clear();
+                    SelectListItem ss = new SelectListItem();
+                    ss.Text = "All";
+                    ss.Value = "A";
+                    ss.Selected = selectedElectionType == "A" ? true : false;
+                    items.Add(ss);
+                    if (selectedUserType != "1" && selectedUserType != "6" && selectedUserType != null)
+                    {
+                        SelectListItem s1 = new SelectListItem();
+                        s1.Text = "Municipal Election";
+                        s1.Value = "M";
+                        s1.Selected = selectedElectionType == "M" ? true : false;
+                        items.Add(s1);
+                        SelectListItem s2 = new SelectListItem();
+                        s2.Text = "Panchayat Election";
+                        s2.Value = "P";
+                        s2.Selected = selectedElectionType == "P" ? true : false;
+                        items.Add(s2);
+                    }
+                }
+                <select asp-for="electionType" id="ddwnElectionType" name="electionType" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById ('frmManageUsers').submit ();"></select>
+            </div>
+            <div class="col-sm-4">
+                @{
+                    if (userList.Tables.Count > 0)
+                    {
+                        <button type="submit" class="btn btn-primary" asp-action="NewUser">Add New User</button>
+                    }
+                }
+            </div>
+        </div>
+        @{
+            if (ViewBag.postCause == "newUser")
+            {
+                <div class="row" style="border-block:groove; border-radius:20px;padding:5px; margin-top:15px;margin-bottom:15px;">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label class="form-label mylabel" for="username">User ID</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <input asp-for="username" type="text" id="username" name="username" placeholder="Enter User ID" class="form-control" maxlength="50" required/>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="form-label mylabel" for="default_password">Default Password</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <input asp-for="default_password" type="password" id="default_password" name="default_password" placeholder="Enter Default Password" class="form-control" maxlength="50" required />
+                            <span asp-validation-for="default_password"></span>
+                        </div>
+                       
+                    </div>
+                    <div class="row">
+                    <p></p>
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-success form-control" asp-action="SaveUser">Save</button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-danger form-control" formnovalidate>Cancel</button>
+                        </div>
+                        <div class="col-sm-3"></div>
+                    </div>
+                </div>
+            }
+        }
+
+     <!--**********************************Displaying List of Users for the Selected Department-->
+        <div class="row">
+            <div class="table-responsive-md">
+                @{
+                    if (userList.Tables.Count > 0)
+                        if (userList.Tables[0].Rows.Count > 0)
+                        {
+                            <table class="table table-hover table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Default Password</th>
+                                        <th>Status</th>
+                                        <th colspan="2"></th>
+                                    </tr>
+                                </thead>
+                                @{
+                                    int cnt = 0;
+                                    foreach (DataRow row in userList.Tables[0].Rows)
+                                    {
+                                        cnt++;
+                                        string huid = "hid_uid" + cnt;
+                                        <tr>
+                                            <td>
+                                                <input hidden id="@huid" name="@huid" value="@row["uid"]" />
+                                                @row["USERNAME"]
+                                            </td>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="DeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Confirmation</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure to delete the User?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                                                            <button type="submit" class="btn btn-danger" asp-action="DeleteUser" asp-route-id="@row["UID"]">Yes</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @{
+                                                if (ViewBag.postCause == "editUser")
+                                                {
+                                                    if (TempData["user_id"].ToString() == row["UID"].ToString())
+                                                    {
+                                                        <td>
+                                                            <input asp-for="default_password" type="password" id="EditDefPassword" name="default_password" value="@row["DEFAULT_PASSWORD"]" placeholder="Enter Default Password" class="form-control" maxlength="50" required />
+                                                        </td>
+                                                        <td>
+                                                        <select asp-for=status id="ddwnStatus" name="status" class="form-select">
+                                                            @{
+                                                                if (@row["STATUS"].ToString()=="Active")
+                                                                {
+                                                                    <option value="1" selected>Active</option>
+                                                                    <option value="0">Deactivated</option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="1">Active</option>
+                                                                    <option value="0" selected>Deactivated</option>
+                                                                }
+                                                            }        
+                                                        </select>    
+                                                        </td>
+                                                        <td><button class="btn btn-link" asp-action="UpdateUser" asp-route-id="@row["UID"]">Update</button></td>
+                                                        <td><button class="btn btn-link" style="color:red;" formnovalidate asp-action="CancelUser">Cancel</button></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            ***********
+                                                        </td>
+                                                        <td>
+                                                            @row["STATUS"]
+                                                        </td>
+                                                        
+                                                        <td><button class="btn btn-link" asp-action="EditUser" asp-route-id="@row["UID"]">Edit</button></td>
+                                                        <!-- <td><button class="btn btn-link" style="color:red;" asp-action="DeleteItem" asp-route-id="@row["UID"]" onclick="return confirm('Are you sure you want to delete the User?');">Delete</button></td>-->
+                                                        <td>
+                                                            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#DeleteConfirm" style="color:red;" onclick="setDeleteItem('@row[0]');">Delete</button>
+                                                        </td>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        ***********
+                                                    </td>
+                                                    <td>
+                                                        @row["STATUS"]
+                                                    </td>
+                                                    <td><button class="btn btn-link" asp-action="EditUser" asp-route-id="@row["UID"]">Edit</button></td>
+                                                    <!--<td><button class="btn btn-link" style="color:red;" asp-action="DeleteItem" asp-route-id="@row["UID"]" onclick="return confirm('Are you sure you want to delete the User?');">Delete</button></td>-->
+                                                    <td>
+                                                        <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#DeleteConfirm" style="color:red;" onclick="setDeleteItem('@row[0]');">Delete</button>
+
+                                                    </td>
+
+                                                }
+
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </table>
+                        }
+                }
+            </div>
+        </div>
+    </div>
+
+</form>

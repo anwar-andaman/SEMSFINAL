@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SEMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mystyle.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SEMS.styles.css" asp-append-version="true" />
+   
+</head>
+<body style="background-color:white">
+
+    <header>
+        
+        <div class="flex-container">
+            
+            <div class="row">
+               
+                <div class="row" style="background-image:url('../images/headerbg1.jpg'); background-repeat:no-repeat; background-size:cover;">
+                    
+                    <div class="col">
+                       
+                        <h1 class="aligncenter" style="color:white;">State Election Commission</h1>
+                        <h2 class="aligncenter" style="color:white;">Andaman & Nicobar Islands</h2>
+                    </div>
+
+                </div>
+            </div>
+           
+        </div>
+
+    </header>
+
+
+    <div class="row">
+        <div class="col">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - State Election Managment System
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
