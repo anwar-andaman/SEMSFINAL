@@ -103,13 +103,13 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>0.5625in</Width>
+                  <Width>0.35417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.56896in</Width>
+                  <Width>0.87104in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.10417in</Width>
+                  <Width>3.01042in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.6875in</Width>
@@ -1082,7 +1082,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>="POLLING STATION WISE ELECTOR DETAILS - " + First(Fields!REVYEAR.Value, "PARAMETER")</Value>
+                      <Value>="PANCHAYAT-WISE ELECTOR DETAILS - " + First(Fields!REVYEAR.Value, "PARAMETER")</Value>
                       <Style>
                         <FontSize>14pt</FontSize>
                         <FontWeight>Bold</FontWeight>
@@ -1130,7 +1130,7 @@
               <Top>0.70661in</Top>
               <Left>0.26958in</Left>
               <Height>0.39583in</Height>
-              <Width>0.5625in</Width>
+              <Width>0.35417in</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
@@ -1150,7 +1150,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>PS. No.</Value>
+                      <Value>Panchayat No.</Value>
                       <Style>
                         <FontWeight>Bold</FontWeight>
                       </Style>
@@ -1163,9 +1163,9 @@
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
               <Top>0.70608in</Top>
-              <Left>0.83208in</Left>
+              <Left>0.62375in</Left>
               <Height>0.39583in</Height>
-              <Width>0.56896in</Width>
+              <Width>0.87104in</Width>
               <ZIndex>2</ZIndex>
               <Style>
                 <Border>
@@ -1185,7 +1185,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>PS Name</Value>
+                      <Value>Name of the Panchayat</Value>
                       <Style>
                         <FontWeight>Bold</FontWeight>
                       </Style>
@@ -1198,9 +1198,9 @@
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
               <Top>0.708in</Top>
-              <Left>1.40104in</Left>
+              <Left>1.49479in</Left>
               <Height>0.39583in</Height>
-              <Width>3.10417in</Width>
+              <Width>3.01042in</Width>
               <ZIndex>3</ZIndex>
               <Style>
                 <Border>
@@ -1372,7 +1372,7 @@
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <Top>0.40608in</Top>
+              <Top>0.39549in</Top>
               <Left>0.03776in</Left>
               <Height>0.27084in</Height>
               <Width>7.73993in</Width>

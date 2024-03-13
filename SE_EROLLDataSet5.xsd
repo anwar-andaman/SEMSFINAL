@@ -52,6 +52,37 @@ GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,E.PART_NO,PL.PART_NAME ORDER BY E
             </Mappings>
             <Sources />
           </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="ECHANGESTableAdapter" GeneratorDataComponentClassName="ECHANGESTableAdapter" Name="ECHANGES" UserDataComponentName="ECHANGESTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT D.DIST_CODE,D.DIST_NAME,T.TNAME,T.TNO,E.PART_NO,PL.PART_NAME,SUM(CASE E.GENDER WHEN 'M' THEN 1 ELSE 0 END) AS MALE,SUM(CASE E.GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE E.GENDER WHEN 'T' THEN 1 ELSE 0 END) AS TG,SUM(CASE A.GENDER WHEN 'M' THEN 1 ELSE 0 END) AS AMALE,SUM(CASE A.GENDER WHEN 'F' THEN 1 ELSE 0 END) AS AFEMALE,SUM(CASE A.GENDER WHEN 'T' THEN 1 ELSE 0 END) AS ATG, SUM(CASE DV.GENDER WHEN 'M' THEN 1 ELSE 0 END) AS DMALE,SUM(CASE DV.GENDER WHEN 'F' THEN 1 ELSE 0 END) AS DFEMALE,SUM(CASE DV.GENDER WHEN 'T' THEN 1 ELSE 0 END) AS DTG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN WHERE E.PAN_MUN='P' AND PL.AREA_TYPE='P' AND E.REVISIONNO=0   
+GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,E.PART_NO,PL.PART_NAME ORDER BY E.PART_NO</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="DIST_CODE" DataSetColumn="DIST_CODE" />
+              <Mapping SourceColumn="DIST_NAME" DataSetColumn="DIST_NAME" />
+              <Mapping SourceColumn="TNAME" DataSetColumn="TNAME" />
+              <Mapping SourceColumn="TNO" DataSetColumn="TNO" />
+              <Mapping SourceColumn="PART_NO" DataSetColumn="PART_NO" />
+              <Mapping SourceColumn="PART_NAME" DataSetColumn="PART_NAME" />
+              <Mapping SourceColumn="MALE" DataSetColumn="MALE" />
+              <Mapping SourceColumn="FEMALE" DataSetColumn="FEMALE" />
+              <Mapping SourceColumn="TG" DataSetColumn="TG" />
+              <Mapping SourceColumn="AMALE" DataSetColumn="AMALE" />
+              <Mapping SourceColumn="AFEMALE" DataSetColumn="AFEMALE" />
+              <Mapping SourceColumn="ATG" DataSetColumn="ATG" />
+              <Mapping SourceColumn="DMALE" DataSetColumn="DMALE" />
+              <Mapping SourceColumn="DFEMALE" DataSetColumn="DFEMALE" />
+              <Mapping SourceColumn="DTG" DataSetColumn="DTG" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
         </Tables>
         <Sources />
       </DataSource>
@@ -93,17 +124,17 @@ GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,E.PART_NO,PL.PART_NAME ORDER BY E
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="PARAMETERS" msprop:Generator_RowClassName="PARAMETERSRow" msprop:Generator_RowEvHandlerName="PARAMETERSRowChangeEventHandler" msprop:Generator_RowDeletedName="PARAMETERSRowDeleted" msprop:Generator_RowDeletingName="PARAMETERSRowDeleting" msprop:Generator_RowEvArgName="PARAMETERSRowChangeEvent" msprop:Generator_TablePropName="PARAMETERS" msprop:Generator_RowChangedName="PARAMETERSRowChanged" msprop:Generator_UserTableName="PARAMETERS" msprop:Generator_RowChangingName="PARAMETERSRowChanging" msprop:Generator_TableClassName="PARAMETERSDataTable" msprop:Generator_TableVarName="tablePARAMETERS">
+        <xs:element name="PARAMETERS" msprop:Generator_RowEvHandlerName="PARAMETERSRowChangeEventHandler" msprop:Generator_RowDeletedName="PARAMETERSRowDeleted" msprop:Generator_RowDeletingName="PARAMETERSRowDeleting" msprop:Generator_RowEvArgName="PARAMETERSRowChangeEvent" msprop:Generator_TablePropName="PARAMETERS" msprop:Generator_RowChangedName="PARAMETERSRowChanged" msprop:Generator_UserTableName="PARAMETERS" msprop:Generator_RowChangingName="PARAMETERSRowChanging" msprop:Generator_RowClassName="PARAMETERSRow" msprop:Generator_TableClassName="PARAMETERSDataTable" msprop:Generator_TableVarName="tablePARAMETERS">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="HEADER" msdata:ReadOnly="true" msprop:Generator_UserColumnName="HEADER" msprop:Generator_ColumnPropNameInTable="HEADERColumn" msprop:Generator_ColumnPropNameInRow="HEADER" msprop:Generator_ColumnVarNameInTable="columnHEADER" minOccurs="0">
+              <xs:element name="HEADER" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="HEADERColumn" msprop:Generator_ColumnPropNameInRow="HEADER" msprop:Generator_UserColumnName="HEADER" msprop:Generator_ColumnVarNameInTable="columnHEADER" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="6" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="REVYEAR" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="REVYEAR" msprop:Generator_ColumnPropNameInTable="REVYEARColumn" msprop:Generator_ColumnVarNameInTable="columnREVYEAR" msprop:Generator_UserColumnName="REVYEAR" minOccurs="0">
+              <xs:element name="REVYEAR" msdata:ReadOnly="true" msprop:Generator_UserColumnName="REVYEAR" msprop:Generator_ColumnPropNameInTable="REVYEARColumn" msprop:Generator_ColumnPropNameInRow="REVYEAR" msprop:Generator_ColumnVarNameInTable="columnREVYEAR" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="30" />
@@ -113,10 +144,53 @@ GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,E.PART_NO,PL.PART_NAME ORDER BY E
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="ECHANGES" msprop:Generator_RowEvHandlerName="ECHANGESRowChangeEventHandler" msprop:Generator_RowDeletedName="ECHANGESRowDeleted" msprop:Generator_RowDeletingName="ECHANGESRowDeleting" msprop:Generator_RowEvArgName="ECHANGESRowChangeEvent" msprop:Generator_TablePropName="ECHANGES" msprop:Generator_RowChangedName="ECHANGESRowChanged" msprop:Generator_RowChangingName="ECHANGESRowChanging" msprop:Generator_TableClassName="ECHANGESDataTable" msprop:Generator_RowClassName="ECHANGESRow" msprop:Generator_TableVarName="tableECHANGES" msprop:Generator_UserTableName="ECHANGES">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DIST_CODE" msprop:Generator_ColumnPropNameInRow="DIST_CODE" msprop:Generator_ColumnPropNameInTable="DIST_CODEColumn" msprop:Generator_ColumnVarNameInTable="columnDIST_CODE" msprop:Generator_UserColumnName="DIST_CODE" type="xs:unsignedByte" />
+              <xs:element name="DIST_NAME" msprop:Generator_ColumnPropNameInRow="DIST_NAME" msprop:Generator_ColumnPropNameInTable="DIST_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnDIST_NAME" msprop:Generator_UserColumnName="DIST_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TNAME" msprop:Generator_ColumnPropNameInRow="TNAME" msprop:Generator_ColumnPropNameInTable="TNAMEColumn" msprop:Generator_ColumnVarNameInTable="columnTNAME" msprop:Generator_UserColumnName="TNAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TNO" msprop:Generator_ColumnPropNameInRow="TNO" msprop:Generator_ColumnPropNameInTable="TNOColumn" msprop:Generator_ColumnVarNameInTable="columnTNO" msprop:Generator_UserColumnName="TNO" type="xs:unsignedByte" />
+              <xs:element name="PART_NO" msprop:Generator_ColumnPropNameInRow="PART_NO" msprop:Generator_ColumnPropNameInTable="PART_NOColumn" msprop:Generator_ColumnVarNameInTable="columnPART_NO" msprop:Generator_UserColumnName="PART_NO" type="xs:int" />
+              <xs:element name="PART_NAME" msprop:Generator_ColumnPropNameInRow="PART_NAME" msprop:Generator_ColumnPropNameInTable="PART_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnPART_NAME" msprop:Generator_UserColumnName="PART_NAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="MALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="MALE" msprop:Generator_ColumnPropNameInTable="MALEColumn" msprop:Generator_ColumnVarNameInTable="columnMALE" msprop:Generator_UserColumnName="MALE" type="xs:int" minOccurs="0" />
+              <xs:element name="FEMALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="FEMALE" msprop:Generator_ColumnPropNameInTable="FEMALEColumn" msprop:Generator_ColumnVarNameInTable="columnFEMALE" msprop:Generator_UserColumnName="FEMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="TG" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="TG" msprop:Generator_ColumnPropNameInTable="TGColumn" msprop:Generator_ColumnVarNameInTable="columnTG" msprop:Generator_UserColumnName="TG" type="xs:int" minOccurs="0" />
+              <xs:element name="AMALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="AMALE" msprop:Generator_ColumnPropNameInTable="AMALEColumn" msprop:Generator_ColumnVarNameInTable="columnAMALE" msprop:Generator_UserColumnName="AMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="AFEMALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="AFEMALE" msprop:Generator_ColumnPropNameInTable="AFEMALEColumn" msprop:Generator_ColumnVarNameInTable="columnAFEMALE" msprop:Generator_UserColumnName="AFEMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="ATG" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="ATG" msprop:Generator_ColumnPropNameInTable="ATGColumn" msprop:Generator_ColumnVarNameInTable="columnATG" msprop:Generator_UserColumnName="ATG" type="xs:int" minOccurs="0" />
+              <xs:element name="DMALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="DMALE" msprop:Generator_ColumnPropNameInTable="DMALEColumn" msprop:Generator_ColumnVarNameInTable="columnDMALE" msprop:Generator_UserColumnName="DMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="DFEMALE" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="DFEMALE" msprop:Generator_ColumnPropNameInTable="DFEMALEColumn" msprop:Generator_ColumnVarNameInTable="columnDFEMALE" msprop:Generator_UserColumnName="DFEMALE" type="xs:int" minOccurs="0" />
+              <xs:element name="DTG" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="DTG" msprop:Generator_ColumnPropNameInTable="DTGColumn" msprop:Generator_ColumnVarNameInTable="columnDTG" msprop:Generator_UserColumnName="DTG" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
     <xs:unique name="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//mstns:PSLIST" />
+      <xs:field xpath="mstns:DIST_CODE" />
+    </xs:unique>
+    <xs:unique name="ECHANGES_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:ECHANGES" />
       <xs:field xpath="mstns:DIST_CODE" />
     </xs:unique>
   </xs:element>

@@ -130,51 +130,6 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="DIST_NAME">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!DIST_NAME.Value + " DISTRICT"</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>DIST_NAME</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                        <ColSpan>7</ColSpan>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell />
-                    <TablixCell />
-                    <TablixCell />
-                    <TablixCell />
-                    <TablixCell />
-                    <TablixCell />
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="TNAME">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -630,189 +585,6 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox104">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>="TOTAL (" + Fields!DIST_NAME.Value + " DISTRICT)"</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox104</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                        <ColSpan>3</ColSpan>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell />
-                    <TablixCell />
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="MALE1">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!MALE.Value)</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>MALE1</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="FEMALE1">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!FEMALE.Value)</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>FEMALE1</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="TG1">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!TG.Value)</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>TG1</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox110">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Sum(Fields!MALE.Value)+Sum(Fields!FEMALE.Value)+Sum(Fields!TG.Value)</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Center</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox110</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox112">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -820,7 +592,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>TOTAL ANDMAN &amp; NICOBAR ISLANDS</Value>
+                                  <Value>="TOTAL " + First(Fields!DIST_NAME.Value) + " DISTRICT"</Value>
                                   <Style>
                                     <FontSize>12pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1007,45 +779,25 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="DIST_NAME">
+                  <Group Name="TNAME">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!DIST_NAME.Value</GroupExpression>
+                      <GroupExpression>=Fields!TNAME.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!DIST_CODE.Value</Value>
+                      <Value>=Fields!TNO.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixMembers>
+                    <TablixMember />
                     <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
-                    <TablixMember>
-                      <Group Name="TNAME">
-                        <GroupExpressions>
-                          <GroupExpression>=Fields!TNAME.Value</GroupExpression>
-                        </GroupExpressions>
-                      </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!TNO.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
+                      <Group Name="Details" />
                       <TablixMembers>
-                        <TablixMember />
-                        <TablixMember>
-                          <Group Name="Details" />
-                          <TablixMembers>
-                            <TablixMember />
-                          </TablixMembers>
-                        </TablixMember>
                         <TablixMember />
                       </TablixMembers>
                     </TablixMember>
-                    <TablixMember>
-                      <KeepWithGroup>Before</KeepWithGroup>
-                    </TablixMember>
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
                 <TablixMember>
@@ -1055,8 +807,9 @@
             </TablixRowHierarchy>
             <RepeatRowHeaders>true</RepeatRowHeaders>
             <DataSetName>PSLIST</DataSetName>
+            <Top>0in</Top>
             <Left>0.26958in</Left>
-            <Height>1.5in</Height>
+            <Height>1in</Height>
             <Width>7.28772in</Width>
             <Style>
               <Border>
@@ -1065,13 +818,13 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>1.5in</Height>
+        <Height>1in</Height>
         <Style />
       </Body>
       <Width>7.81545in</Width>
       <Page>
         <PageHeader>
-          <Height>1.10383in</Height>
+          <Height>1.44133in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1082,7 +835,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>="POLLING STATION WISE ELECTOR DETAILS - " + First(Fields!REVYEAR.Value, "PARAMETER")</Value>
+                      <Value>="PANCHAYAT-WISE ELECTOR DETAILS - " + First(Fields!REVYEAR.Value, "PARAMETER")</Value>
                       <Style>
                         <FontSize>14pt</FontSize>
                         <FontWeight>Bold</FontWeight>
@@ -1127,7 +880,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.70661in</Top>
+              <Top>1.04411in</Top>
               <Left>0.26958in</Left>
               <Height>0.39583in</Height>
               <Width>0.5625in</Width>
@@ -1162,7 +915,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.70608in</Top>
+              <Top>1.04358in</Top>
               <Left>0.83208in</Left>
               <Height>0.39583in</Height>
               <Width>0.56896in</Width>
@@ -1197,7 +950,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.708in</Top>
+              <Top>1.0455in</Top>
               <Left>1.40104in</Left>
               <Height>0.39583in</Height>
               <Width>3.10417in</Width>
@@ -1232,7 +985,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.70747in</Top>
+              <Top>1.04497in</Top>
               <Left>4.50521in</Left>
               <Height>0.39583in</Height>
               <Width>0.6875in</Width>
@@ -1267,7 +1020,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.70522in</Top>
+              <Top>1.04272in</Top>
               <Left>5.19271in</Left>
               <Height>0.39583in</Height>
               <Width>0.69792in</Width>
@@ -1302,7 +1055,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.70522in</Top>
+              <Top>1.04272in</Top>
               <Left>5.89063in</Left>
               <Height>0.39583in</Height>
               <Width>0.66667in</Width>
@@ -1337,7 +1090,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox119</rd:DefaultName>
-              <Top>0.70522in</Top>
+              <Top>1.04272in</Top>
               <Left>6.5573in</Left>
               <Height>0.39583in</Height>
               <Width>1in</Width>
@@ -1381,6 +1134,73 @@
                 <Border>
                   <Style>None</Style>
                 </Border>
+                <VerticalAlign>Top</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox1">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>DISTRICT:</Value>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <Top>0.73161in</Top>
+              <Left>0.26958in</Left>
+              <Height>0.25in</Height>
+              <Width>0.94097in</Width>
+              <ZIndex>9</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox3">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!DIST_NAME.Value, "PSLIST")</Value>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <Top>0.71911in</Top>
+              <Left>1.28in</Left>
+              <Height>0.25in</Height>
+              <Width>6.4023in</Width>
+              <ZIndex>10</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
                 <PaddingLeft>2pt</PaddingLeft>
                 <PaddingRight>2pt</PaddingRight>
                 <PaddingTop>2pt</PaddingTop>
@@ -1395,7 +1215,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.36197in</Height>
+          <Height>0.31197in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1415,7 +1235,7 @@
                   <Style />
                 </Paragraph>
               </Paragraphs>
-              <Top>0.17447in</Top>
+              <Top>0.12447in</Top>
               <Left>3.13021in</Left>
               <Height>0.1875in</Height>
               <Width>0.5in</Width>
@@ -1442,7 +1262,7 @@
                   <Style />
                 </Paragraph>
               </Paragraphs>
-              <Top>0.17447in</Top>
+              <Top>0.12447in</Top>
               <Left>3.63021in</Left>
               <Height>0.1875in</Height>
               <Width>1.125in</Width>
@@ -1470,7 +1290,7 @@
                   <Style />
                 </Paragraph>
               </Paragraphs>
-              <Top>0.17447in</Top>
+              <Top>0.08056in</Top>
               <Left>5.19271in</Left>
               <Height>0.1875in</Height>
               <Width>2.36459in</Width>

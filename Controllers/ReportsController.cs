@@ -1,6 +1,5 @@
 ﻿//using AspNetCore.Reporting;
 using Microsoft.Reporting.NETCore;
-
 using Microsoft.AspNetCore.Mvc;
 using System.Security.AccessControl;
 using Microsoft.Data.SqlClient;
@@ -25,8 +24,6 @@ namespace SEMS.Controllers
             this._logger = logger;
             this._webHostEnv = webHostEnv;
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            
-
         }
        
         string qry;
@@ -370,7 +367,7 @@ namespace SEMS.Controllers
                     qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
                     qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN ";
                     qry += "TEHSIL AS T ON P.TCODE=T.TCODE JOIN DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE WHERE E.PAN_MUN='P' ";
-                    qry += "AND PL.AREA_TYPE='P' AND P.PCODE=" + keyValue + " AND E.REVISIONNO<=" + dataUpto + " GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,P.PAN_NAME,E.PART_NO,PL.PART_NAME ";
+                    qry += "AND PL.AREA_TYPE='P' AND T.TCODE=" + keyValue + " AND E.REVISIONNO<=" + dataUpto + " GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,P.PAN_NAME,E.PART_NO,PL.PART_NAME ";
                     qry += "ORDER BY E.PART_NO";
                     reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepTehsilPSWiseElectors.rdlc";
                 }
@@ -433,6 +430,323 @@ namespace SEMS.Controllers
             Stream strm = new MemoryStream(pdf);
             var result = new FileStreamResult(strm, "application/pdf");
            // return File(pdf, mimeType, "myreport.pdf", false);
+            return File(strm, mimeType);
+        }
+        #endregion
+
+        #region PANCHAYAT-WISE ELECTOR DETAILS
+        public IActionResult PanchayatWiseElectors(int id, string panmun, int revYear, int dataUpto, int keyValue)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            System.Data.DataColumn col1 = new System.Data.DataColumn("REVYEAR");
+            System.Data.DataColumn col2 = new System.Data.DataColumn("HEADER");
+            dt.Columns.Add(col1);
+            dt.Columns.Add(col2);
+            System.Data.DataRow dr = dt.NewRow();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+
+            // Dictionary<string, string> parameters = new Dictionary<string, string>();
+            string reportPath = "";
+            if (panmun == "P")
+            {
+                if (dataUpto == 0)
+                {
+                    dr["HEADER"] = "AS PER DRAFT PANCHAYAT ROLL";
+                }
+                else if (dataUpto == 1)
+                {
+                    dr["HEADER"] = "AS PER FINAL PANCHAYAT ROLL";
+                }
+            }
+            else if (panmun == "M")
+            {
+                if (dataUpto == 0)
+                {
+                    dr["HEADER"] = "AS PER DRAFT MUNICIPAL ROLL";
+                }
+                else if (dataUpto == 1)
+                {
+                    dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
+                }
+            }
+            dr["REVYEAR"] = revYear.ToString();
+            dt.Rows.Add(dr);
+            if (id == 1)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,T.TNAME,T.TNO,P.PAN_NAME AS PART_NAME,P.PCODE as PART_NO,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE JOIN DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE WHERE E.PAN_MUN='P' ";
+                    qry += "AND PL.AREA_TYPE='P' AND E.REVISIONNO<=" + dataUpto + " GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,P.PCODE,P.PAN_NAME ";
+                    qry += "ORDER BY P.PCODE";
+
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPanchayatWiseElectorsSummary.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT P.WARD_NAME AS TNAME,P.WARD_NO AS PART_NO,P.WARD_NAME AS PART_NAME,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE  WHERE E.PAN_MUN='M' ";
+                    qry += "AND PL.AREA_TYPE='M' AND E.REVISIONNO<=" + dataUpto + " GROUP BY P.WARD_NO,P.WARD_NAME ";
+                    qry += "ORDER BY P.WARD_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepWardWiseElectorsMunicipal.rdlc";
+                }
+            }
+            else if (id == 2)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,T.TNAME,T.TNO,P.PCODE AS PART_NO,P.PAN_NAME AS PART_NAME,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE JOIN DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE WHERE E.PAN_MUN='P' ";
+                    qry += "AND PL.AREA_TYPE='P' AND D.DIST_CODE=" + keyValue + " AND E.REVISIONNO<=" + dataUpto + " GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,P.PCODE,P.PAN_NAME ";
+                    qry += "ORDER BY P.PCODE";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepDistrictPanchayatWiseElectors.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT P.WARD_NAME AS TNAME,P.WARD_NO AS PART_NO,P.WARD_NAME AS PART_NAME,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE  WHERE E.PAN_MUN='M' ";
+                    qry += "AND PL.AREA_TYPE='M' AND E.REVISIONNO<=" + dataUpto + " GROUP BY P.WARD_NO,P.WARD_NAME ";
+                    qry += "ORDER BY P.WARD_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepWardWiseElectorsMunicipal.rdlc";
+                }
+            }
+            else if (id == 3)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT D.DIST_CODE,T.TNAME AS DIST_NAME,P.PAN_NAME PART_NAME,P.PCODE AS PART_NO,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE JOIN DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE WHERE E.PAN_MUN='P' ";
+                    qry += "AND PL.AREA_TYPE='P' AND T.TCODE=" + keyValue + " AND E.REVISIONNO<=" + dataUpto + " GROUP BY D.DIST_CODE,D.DIST_NAME,T.TNO,T.TNAME,P.PAN_NAME,P.PCODE ";
+                    qry += "ORDER BY P.PCODE";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepTehsilPanchayatWiseElectors.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT P.WARD_NAME AS TNAME,P.WARD_NO AS PART_NO,P.WARD_NAME AS PART_NAME,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE  WHERE E.PAN_MUN='M' ";
+                    qry += "AND PL.AREA_TYPE='M' AND E.REVISIONNO<=" + dataUpto + " GROUP BY P.WARD_NO,P.WARD_NAME ";
+                    qry += "ORDER BY P.WARD_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepWardWiseElectorsMunicipal.rdlc";
+                }
+            }
+            
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            ds = dm.create_dataset(qry);
+            // var report = new LocalReport(reportPath);
+            //report.AddDataSource("PSLIST", ds.Tables[0]);
+            // report.AddDataSource("PARAMETER", dt);
+            //Stream reportDefinition; // your RDLC from file or resource
+            //IEnumerable dataSource(); // your datasource for the report
+
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PSLIST", ds.Tables[0]));
+            report.DataSources.Add(new ReportDataSource("PARAMETER", dt));
+            // report.SetParameters(new[] { new ReportParameter("Parameter1", "Parameter value") });
+            byte[] pdf = report.Render("PDF");
+            //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+            // return File(result.MainStream, mimeType);
+            Stream strm = new MemoryStream(pdf);
+            var result = new FileStreamResult(strm, "application/pdf");
+            // return File(pdf, mimeType, "myreport.pdf", false);
+            return File(strm, mimeType);
+        }
+        #endregion
+
+        #region PS-WISE ELECTOR CHANGES (ADDITIONS & DELETIONS)
+        public IActionResult PSWiseElectorChanges(int id, string panmun, int revYear, int dataUpto, int keyValue)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            System.Data.DataColumn col1 = new System.Data.DataColumn("REVYEAR");
+            System.Data.DataColumn col2 = new System.Data.DataColumn("HEADER");
+            dt.Columns.Add(col1);
+            dt.Columns.Add(col2);
+            System.Data.DataRow dr = dt.NewRow();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+
+            // Dictionary<string, string> parameters = new Dictionary<string, string>();
+            string reportPath = "";
+            if (panmun == "P")
+            {
+                if (dataUpto == 0)
+                {
+                    dr["HEADER"] = "AS PER DRAFT PANCHAYAT ROLL";
+                }
+                else if (dataUpto == 1)
+                {
+                    dr["HEADER"] = "AS PER FINAL PANCHAYAT ROLL";
+                }
+            }
+            else if (panmun == "M")
+            {
+                if (dataUpto == 0)
+                {
+                    dr["HEADER"] = "AS PER DRAFT MUNICIPAL ROLL";
+                }
+                else if (dataUpto == 1)
+                {
+                    dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
+                }
+            }
+            dr["REVYEAR"] = revYear.ToString();
+            dt.Rows.Add(dr);
+            if (id == 1)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,T.TNAME,T.TNO,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='P' AND PL.AREA_TYPE='P' ORDER BY E.PART_NO";
+
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPSWiseElectorChanges.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,P.WARD_NAME AS TNAME,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='M' AND PL.AREA_TYPE='M' ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPSWiseElectorChangesMunicipal.rdlc";
+                }
+            }
+            else if (id == 2)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,T.TNAME,T.TNO,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='P' AND PL.AREA_TYPE='P' AND D.DIST_CODE=" + keyValue + " ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepDistrictPSWiseElectorChanges.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,P.WARD_NAME AS TNAME,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='M' AND PL.AREA_TYPE='M' ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPSWiseElectorChangesMunicipal.rdlc";
+                }
+            }
+            else if (id == 3)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,P.PAN_NAME AS TNAME,T.TNO,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='P' AND PL.AREA_TYPE='P' AND T.TCODE=" + keyValue + " ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepTehsilPSWiseElectorChanges.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT D.DIST_CODE,D.DIST_NAME,P.WARD_NAME AS TNAME,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='M' AND PL.AREA_TYPE='M' ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPSWiseElectorChangesMunicipal.rdlc";
+                }
+            }
+            else if (id == 4)
+            {
+                if (panmun == "P")
+                {
+                    qry = "SELECT P.PCODE AS DIST_CODE,P.PAN_NAME AS DIST_NAME,T.TNAME,T.TNO,E.PART_NO,PL.PART_NAME, ";
+                    qry += "MALE,FEMALE,TG,ISNULL(AMALE,0) AS AMALE,ISNULL(AFEMALE,0) AS AFEMALE,ISNULL(ATG,0) AS ATG, ";
+                    qry += "ISNULL(DMALE,0) AS DMALE,ISNULL(DFEMALE,0) AS DFEMALE,ISNULL(DTG,0) AS DTG FROM ";
+                    qry += "DRAFT_VW AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON E.PART_NO=PL.PART_NO AND E.PAN_MUN=";
+                    qry += "PL.PAN_MUN JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE JOIN TEHSIL AS T ON P.TCODE=T.TCODE JOIN ";
+                    qry += "DISTRICT AS D ON T.DIST_CODE=D.DIST_CODE LEFT JOIN ADDITIONS_VW AS A ON A.PART_NO=E.PART_NO AND A.PAN_MUN=";
+                    qry += "E.PAN_MUN LEFT JOIN DELETIONS_VW AS DV ON DV.PART_NO=E.PART_NO AND DV.PAN_MUN=E.PAN_MUN ";
+                    qry += "WHERE E.PAN_MUN='P' AND PL.AREA_TYPE='P' AND P.PCODE=" + keyValue + " ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPanchayatPSWiseElectorChanges.rdlc";
+                }
+                else if (panmun == "M")
+                {
+                    qry = "SELECT P.WARD_NAME AS TNAME,E.PART_NO,PL.PART_NAME,SUM(CASE GENDER WHEN 'M' THEN 1 ";
+                    qry += "ELSE 0 END) AS MALE,SUM(CASE GENDER WHEN 'F' THEN 1 ELSE 0 END) AS FEMALE,SUM(CASE GENDER WHEN 'T' ";
+                    qry += "THEN 1 ELSE 0 END) AS TG FROM SE_EROLL.DBO.E_DETAIL AS E JOIN SE_EROLL.DBO.PARTLIST AS PL ON ";
+                    qry += "E.PART_NO=PL.PART_NO AND E.PAN_MUN=PL.PAN_MUN JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO JOIN ";
+                    qry += "TEHSIL AS T ON P.TCODE=T.TCODE  WHERE E.PAN_MUN='M' ";
+                    qry += "AND PL.AREA_TYPE='M' AND E.REVISIONNO<=" + dataUpto + " GROUP BY P.WARD_NAME,E.PART_NO,PL.PART_NAME ";
+                    qry += "ORDER BY E.PART_NO";
+                    reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\RepPSWiseElectorsMunicipal.rdlc";
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            ds = dm.create_dataset(qry);
+            // var report = new LocalReport(reportPath);
+            //report.AddDataSource("PSLIST", ds.Tables[0]);
+            // report.AddDataSource("PARAMETER", dt);
+            //Stream reportDefinition; // your RDLC from file or resource
+            //IEnumerable dataSource(); // your datasource for the report
+
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("PSLIST", ds.Tables[0]));
+            report.DataSources.Add(new ReportDataSource("PARAMETER", dt));
+            // report.SetParameters(new[] { new ReportParameter("Parameter1", "Parameter value") });
+            byte[] pdf = report.Render("PDF");
+            //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+            // return File(result.MainStream, mimeType);
+            Stream strm = new MemoryStream(pdf);
+            var result = new FileStreamResult(strm, "application/pdf");
+            // return File(pdf, mimeType, "myreport.pdf", false);
             return File(strm, mimeType);
         }
         #endregion

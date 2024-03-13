@@ -10,10 +10,12 @@
     <Content Remove="Views\Reports\PSWiseElectors.cshtml" />
     <Content Remove="wwwroot\Reports\RepDraftRoll.rdlc" />
     <Content Remove="wwwroot\Reports\RepFinalRoll.rdlc" />
+    <Content Remove="wwwroot\Reports\RepWardWiseElectorsMunicipal.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="wwwroot\Reports\RepDraftRoll.rdlc" />
+    <EmbeddedResource Include="wwwroot\Reports\RepWardWiseElectorsMunicipal.rdlc" />
     <EmbeddedResource Include="wwwroot\Reports\RepPSWiseElectorsMunicipal.rdlc" />
     <EmbeddedResource Include="wwwroot\Reports\RepFinalRoll.rdlc" />
   </ItemGroup>

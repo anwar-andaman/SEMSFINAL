@@ -791,7 +791,7 @@ namespace SEMS.Controllers
         public IActionResult PSWiseElectors()
         {
             PSWiseElectorsModel md = new PSWiseElectorsModel();
-            md.reportLevel = "S";
+            md.reportLevel = "1";
             return View(md);
         }
         [HttpPost]
@@ -804,7 +804,7 @@ namespace SEMS.Controllers
                 ViewBag.districts = ds;
                 if (md.reportLevel=="3" || md.reportLevel=="4")
                 {
-                    qry = "SELECT TCODE,TNAME FROM TEHSIL ORDER BY TNAME";
+                    qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE DIST_CODE=" + md.district + " ORDER BY TNAME";
                     ds = dm.create_dataset(qry);
                     ViewBag.tehsils = ds;
                     //if (md.reportLevel=="P")
@@ -820,8 +820,82 @@ namespace SEMS.Controllers
             ViewBag.revisionYear = ds;
             return View(md);
         }
-      
+
         #endregion
+
+        #region PANCHAYAT-WISE ELECTOR DETAILS
+        public IActionResult PanchayatWiseElectors()
+        {
+            PSWiseElectorsModel md = new PSWiseElectorsModel();
+            md.reportLevel = "1";
+            return View(md);
+        }
+        [HttpPost]
+        public IActionResult PanchayatWiseElectors(PSWiseElectorsModel md)
+        {
+            if (md.reportLevel != "1")
+            {
+                qry = "SELECT * FROM DISTRICT ORDER BY DIST_NAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.districts = ds;
+                if (md.reportLevel == "3" || md.reportLevel == "4")
+                {
+                    qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE DIST_CODE=" + md.district + " ORDER BY TNAME";
+                    ds = dm.create_dataset(qry);
+                    ViewBag.tehsils = ds;
+                    //if (md.reportLevel=="P")
+                    //{
+                    qry = "SELECT PCODE,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+                    ds = dm.create_dataset(qry);
+                    ViewBag.panchayats = ds;
+                    //}
+                }
+            }
+            qry = "SELECT DISTINCT REVISIONYEAR FROM SE_EROLL.DBO.REVISIONS ORDER BY REVISIONYEAR DESC";
+            ds = dm.create_dataset(qry);
+            ViewBag.revisionYear = ds;
+            return View(md);
+        }
+
+        #endregion
+
+        #region PS-WISE ELECTOR CHANGES (ADDITIONS & DELETIONS)
+
+        public IActionResult PSWiseElectorChanges()
+        {
+            PSWiseElectorsModel md = new PSWiseElectorsModel();
+            md.reportLevel = "1";
+            return View(md);
+        }
+        [HttpPost]
+        public IActionResult PSWiseElectorChanges(PSWiseElectorsModel md)
+        {
+            if (md.reportLevel != "1")
+            {
+                qry = "SELECT * FROM DISTRICT ORDER BY DIST_NAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.districts = ds;
+                if (md.reportLevel == "3" || md.reportLevel == "4")
+                {
+                    qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE DIST_CODE=" + md.district + " ORDER BY TNAME";
+                    ds = dm.create_dataset(qry);
+                    ViewBag.tehsils = ds;
+                    //if (md.reportLevel=="P")
+                    //{
+                    qry = "SELECT PCODE,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+                    ds = dm.create_dataset(qry);
+                    ViewBag.panchayats = ds;
+                    //}
+                }
+            }
+            qry = "SELECT DISTINCT REVISIONYEAR FROM SE_EROLL.DBO.REVISIONS ORDER BY REVISIONYEAR DESC";
+            ds = dm.create_dataset(qry);
+            ViewBag.revisionYear = ds;
+            return View(md);
+        }
+
+        #endregion
+
 
 
 
