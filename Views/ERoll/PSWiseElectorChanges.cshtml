@@ -1,6 +1,7 @@
-﻿@model PSWiseElectorsModel
+﻿@model SEMS.Models.Reports.PSWiseElectorsModel
 @{
     @using System.Data;
+    @using SEMS.Models.Reports;
     ViewData["Title"] = "PSWiseElectorChanges";
     Layout = "~/Views/Shared/_Layout.cshtml";
     DataSet districts = ViewBag.districts, tehsils = ViewBag.tehsils, panchayats = ViewBag.panchayats, revisionYear = ViewBag.revisionYear;

@@ -1,4 +1,4 @@
-﻿namespace SEMS.Models
+﻿namespace SEMS.Models.Reports
 {
     public class PSWiseElectorsModel
     {

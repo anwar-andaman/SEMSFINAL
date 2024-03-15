@@ -1,8 +1,50 @@
-﻿
+﻿@model SEMS.Models.Ballot.PolPartyModel
 @{
     ViewData["Title"] = "ManageParties";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<form id="frmParty" method="post">
+<input type="hidden" id ="hidStatus" asp-for="formStatus" />
+<div class="container">
+    <div class="col-sm-9">
+        <div class="row">
+            <h2 class="pageheading">Manage Political Parties</h2>
+            <hr />
+            @{
+                if (ViewBag.partyCount == 0)
+                {
+                    <div class="col-sm-6">
+                        <label class="form-label mylabel">Party Name</label>
+                            <input type="text" class="form-control" id="txtPartyName" asp-for="partyName" required oninvalid="this.setCustomValidity('Party Name must be entered.')" oninput="setCustomValidity('')" />
 
-<h1>ManageParties</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label mylabel">Party Name (Hindi)</label>
+                            <input type="text" class="form-control" id="txtPartyNameV1" asp-for="partyNameV1" required oninvalid="this.setCustomValidity('Party Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
+                    </div>
+                }
+            }
+        </div>
+        <div class="row" style="margin-top:10px;">
+            <div class="col-sm-6">
+                <label class="form-label mylabel">Short Name</label>
+                    <input type="text" class="form-control" id="txtShortName" asp-for="shortName" required oninvalid="this.setCustomValidity('Short Name must be entered.')" oninput="setCustomValidity('')" />
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label mylabel">Short Name (Hindi)</label>
+                    <input type="text" class="form-control" id="txtShortNameV1" asp-for="shortNameV1" required oninvalid="this.setCustomValidity('Short Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
+            </div>
+           
+        </div>
+    <div class="row" style="margin-top:15px;">
+            <hr />
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <button type="submit" class="btn btn-danger form-control">Save</button>
+        </div>
+        <div class="col-sm-4"></div>
+    </div>
+   
+</div>
+</form>
 
