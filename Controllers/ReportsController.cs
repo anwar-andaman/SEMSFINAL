@@ -138,6 +138,7 @@ namespace SEMS.Controllers
             Stream strm = new MemoryStream(pdf);
             var result = new FileStreamResult(strm, "application/pdf");
             // return File(pdf, mimeType, "myreport.pdf", false);
+           
             return File(strm, mimeType);
 
             //return File(result.MainStream, mimeType);

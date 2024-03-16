@@ -3,12 +3,12 @@ using SEMS.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.Scripting;
+//using Microsoft.CodeAnalysis.Scripting;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+//using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Reflection;
 
 namespace SEMS.Controllers

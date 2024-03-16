@@ -1,50 +1,192 @@
 ﻿@model SEMS.Models.Ballot.PolPartyModel
 @{
+    @using System.Data;
+    @using System.IO.MemoryMappedFiles;
     ViewData["Title"] = "ManageParties";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet party = ViewBag.party, symbols=ViewBag.symbols;
+    // Model.symbol = (byte[])party.Tables[0].Rows[0]["SYMBOL"];
+    
 }
-<form id="frmParty" method="post">
-<input type="hidden" id ="hidStatus" asp-for="formStatus" />
-<div class="container">
-    <div class="col-sm-9">
-        <div class="row">
-            <h2 class="pageheading">Manage Political Parties</h2>
-            <hr />
-            @{
-                if (ViewBag.partyCount == 0)
-                {
-                    <div class="col-sm-6">
-                        <label class="form-label mylabel">Party Name</label>
-                            <input type="text" class="form-control" id="txtPartyName" asp-for="partyName" required oninvalid="this.setCustomValidity('Party Name must be entered.')" oninput="setCustomValidity('')" />
-
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label mylabel">Party Name (Hindi)</label>
-                            <input type="text" class="form-control" id="txtPartyNameV1" asp-for="partyNameV1" required oninvalid="this.setCustomValidity('Party Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
-                    </div>
-                }
-            }
-        </div>
-        <div class="row" style="margin-top:10px;">
-            <div class="col-sm-6">
-                <label class="form-label mylabel">Short Name</label>
-                    <input type="text" class="form-control" id="txtShortName" asp-for="shortName" required oninvalid="this.setCustomValidity('Short Name must be entered.')" oninput="setCustomValidity('')" />
-            </div>
-            <div class="col-sm-6">
-                <label class="form-label mylabel">Short Name (Hindi)</label>
-                    <input type="text" class="form-control" id="txtShortNameV1" asp-for="shortNameV1" required oninvalid="this.setCustomValidity('Short Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
-            </div>
-           
-        </div>
-    <div class="row" style="margin-top:15px;">
-            <hr />
-        <div class="col-sm-4"></div>
-        <div class="col-sm-4">
-            <button type="submit" class="btn btn-danger form-control">Save</button>
-        </div>
-        <div class="col-sm-4"></div>
-    </div>
+<script>
+   // alert("@Model.formStatus");
+    function setDeleteItem(item) {
+        document.getElementById('hidDeleteItem').value = item;
+    }
+    function SetEditItem(item) {
+         document.getElementById('hidStatus').value = "edit"; 
+        document.getElementById('hidEditItem').value = item;
+        
+    }
    
-</div>
+</script>
+<form id="frmParty" method="post">
+    <input type="hidden" id ="hidStatus" asp-for="formStatus" />
+    <input type="hidden" id="hidDeleteItem" name="deleteItem"  asp-for="deleteItem"/>
+    <input type="hidden" id="hidEditItem" name="editItem" asp-for="editItem" />
+    <div class="modal fade" id="DeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure to delete the Political Party?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger" asp-action="DeleteParty">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        @{
+            if (party.Tables[0].Rows.Count == 0 || Model.formStatus == "add")
+            {
+                    <div class="col-sm-9">
+                        <h2 class="pageheading">Manage Political Parties</h2>
+                        <hr />
+                        
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel">Party Name</label>
+                                        <input type="text" class="form-control mycontrol" id="txtPartyName" asp-for="partyName" required oninvalid="this.setCustomValidity('Party Name must be entered.')" oninput="setCustomValidity('')" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel">Party Name (Hindi)</label>
+                                        <input type="text" class="form-control mycontrol" id="txtPartyNameV1" asp-for="partyNameV1" required oninvalid="this.setCustomValidity('Party Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
+                                    </div>
+
+                                </div>
+                                <div class="row" style="margin-top:10px;">
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel">Short Name</label>
+                                        <input type="text" class="form-control mycontrol" id="txtShortName" asp-for="shortName" required oninvalid="this.setCustomValidity('Short Name must be entered.')" oninput="setCustomValidity('')" />
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel">Short Name (Hindi)</label>
+                                        <input type="text" class="form-control mycontrol" id="txtShortNameV1" asp-for="shortNameV1" required oninvalid="this.setCustomValidity('Short Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top:10px;">
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel">Symbol</label>
+                                        @{
+                                        List<SelectListItem>
+                                        items = new List<SelectListItem>();
+                                        foreach (DataRow row in symbols.Tables[0].Rows)
+                                        {
+                                            SelectListItem s = new SelectListItem();
+                                            s.Text = row["SYMBOL_NAME"].ToString();
+                                            s.Value = row["SID"].ToString();
+                                            //s.Selected = row["SID"].ToString() == Model.sid.ToString() ? true : false;
+                                            items.Add(s);
+                                        }
+                                        }
+                                        <select class="form-select mycontrol" id="ddwnSymbol" asp-for="sid" asp-items="@items">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top:15px;">
+                                    <hr />
+                                    <div class="col-sm-3"></div>
+                                    <div class="col-sm-3">
+                                        <button type="submit" class="btn btn-success form-control" onclick="document.getElementById('hidStatus').value='save'" asp-action="AddParty">Save</button>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button type="submit" class="btn btn-danger form-control" onclick="document.getElementById('hidStatus').value='new'" formnovalidate>Cancel</button>
+                                    </div>
+                                    <div class="col-sm-3"></div>
+                                </div>
+                         
+                       
+                </div>
+            }
+            else
+            {
+                <h2 class="pageheading">Manage Political Parties</h2>
+                <hr />
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-link" onclick="document.getElementById('hidStatus').value='add';" >Add New Political Party</button>
+                </div>
+                <table class="table table-bordered" style="text-align:center">
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Party Name</th>
+                        <th>Party Name (Hindi)</th>
+                        <th>Short Name</th>
+                        <th>Short Name (Hindi)</th>
+                        <th>Symbol</th>
+                        <th colspan="2"></th>
+                    </tr>
+                    @{
+                        int cnt=0;
+                        foreach (DataRow row in party.Tables[0].Rows)
+                        {
+                            cnt++;
+                            if (Model.formStatus=="edit" && Model.editItem.ToString()==row["PACODE"].ToString())
+                            {
+                                <tr class="mycontrol" style="text-align:center">
+                                    <td>@cnt</td>
+                                    <td>
+                                        <input type="text" class="form-control" id="txtPartyName" asp-for="partyName" required oninvalid="this.setCustomValidity('Party Name must be entered.')" oninput="setCustomValidity('')" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" id="txtPartyNameV1" asp-for="partyNameV1" required oninvalid="this.setCustomValidity('Party Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" id="txtShortName" asp-for="shortName" required oninvalid="this.setCustomValidity('Short Name must be entered.')" oninput="setCustomValidity('')" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" id="txtShortNameV1" asp-for="shortNameV1" required oninvalid="this.setCustomValidity('Short Name (Hindi) must be entered.')" oninput="setCustomValidity('')" />
+                                    </td>
+                                    <td>
+                                            @{
+                                        List<SelectListItem>
+                                        items = new List<SelectListItem>();
+                                        foreach (DataRow row1 in symbols.Tables[0].Rows)
+                                        {
+                                            SelectListItem s = new SelectListItem();
+                                            s.Text = row1["SYMBOL_NAME"].ToString();
+                                            s.Value = row1["SID"].ToString();
+                                            s.Selected = row1["SID"].ToString() == Model.sid.ToString() ? true : false;
+                                            items.Add(s);
+                                        }
+                                            }
+                                        <select class="form-select" id="ddwnSymbol" asp-for="sid" asp-items="@items"></select>
+                                    </td>
+                                    <td><button type="submit" class="btn btn-link" asp-action="UpdateParty" asp-route-id="@row["PACODE"]">Update</button></td>
+                                    <td>
+                                        <button type="submit" class="btn btn-link" style="color:red;" onclick="document.getElementById('hidStatus').value='new'" formnovalidate>Cancel</button>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="mycontrol" style="text-align:center">
+                                            <td>@cnt</td>
+                                            <td>@row["PANAME"]</td>
+                                            <td>@row["PANAME_V1"]</td>
+                                            <td>@row["SHORT_NAME"]</td>
+                                            <td>@row["SHORT_NAME_V1"]</td>
+                                            <td>
+                                                <img src="data:image/jpeg;base64,@Convert.ToBase64String((byte[])row[5])" />
+                                            </td>
+                                            <td><button class="btn btn-link" onclick="SetEditItem('@row["PACODE"]');">Edit</button></td>
+
+                                            <td>
+                                                <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#DeleteConfirm" style="color:red;" onclick="setDeleteItem('@row[0]');">Delete</button>
+                                            </td>
+                                        </tr>
+                            }
+                            
+                        }
+                        }
+                    </table>
+            }
+        }
+    </div>
 </form>
 
