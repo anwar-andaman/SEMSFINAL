@@ -89,8 +89,66 @@ namespace SEMS.Controllers
 
         #region MANAGE SYMBOLS
         public IActionResult ManageSymbols()
-        { 
-            return View(); 
+        {
+            SymbolsModel md = new SymbolsModel();
+            qry = "SELECT SID,SYMBOL_NAME,SYMBOL FROM SYMBOLS ORDER BY SYMBOL_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.symbols = ds;
+            md.symbol = (byte[])ds.Tables[0].Rows[0][2];
+            return View(md); 
+        }
+
+        [HttpPost]
+        public IActionResult ManageSymbols(SymbolsModel md)
+        {
+            qry = "SELECT SID,SYMBOL_NAME,SYMBOL FROM SYMBOLS ORDER BY SYMBOL_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.symbols = ds;
+            foreach (DataRow row in ds.Tables[0].Rows)
+            {
+                if (md.sid == row["SID"].ToString())
+                {
+                    md.symbol = (byte[])row["SYMBOL"];
+                }
+            }
+            return View(md);
+        }
+
+        public IActionResult AddSymbol(SymbolsModel md)
+        {
+            IFormFile sym = md.symbolfile1;
+            byte[] symbolData = { };
+            if (sym != null && sym.Length != 0)
+            {
+                var symstr = sym.OpenReadStream();
+                var symStream = new MemoryStream();
+                symstr.CopyTo(symStream);
+                symbolData = symStream.ToArray();
+            }
+            SqlParameter ageParam = new SqlParameter("ageparam", symbolData);
+            SqlParameter ageParam1 = new SqlParameter("ageparam1", symbolData);
+            qry = "INSERT INTO SYMBOLS(SYMBOL_NAME,SYMBOL) VALUES('" + md.symbolName + "'," + "@ageparam" + ")";
+            dm.runquery_with_image(qry, ageParam, ageParam1);
+            return RedirectToActionPreserveMethod("ManageSymbols");
+        }
+        public IActionResult UpdateSymbol(SymbolsModel md)
+        {
+            //IFormFile sym = md.symbolfile;
+
+            //byte[] symbolData = { };
+
+            //if (sym != null && sym.Length != 0)
+            //{
+            //    var symstr = sym.OpenReadStream();
+            //    var symStream = new MemoryStream();
+            //    symstr.CopyTo(symStream);
+            //    symbolData = symStream.ToArray();
+            //}
+            //SqlParameter ageParam = new SqlParameter("ageparam", symbolData);
+            //SqlParameter ageParam1 = new SqlParameter("ageparam1", symbolData);
+            //qry = "INSERT INTO SYMBOLS(SYMBOL_NAME,SYMBOL) VALUES('FSDFAS'," + "@ageparam" + ")";
+            //dm.runquery_with_image(qry, ageParam, ageParam1);
+            return RedirectToActionPreserveMethod("ManageSymbols");
         }
         #endregion
 

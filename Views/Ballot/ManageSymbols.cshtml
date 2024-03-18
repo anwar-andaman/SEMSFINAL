@@ -1,0 +1,137 @@
+﻿@model SEMS.Models.Ballot.SymbolsModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "ManageSymbols";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet symbols = ViewBag.symbols;
+}
+<script>
+    
+    function displayPhoto(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#symbolfile').attr('src', e.target.result).width(120).height(120);
+            };
+            reader.readAsDataURL(input.files[0]);
+            document.getElementById('btnUpdate').disabled = false;
+            document.getElementById('btnDelete').style.display = "none";
+            document.getElementById('btnCancel').style.visibility="visible";
+        }
+       
+    }
+    function displayPhoto1(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#symbolfile1').attr('src', e.target.result).width(120).height(120);
+            };
+            reader.readAsDataURL(input.files[0]);
+           
+        }
+    }
+    function AddSymbol() {
+        document.getElementById('hidStatus').value = 'add'; 
+        document.getElementById('divAdd').style.display = 'block';
+        document.getElementById('divUpdate').style.display = 'none';
+        document.getElementById('txtSymbolName').value = "";
+        //document.getElementById('divUpdate').style.pointerEvents = "none"
+       // pointer - events: none;
+    }
+    function CancelAdd() {
+        document.getElementById('hidStatus').value = 'new';
+        document.getElementById('divAdd').style.display = 'none';
+        document.getElementById('divUpdate').style.display = 'initial';
+        document.getElementById('txtSymbolName').value = "hffgdjf";
+        //document.getElementById('divUpdate').style.pointerEvents = "initial";
+    }
+</script>
+<form id="frmSymbols" method="post">
+    <input type="hidden" id="hidStatus" name="formStatus" asp-for="formStatus" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8" id="divAdd" style="display:none;">
+                <div class="row">
+                    <h2 class="pageheading">Manage Symbols</h2>
+                    <hr />
+                </div>
+                <div class="row" >
+                    <div class="col-sm-8">
+                        <label class="form-label mylabel" for="txtSymbolName">Symbol Name</label>
+                        <input class="form-control" type="text" id="txtSymbolName" placeholder="Enter Symbol Name" name="symbolName" asp-for="symbolName" value="hghj" oninvalid="this.setCustomValidity('Symbol Name must be entered')" oninput="setCustomValidity('')" required />
+                        <div class="row" style="margin-top:10px;">
+                            <div class="col-sm-6">
+                                <button class="btn btn-primary form-control" onclick="document.getElementById('hidStatus').value='save';" asp-action="AddSymbol">Save</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button class="btn btn-danger form-control" formnovalidate>Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="border" style="width:120px;height:120px;text-align:center;">
+                            @{
+                                //var base = Convert.ToBase64String(Model.symbol);
+                                var imgSrc1 = String.Format("data:image/gif;base64,{0}", Convert.ToBase64String(Model.symbol));
+                            }
+                            <img  id="symbolfile1" alt="Symbol" style="width:120px;height:120px;" />
+                        </div>
+                        <input id="imgPhoto1" type="file" accept="image/gif, image/jpeg, image/png" asp-for="symbolfile1" name="symbolfile1" class="form-control"  style="display:none" onchange="displayPhoto1(this);" />
+                        <label class="form-label mylabel btn-success" for="imgPhoto1" style="color:white">Update Symbol</label>
+                    </div>
+                </div>
+                <hr />
+            </div>
+            <div class="col-sm-8" id="divUpdate">
+                <div class="row">
+                    <h2 class="pageheading">Manage Symbols</h2>
+                    <hr />
+                </div>
+                
+                <div class="col" >
+                    <button class="btn btn-link" onclick="AddSymbol();">Add New Symbol</button>
+                </div>
+                <div class="row" >
+                    <div class="col-sm-8">
+                        <label class="form-label mylabel" for="ddwnSymbols">Already Added Symbols</label>
+                        @{
+                            List<SelectListItem>
+                            items = new List<SelectListItem>();
+                            foreach (DataRow row in symbols.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["SYMBOL_NAME"].ToString();
+                                s.Value = row["SID"].ToString();
+                                //s.Selected = row["SID"].ToString() == Model.sid.ToString() ? true : false;
+                                items.Add(s);
+                            }
+                        }
+                        <select class="form-select mycontrol" id="ddwnSymbols" asp-for="sid" name="sid" asp-items="@items" onchange="document.getElementById('frmSymbols').submit();"></select>
+                        <button id="btnUpdate" type="submit" class="btn btn-primary" style="margin-top:10px;" asp-action="UpdateSymbol" disabled>Update Symbol</button>
+                        <button id="btnDelete" type="submit" class="btn btn-danger" style="margin-top:10px;" asp-action="DeleteSymbol" >Delete Symbol</button>
+                        <button id="btnCancel" type="submit" class="btn btn-danger" style="margin-top:10px;visibility:hidden;" formnovalidate >Cancel Update</button>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="border" style="width:120px;height:120px;text-align:center;">
+                            @{
+                                var base64 = Convert.ToBase64String(Model.symbol);
+                                var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                            }
+                            <img src="@imgSrc" id="symbolfile" alt="Symbol" style="width:120px;height:120px;" />
+                        </div>
+                        <input id="imgPhoto" type="file" accept="image/gif, image/jpeg, image/png" asp-for="symbolfile" name="symbolfile" class="form-control"  style="display:none" onchange="displayPhoto(this);" />
+                        <label class="form-label mylabel btn-success" for="imgPhoto" style="color:white">Update Symbol</label>
+                       
+                    </div>
+                </div>
+                <hr />
+                
+                
+            </div>
+        </div>
+        
+    </div>
+</form>
+
