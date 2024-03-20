@@ -129,26 +129,87 @@ namespace SEMS.Controllers
             SqlParameter ageParam1 = new SqlParameter("ageparam1", symbolData);
             qry = "INSERT INTO SYMBOLS(SYMBOL_NAME,SYMBOL) VALUES('" + md.symbolName + "'," + "@ageparam" + ")";
             dm.runquery_with_image(qry, ageParam, ageParam1);
-            return RedirectToActionPreserveMethod("ManageSymbols");
+            return RedirectToAction("ManageSymbols");
         }
         public IActionResult UpdateSymbol(SymbolsModel md)
         {
-            //IFormFile sym = md.symbolfile;
+            IFormFile sym = md.symbolfile;
+            byte[] symbolData = { };
 
-            //byte[] symbolData = { };
-
-            //if (sym != null && sym.Length != 0)
-            //{
-            //    var symstr = sym.OpenReadStream();
-            //    var symStream = new MemoryStream();
-            //    symstr.CopyTo(symStream);
-            //    symbolData = symStream.ToArray();
-            //}
-            //SqlParameter ageParam = new SqlParameter("ageparam", symbolData);
-            //SqlParameter ageParam1 = new SqlParameter("ageparam1", symbolData);
-            //qry = "INSERT INTO SYMBOLS(SYMBOL_NAME,SYMBOL) VALUES('FSDFAS'," + "@ageparam" + ")";
-            //dm.runquery_with_image(qry, ageParam, ageParam1);
+            if (sym != null && sym.Length != 0)
+            {
+                var symstr = sym.OpenReadStream();
+                var symStream = new MemoryStream();
+                symstr.CopyTo(symStream);
+                symbolData = symStream.ToArray();
+            }
+            SqlParameter ageParam = new SqlParameter("ageparam", symbolData);
+            SqlParameter ageParam1 = new SqlParameter("ageparam1", symbolData);
+            qry = "UPDATE SYMBOLS SET SYMBOL=@ageparam WHERE SID=" + md.sid ;
+            dm.runquery_with_image(qry, ageParam, ageParam1);
             return RedirectToActionPreserveMethod("ManageSymbols");
+        }
+
+        public IActionResult DeleteSymbol(SymbolsModel md)
+        {
+            qry = "DELETE FROM SYMBOLS WHERE SID=" + md.sid;
+            dm.runquery(qry);
+            return RedirectToAction("ManageSymbols");
+        }
+        #endregion
+
+        #region MANAGE CANDIDATES
+        public IActionResult ManageCandidates()
+        {
+            CandidateModel md = new CandidateModel();
+            qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.posts = ds;
+            md.pstCode = ds.Tables[0].Rows[0]["TYPE_CODE"].ToString();
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
+            if (md.pstCode=="1")
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+            }
+            else
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+            }
+            ds = dm.create_dataset(qry);
+            ViewBag.constituencies = ds;
+            return View(md);
+        }
+
+        [HttpPost]
+        public IActionResult ManageCandidates(CandidateModel md)
+        {
+            qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.posts = ds;
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            if (md.postCause=="ddwnPost")
+            {
+                md.panchayat = "1";
+            }
+            if (md.pstCode == "1")
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+            }
+            else
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+            }
+            ds = dm.create_dataset(qry);
+            ViewBag.constituencies = ds;
+            qry = "SELECT PACODE,PANAME FROM PARTY ORDER BY PANAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.parties = ds;
+            return View(md);
         }
         #endregion
 

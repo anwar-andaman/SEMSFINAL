@@ -10,26 +10,22 @@
     function displayPhoto(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
-                $('#symbolfile').attr('src', e.target.result).width(120).height(120);
+                $('#imgsymbolfile').attr('src', e.target.result).width(120).height(120);
             };
             reader.readAsDataURL(input.files[0]);
             document.getElementById('btnUpdate').disabled = false;
             document.getElementById('btnDelete').style.display = "none";
             document.getElementById('btnCancel').style.visibility="visible";
         }
-       
     }
     function displayPhoto1(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
-                $('#symbolfile1').attr('src', e.target.result).width(120).height(120);
+                $('#imgsymbolfile1').attr('src', e.target.result).width(120).height(120);
             };
             reader.readAsDataURL(input.files[0]);
-           
         }
     }
     function AddSymbol() {
@@ -37,19 +33,33 @@
         document.getElementById('divAdd').style.display = 'block';
         document.getElementById('divUpdate').style.display = 'none';
         document.getElementById('txtSymbolName').value = "";
-        //document.getElementById('divUpdate').style.pointerEvents = "none"
-       // pointer - events: none;
     }
     function CancelAdd() {
         document.getElementById('hidStatus').value = 'new';
         document.getElementById('divAdd').style.display = 'none';
         document.getElementById('divUpdate').style.display = 'initial';
         document.getElementById('txtSymbolName').value = "hffgdjf";
-        //document.getElementById('divUpdate').style.pointerEvents = "initial";
     }
 </script>
-<form id="frmSymbols" method="post">
+<form id="frmSymbols" method="post" enctype="multipart/form-data">
     <input type="hidden" id="hidStatus" name="formStatus" asp-for="formStatus" />
+    <div class="modal fade" id="DeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure to delete the Symbol?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger" asp-action="DeleteSymbol">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-sm-8" id="divAdd" style="display:none;">
@@ -76,7 +86,7 @@
                                 //var base = Convert.ToBase64String(Model.symbol);
                                 var imgSrc1 = String.Format("data:image/gif;base64,{0}", Convert.ToBase64String(Model.symbol));
                             }
-                            <img  id="symbolfile1" alt="Symbol" style="width:120px;height:120px;" />
+                            <img  id="imgsymbolfile1" alt="Symbol" style="width:120px;height:120px;" />
                         </div>
                         <input id="imgPhoto1" type="file" accept="image/gif, image/jpeg, image/png" asp-for="symbolfile1" name="symbolfile1" class="form-control"  style="display:none" onchange="displayPhoto1(this);" />
                         <label class="form-label mylabel btn-success" for="imgPhoto1" style="color:white">Update Symbol</label>
@@ -89,7 +99,6 @@
                     <h2 class="pageheading">Manage Symbols</h2>
                     <hr />
                 </div>
-                
                 <div class="col" >
                     <button class="btn btn-link" onclick="AddSymbol();">Add New Symbol</button>
                 </div>
@@ -110,7 +119,7 @@
                         }
                         <select class="form-select mycontrol" id="ddwnSymbols" asp-for="sid" name="sid" asp-items="@items" onchange="document.getElementById('frmSymbols').submit();"></select>
                         <button id="btnUpdate" type="submit" class="btn btn-primary" style="margin-top:10px;" asp-action="UpdateSymbol" disabled>Update Symbol</button>
-                        <button id="btnDelete" type="submit" class="btn btn-danger" style="margin-top:10px;" asp-action="DeleteSymbol" >Delete Symbol</button>
+                        <button id="btnDelete" type="button" class="btn btn-danger" style="margin-top:10px;" data-bs-toggle="modal" data-bs-target="#DeleteConfirm">Delete Symbol</button>
                         <button id="btnCancel" type="submit" class="btn btn-danger" style="margin-top:10px;visibility:hidden;" formnovalidate >Cancel Update</button>
                     </div>
                     <div class="col-sm-4">
@@ -119,19 +128,15 @@
                                 var base64 = Convert.ToBase64String(Model.symbol);
                                 var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
                             }
-                            <img src="@imgSrc" id="symbolfile" alt="Symbol" style="width:120px;height:120px;" />
+                            <img src="@imgSrc" id="imgsymbolfile" alt="Symbol" style="width:120px;height:120px;" />
                         </div>
-                        <input id="imgPhoto" type="file" accept="image/gif, image/jpeg, image/png" asp-for="symbolfile" name="symbolfile" class="form-control"  style="display:none" onchange="displayPhoto(this);" />
                         <label class="form-label mylabel btn-success" for="imgPhoto" style="color:white">Update Symbol</label>
-                       
+                        <input id="imgPhoto" type="file" accept="image/gif, image/jpeg, image/png" asp-for="symbolfile" name="symbolfile" class="form-control"  style="display:none" onchange="displayPhoto(this);"  />
                     </div>
                 </div>
                 <hr />
-                
-                
             </div>
         </div>
-        
     </div>
 </form>
 
