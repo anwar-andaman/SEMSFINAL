@@ -4,6 +4,7 @@
     ViewData["Title"] = "ManageCandidates";
     Layout = "~/Views/Shared/_Layout.cshtml";
     DataSet posts = ViewBag.posts,panchayats=ViewBag.panchayats,constituencies=ViewBag.constituencies,parties=ViewBag.parties;
+    DataSet candidates = ViewBag.candidates,symbols = ViewBag.symbols;
 }
 <script>
     function SubmitForm(item)
@@ -14,10 +15,16 @@
     function ShowParty() { 
         var chk = document.getElementById('chkIndependent');
        
-        if (chk.checked == true)
+        if (chk.checked == true) {
             document.getElementById('divParty').style.display = "none";
-        else
+            document.getElementById('divSymbol').style.display = "block";
+        }
+
+        else { 
             document.getElementById('divParty').style.display = "block";
+            document.getElementById('divSymbol').style.display = "none";
+        }
+            
     }
     
 </script>
@@ -58,11 +65,11 @@
                         s.Value = row["PNO"].ToString();
                         items.Add(s);
                     }
-                                <div class="col-sm-4">
-                                    <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
-                            <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
-                                    </select>
-                                </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                        <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
+                        </select>
+                    </div>
                 }
                 items.Clear();
                 foreach (DataRow row in constituencies.Tables[0].Rows)
@@ -72,62 +79,117 @@
                     s.Value = row["CONST_CODE"].ToString();
                     items.Add(s);
                 }
-                    <div class="col-sm-4">
-                        <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
-                        <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items">
-                        </select>
-                    </div>
+                <div class="col-sm-4">
+                    <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                    <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items" onchange="SubmitForm('ddwnConstituency');">
+                    </select>
+                </div>
             }
         </div>
         @{
-            if(Model.formStatus=="add")
+            if(Model.formStatus=="add" || candidates.Tables[0].Rows.Count==0)
             {
-                    <div class="row" id="divAdd" style="margin-top:10px;">
+                <div class="row" id="divAdd" style="margin-top:10px;">
 
-                        <div class="col-sm-8 border">
-                            <div class="row">
-
-                                <div class="col-sm-6">
-                                    <label class="form-label mylabel" for="txtCname">Candidate Name</label>
-                                    <input type="text" id="txtCname" class="form-control" asp-for="cName" placeholder="Enter Candidate's Name" />
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label mylabel" for="txtCnameV1">Candidate Name (Hindi)</label>
-                                    <input type="text" id="txtCnameV1" class="form-control" asp-for="cNameV1" placeholder="Enter Candidate's Name in Hindi" />
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label mylabel" for="ddwnGender">Gender</label>
-                                    <select class="form-select mycontrol" id="ddwnGender" asp-for="gender" name="gender">
-                                        <option value="M">Male</option>
-                                        <option value="F">Female</option>
-                                        <option value="T">Third Gender</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-6">
-                                    <br />
-                                    <input class="form_control" id="chkIndependent" type="checkbox" value="I" asp-for="independent" checked onchange="ShowParty();" />
-                                    <label class="form-label mylabel" for="chkIndependent">Whether Independent</label>
-                                </div>
-                                @{
-                                items.Clear();
-                                foreach (DataRow row in parties.Tables[0].Rows)
-                                {
-                                    SelectListItem s = new SelectListItem();
-                                    s.Text = row["PANAME"].ToString();
-                                    s.Value = row["PACODE"].ToString();
-                                    items.Add(s);
-                                }
-                                }
-                                <div class="col-sm-6" id="divParty" style="display:none">
-                                    <label class="form-label mylabel" for="ddwnParties">Political Party</label>
-                                    <select class="form-select mycontrol" id="ddwnParties" asp-for="pacode" asp-items="@items">
-                                    </select>
-                                </div>
-                                <p></p>
+                    <div class="col-sm-8 border" style="background-color:white;">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label mylabel" for="txtCname">Candidate Name</label>
+                                <input type="text" id="txtCname" class="form-control" asp-for="cName" placeholder="Enter Candidate's Name" required/>
                             </div>
+                            <div class="col-sm-6">
+                                <label class="form-label mylabel" for="txtCnameV1">Candidate Name (Hindi)</label>
+                                <input type="text" id="txtCnameV1" class="form-control" asp-for="cNameV1" placeholder="Enter Candidate's Name in Hindi" required/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label mylabel" for="ddwnGender">Gender</label>
+                                <select class="form-select mycontrol" id="ddwnGender" asp-for="gender" name="gender">
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="T">Third Gender</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <br />
+                            <input class="form_control" id="chkIndependent" name="chkIndependent" type="checkbox" value="True" asp-for="independent" checked onchange="ShowParty();" />
+                                <label class="form-label mylabel" for="chkIndependent">Whether Independent</label>
+                            </div>
+                            @{
+                        items.Clear();
+                        foreach (DataRow row in parties.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["PANAME"].ToString();
+                            s.Value = row["PACODE"].ToString();
+                            items.Add(s);
+                        }
+                            }
+                            <div class="col-sm-6" id="divParty" style="display:none">
+                                <label class="form-label mylabel" for="ddwnParties">Political Party</label>
+                                <select class="form-select mycontrol" id="ddwnParties" asp-for="pacode" asp-items="@items">
+                                </select>
+                            </div>
+                            @{
+                        items.Clear();
+                        foreach (DataRow row in symbols.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["SYMBOL_NAME"].ToString();
+                            s.Value = row["SID"].ToString();
+                            items.Add(s);
+                        }
+                            }
+                            <div class="col-sm-6" id="divSymbol">
+                                <label class="form-label mylabel" for="ddwnSymbol">Symbol</label>
+                            <select class="form-select mycontrol" id="ddwnSymbol" asp-for="sid" asp-items="@items">
+                                </select>
+                            </div>
+                            <p></p>
                         </div>
-
+                        <div class="row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-4">
+                            <button class="btn btn-primary form-control" asp-action="AddCandidate">Save</button>
+                            </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-danger form-control" formnovalidate>Cancel</button>
+                        </div>
+                            <div class="col-sm-2"></div>
+                        </div>
                     </div>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <table class="table mylabel">
+                        <th>S. No.</th>
+                        <th>Candidate Name</th>
+                        <th>Candidate Name(Hindi)</th>
+                        <th>Gender</th>
+                        <th>Party Affiliated To</th>
+                        <th>Symbol</th>
+                        <th colspan="2"></th>
+                        @{
+                            foreach (DataRow row in candidates.Tables[0].Rows)
+                            {
+                                byte[] img = { };
+                                if (row["SYMBOL"].ToString().Length != 0)
+                                {
+                                    img = (byte[])row["SYMBOL"];
+                                }
+                                <tr class="mycontrol">
+                                    <td>@row["CAND_SL_NO"]</td>
+                                    <td>@row["CAND_NAME"]</td>
+                                    <td>@row["CAND_NAME_V1"]</td>
+                                    <td>@row["GENDER"]</td>
+                                    <td>@row["PANAME"]</td>
+                                    <td> <img src="data:image/jpeg;base64,@Convert.ToBase64String(img)" style="width:65px;height:65px;" /></td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
             }
         }
        

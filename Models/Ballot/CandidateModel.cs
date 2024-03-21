@@ -14,5 +14,6 @@
         public bool independent { get; set; }
         public string pacode { get; set; }  
         public string postCause { get; set;}
+        public string sid { get; set; }
     }
 }
