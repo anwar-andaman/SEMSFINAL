@@ -26,12 +26,42 @@
         }
             
     }
+    function EditForm(cid) {
+        
+        document.getElementById('hidStatus').value = "edit";
+        document.getElementById('hidPostCause').value = "edit";
+        document.getElementById('hidEditValue').value = cid;
+    }
+    function Delete(cid) {
+
+        document.getElementById('hidStatus').value = "delete";
+        document.getElementById('hidPostCause').value = "delete";
+        document.getElementById('hidEditValue').value = cid;
+    }
     
 </script>
 
 <form id="frmCandidate" method="post">
    <input type="hidden" id="hidStatus" asp-for="formStatus" />
     <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <input type="hidden" id="hidEditValue" asp-for="editValue" />
+    <div class="modal fade" id="DeleteConfirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure to delete the User?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger" asp-action="DeleteCandidate">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <h2 class="pageheading">Manage Candidates</h2>
@@ -65,11 +95,11 @@
                         s.Value = row["PNO"].ToString();
                         items.Add(s);
                     }
-                    <div class="col-sm-4">
-                        <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
-                        <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
-                        </select>
-                    </div>
+                            <div class="col-sm-4">
+                                <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                                <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
+                                </select>
+                            </div>
                 }
                 items.Clear();
                 foreach (DataRow row in constituencies.Tables[0].Rows)
@@ -79,27 +109,98 @@
                     s.Value = row["CONST_CODE"].ToString();
                     items.Add(s);
                 }
-                <div class="col-sm-4">
-                    <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
-                    <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items" onchange="SubmitForm('ddwnConstituency');">
-                    </select>
-                </div>
+                        <div class="col-sm-4">
+                            <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                            <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items" onchange="SubmitForm('ddwnConstituency');">
+                            </select>
+                        </div>
             }
         </div>
         @{
             if(Model.formStatus=="add" || candidates.Tables[0].Rows.Count==0)
             {
-                <div class="row" id="divAdd" style="margin-top:10px;">
+                        <div class="row" id="divAdd" style="margin-top:10px;">
 
+                            <div class="col-sm-8 border" style="background-color:white;">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel" for="txtCname">Candidate Name</label>
+                                        <input type="text" id="txtCname" class="form-control mycontrol" asp-for="cName" placeholder="Enter Candidate's Name" required/>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel" for="txtCnameV1">Candidate Name (Hindi)</label>
+                                        <input type="text" id="txtCnameV1" class="form-control mycontrol" asp-for="cNameV1" placeholder="Enter Candidate's Name in Hindi" required/>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label class="form-label mylabel" for="ddwnGender">Gender</label>
+                                        <select class="form-select mycontrol" id="ddwnGender" asp-for="gender" name="gender">
+                                            <option value="M">Male</option>
+                                            <option value="F">Female</option>
+                                            <option value="T">Third Gender</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <br />
+                                    <input class="form_control mycontrol" id="chkIndependent" name="chkIndependent" type="checkbox" value="True" asp-for="independent" checked onchange="ShowParty();" />
+                                        <label class="form-label mylabel" for="chkIndependent">Whether Independent</label>
+                                    </div>
+                                    @{
+                        items.Clear();
+                        foreach (DataRow row in parties.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["PANAME"].ToString();
+                            s.Value = row["PACODE"].ToString();
+                            items.Add(s);
+                        }
+                                    }
+                                    <div class="col-sm-6" id="divParty" style="display:none">
+                                        <label class="form-label mylabel" for="ddwnParties">Political Party</label>
+                                        <select class="form-select mycontrol" id="ddwnParties" asp-for="pacode" asp-items="@items">
+                                        </select>
+                                    </div>
+                                    @{
+                        items.Clear();
+                        foreach (DataRow row in symbols.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["SYMBOL_NAME"].ToString();
+                            s.Value = row["SID"].ToString();
+                            items.Add(s);
+                        }
+                                    }
+                                    <div class="col-sm-6" id="divSymbol">
+                                        <label class="form-label mylabel" for="ddwnSymbol">Symbol</label>
+                                    <select class="form-select mycontrol" id="ddwnSymbol" asp-for="sid" asp-items="@items">
+                                        </select>
+                                    </div>
+                                    <p></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-primary form-control" asp-action="SaveCandidate" onclick="document.getElementById('hidStatus').value = 'new';document.getElementById('hidPostCause').value = 'add';">Save</button>
+                                    </div>
+                                <div class="col-sm-4">
+                                        <button class="btn btn-danger form-control" formnovalidate onclick="document.getElementById('hidStatus').value = 'new';document.getElementById('hidPostCause').value = 'cancel';">Cancel</button>
+                                </div>
+                                    <div class="col-sm-2"></div>
+                                </div>
+                            </div>
+                </div>
+            }
+            else if (Model.formStatus=="edit")
+            {
+                <div class="row" id="divAdd" style="margin-top:10px;">
                     <div class="col-sm-8 border" style="background-color:white;">
                         <div class="row">
                             <div class="col-sm-6">
                                 <label class="form-label mylabel" for="txtCname">Candidate Name</label>
-                                <input type="text" id="txtCname" class="form-control" asp-for="cName" placeholder="Enter Candidate's Name" required/>
+                                <input type="text" id="txtCname" class="form-control mycontrol" asp-for="cName" placeholder="Enter Candidate's Name" required />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label mylabel" for="txtCnameV1">Candidate Name (Hindi)</label>
-                                <input type="text" id="txtCnameV1" class="form-control" asp-for="cNameV1" placeholder="Enter Candidate's Name in Hindi" required/>
+                                <input type="text" id="txtCnameV1" class="form-control mycontrol" asp-for="cNameV1" placeholder="Enter Candidate's Name in Hindi" required />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label mylabel" for="ddwnGender">Gender</label>
@@ -109,51 +210,85 @@
                                     <option value="T">Third Gender</option>
                                 </select>
                             </div>
+                           
                             <div class="col-sm-6">
                                 <br />
-                            <input class="form_control" id="chkIndependent" name="chkIndependent" type="checkbox" value="True" asp-for="independent" checked onchange="ShowParty();" />
-                                <label class="form-label mylabel" for="chkIndependent">Whether Independent</label>
+                                @{
+                                    if (Model.independent==true)
+                                    {
+                                        <input class="form_control mycontrol" id="chkIndependent" name="chkIndependent" type="checkbox" value="True" asp-for="independent" checked onchange="ShowParty();" />
+                                    }
+                                    else
+                                    {
+                                        <input class="form_control mycontrol" id="chkIndependent" name="chkIndependent" type="checkbox" value="False" asp-for="independent" onchange="ShowParty();" />
+                                    }
+                                    <label class="form-label mylabel" for="chkIndependent">Whether Independent</label>
+                                }
                             </div>
                             @{
-                        items.Clear();
-                        foreach (DataRow row in parties.Tables[0].Rows)
-                        {
-                            SelectListItem s = new SelectListItem();
-                            s.Text = row["PANAME"].ToString();
-                            s.Value = row["PACODE"].ToString();
-                            items.Add(s);
-                        }
+                                items.Clear();
+                                foreach (DataRow row in parties.Tables[0].Rows)
+                                {
+                                    SelectListItem s = new SelectListItem();
+                                    s.Text = row["PANAME"].ToString();
+                                    s.Value = row["PACODE"].ToString();
+                                    items.Add(s);
+                                }
+                                if (Model.independent == true)
+                                {
+                                    <div class="col-sm-6" id="divParty" style="display:none">
+                                        <label class="form-label mylabel" for="ddwnParties">Political Party</label>
+                                        <select class="form-select mycontrol" id="ddwnParties" asp-for="pacode" asp-items="@items">
+                                        </select>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-sm-6" id="divParty">
+                                        <label class="form-label mylabel" for="ddwnParties">Political Party</label>
+                                        <select class="form-select mycontrol" id="ddwnParties" asp-for="pacode" asp-items="@items">
+                                        </select>
+                                    </div>
+                                }
+                                items.Clear();
+                                foreach (DataRow row in symbols.Tables[0].Rows)
+                                {
+                                    SelectListItem s = new SelectListItem();
+                                    s.Text = row["SYMBOL_NAME"].ToString();
+                                    s.Value = row["SID"].ToString();
+                                    items.Add(s);
+                                }
+                                if (Model.independent == true)
+                                {
+                                    <div class="col-sm-6" id="divSymbol">
+                                        <label class="form-label mylabel" for="ddwnSymbol">Symbol</label>
+                                        <select class="form-select mycontrol" id="ddwnSymbol" asp-for="sid" asp-items="@items">
+                                        </select>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-sm-6" id="divSymbol" style="display:none;">
+                                        <label class="form-label mylabel" for="ddwnSymbol">Symbol</label>
+                                        <select class="form-select mycontrol" id="ddwnSymbol" asp-for="sid" asp-items="@items">
+                                        </select>
+                                    </div>
+                                }
                             }
-                            <div class="col-sm-6" id="divParty" style="display:none">
-                                <label class="form-label mylabel" for="ddwnParties">Political Party</label>
-                                <select class="form-select mycontrol" id="ddwnParties" asp-for="pacode" asp-items="@items">
-                                </select>
-                            </div>
-                            @{
-                        items.Clear();
-                        foreach (DataRow row in symbols.Tables[0].Rows)
-                        {
-                            SelectListItem s = new SelectListItem();
-                            s.Text = row["SYMBOL_NAME"].ToString();
-                            s.Value = row["SID"].ToString();
-                            items.Add(s);
-                        }
-                            }
-                            <div class="col-sm-6" id="divSymbol">
-                                <label class="form-label mylabel" for="ddwnSymbol">Symbol</label>
-                            <select class="form-select mycontrol" id="ddwnSymbol" asp-for="sid" asp-items="@items">
-                                </select>
+                            <div class="col-sm-6">
+                                <label class="form-label mylabel" for="numSlno">Serial Number</label>
+                                <input type="number" id="numSlno" class="form-control" asp-for="slNo" placeholder="Enter Serial Number" required min="1" />
                             </div>
                             <p></p>
                         </div>
                         <div class="row">
                             <div class="col-sm-2"></div>
                             <div class="col-sm-4">
-                            <button class="btn btn-primary form-control" asp-action="AddCandidate">Save</button>
+                                <button class="btn btn-primary form-control" asp-action="UpdateCandidate" onclick="document.getElementById('hidStatus').value = 'new';document.getElementById('hidPostCause').value = 'update';">Update</button>
                             </div>
-                        <div class="col-sm-4">
-                            <button class="btn btn-danger form-control" formnovalidate>Cancel</button>
-                        </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-danger form-control" formnovalidate onclick="document.getElementById('hidStatus').value = 'new';document.getElementById('hidPostCause').value = 'cancel';">Cancel</button>
+                            </div>
                             <div class="col-sm-2"></div>
                         </div>
                     </div>
@@ -161,16 +296,19 @@
             }
             else
             {
-                <div>
-                    <table class="table mylabel">
-                        <th>S. No.</th>
-                        <th>Candidate Name</th>
-                        <th>Candidate Name(Hindi)</th>
-                        <th>Gender</th>
-                        <th>Party Affiliated To</th>
-                        <th>Symbol</th>
-                        <th colspan="2"></th>
-                        @{
+                        <div class="col-sm-2" style="margin-top:10px;">
+                            <button class="btn btn-primary form-control" formnovalidate onclick="document.getElementById('hidStatus').value = 'add';">Add Candidate</button>
+                        </div>
+                        <div>
+                            <table class="table mylabel " style="text-align:center">
+                                <th>S. No.</th>
+                                <th>Candidate Name</th>
+                                <th>Candidate Name(Hindi)</th>
+                                <th>Gender</th>
+                                <th>Party Affiliated To</th>
+                                <th>Symbol</th>
+                                <th colspan="2"></th>
+                                @{
                             foreach (DataRow row in candidates.Tables[0].Rows)
                             {
                                 byte[] img = { };
@@ -185,11 +323,14 @@
                                     <td>@row["GENDER"]</td>
                                     <td>@row["PANAME"]</td>
                                     <td> <img src="data:image/jpeg;base64,@Convert.ToBase64String(img)" style="width:65px;height:65px;" /></td>
+                                    <td><button class="btn btn-link link-primary" onclick="EditForm(@row["CID"]);">Edit</button></td>
+                                    <td><button type="button" class="btn btn-link link-danger" data-bs-toggle="modal" data-bs-target="#DeleteConfirm" onclick="Delete(@row["CID"]);">Delete</button></td>
+                                                    
                                 </tr>
                             }
-                        }
-                    </table>
-                </div>
+                                }
+                            </table>
+                        </div>
             }
         }
        

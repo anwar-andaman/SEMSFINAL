@@ -1,0 +1,99 @@
+﻿@model SEMS.Models.Ballot.BallotModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "BallotPaper";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet posts = ViewBag.posts, panchayats = ViewBag.panchayats, constituencies = ViewBag.constituencies;
+}
+<script>
+    function SubmitForm(item)
+    {
+        document.getElementById('hidPostCause').value = item;
+        document.getElementById('frmBallotPaper').submit();
+    }
+    function GenerateBallot() {
+        var con = document.getElementById('ddwnConstituency').value;
+        var newurl = "https://" + window.location.host + "/Reports/BallotPaper/" + con;
+        window.open(newurl);
+    }
+</script> 
+
+<form id="frmBallotPaper" method="post">
+    <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6" id="divMain">
+                <div class="row">
+                    <h3 class="pageheading">Ballot Paper Generation</h3>
+                    <hr />
+                    @{
+                        List<SelectListItem>
+                        items = new List<SelectListItem>();
+                        foreach (DataRow row in posts.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["POSTNAME"].ToString();
+                            s.Value = row["TYPE_CODE"].ToString();
+                            items.Add(s);
+                        }
+                    }
+                    <div class="col-sm-3">
+                        <label class="form-label mylabel" for="ddwnPost">Contesting For</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <select class="form-select mycontrol" id="ddwnPost" asp-for="pstCode" asp-items="@items" onchange="SubmitForm('ddwnPost');">
+                        </select>
+                    </div>
+                   
+                    @{
+                        if (Model.pstCode == "1")
+                        {
+                            items.Clear();
+                            foreach (DataRow row in panchayats.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["PAN_NAME"].ToString();
+                                s.Value = row["PNO"].ToString();
+                                items.Add(s);
+                            }
+                            <div class="col-sm-3" style="margin-top:10px;">
+                                <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                            </div>
+                            <div class="col-sm-9" style="margin-top:10px;">
+                                <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
+                                </select>
+                            </div>
+                           
+                           
+                        }
+                        items.Clear();
+                        foreach (DataRow row in constituencies.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["CONST_NAME"].ToString();
+                            s.Value = row["CONST_CODE"].ToString();
+                            items.Add(s);
+                        }
+                        <div class="col-sm-3" style="margin-top:10px;">
+                            <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                        </div>
+                        <div class="col-sm-9" style="margin-top:10px;">
+                            
+                            <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items">
+                            </select>
+                        </div>
+                    }
+                    <p></p>
+                    <hr />
+                </div>
+                <div class="row">
+                    <div class="col-7">
+                    </div>
+                    <div class="col-sm-5">
+                        <button type="button" onclick="GenerateBallot();" class="btn btn-danger form-control">Generate Ballot Paper</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -739,6 +739,7 @@ namespace SEMS.Controllers
 
             Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
             report.ReportPath = reportPath;
+            
             report.DataSources.Add(new ReportDataSource("PSLIST", ds.Tables[0]));
             report.DataSources.Add(new ReportDataSource("PARAMETER", dt));
             // report.SetParameters(new[] { new ReportParameter("Parameter1", "Parameter value") });
@@ -749,6 +750,45 @@ namespace SEMS.Controllers
             var result = new FileStreamResult(strm, "application/pdf");
             // return File(pdf, mimeType, "myreport.pdf", false);
             return File(strm, mimeType);
+        }
+        #endregion
+
+        #region BALLOT PAPER GENERATION
+        public IActionResult BallotPaper()
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            System.Data.DataColumn col1 = new System.Data.DataColumn("REVYEAR");
+            System.Data.DataColumn col2 = new System.Data.DataColumn("HEADER");
+            dt.Columns.Add(col1);
+            dt.Columns.Add(col2);
+            System.Data.DataRow dr = dt.NewRow();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+
+            // Dictionary<string, string> parameters = new Dictionary<string, string>();
+            string reportPath = "";
+            reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayat.rdlc";
+            dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
+            dr["REVYEAR"] = 2024;
+            dt.Rows.Add(dr);
+            qry = "SELECT * FROM NOMINATIONS AS C LEFT JOIN PARTY AS P ON C.PACODE = P.PACODE LEFT JOIN SYMBOLS AS S ON ";
+            qry += "(P.SID = S.SID OR C.SID=S.SID) WHERE CONST_CODE=274 ORDER BY CAND_SL_NO";
+            ds = dm.create_dataset(qry);
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("CANDIDATES", ds.Tables[0]));
+            //report.DataSources.Add(new ReportDataSource("PARAMETER", dt));
+            // report.SetParameters(new[] { new ReportParameter("Parameter1", "Parameter value") });
+            byte[] pdf = report.Render("PDF");
+            //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+            // return File(result.MainStream, mimeType);
+            Stream strm = new MemoryStream(pdf);
+            var result = new FileStreamResult(strm, "application/pdf");
+            // return File(pdf, mimeType, "myreport.pdf", false);
+            return File(strm, mimeType);
+            return View();
         }
         #endregion
     }

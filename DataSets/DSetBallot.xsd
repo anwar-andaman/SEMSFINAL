@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DSetBallot" targetNamespace="http://tempuri.org/DSetBallot.xsd" xmlns:mstns="http://tempuri.org/DSetBallot.xsd" xmlns="http://tempuri.org/DSetBallot.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=.;Initial Catalog=STATE_ELECTION;Persist Security Info=True;User ID=sa;Password=sa@Admin;Encrypt=False" IsAppSettingsProperty="false" Modifier="Assembly" Name="anwar.STATE_ELECTION.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="NOMINATIONSTableAdapter" GeneratorDataComponentClassName="NOMINATIONSTableAdapter" Name="NOMINATIONS" UserDataComponentName="NOMINATIONSTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT * FROM NOMINATIONS AS C JOIN SYMBOLS AS S ON C.SID=S.SID WHERE CONST_CODE=1</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="CID" DataSetColumn="CID" />
+              <Mapping SourceColumn="E_CODE" DataSetColumn="E_CODE" />
+              <Mapping SourceColumn="PSTCODE" DataSetColumn="PSTCODE" />
+              <Mapping SourceColumn="CONST_CODE" DataSetColumn="CONST_CODE" />
+              <Mapping SourceColumn="CAND_NAME" DataSetColumn="CAND_NAME" />
+              <Mapping SourceColumn="CAND_NAME_V1" DataSetColumn="CAND_NAME_V1" />
+              <Mapping SourceColumn="CAND_SL_NO" DataSetColumn="CAND_SL_NO" />
+              <Mapping SourceColumn="GENDER" DataSetColumn="GENDER" />
+              <Mapping SourceColumn="AGE" DataSetColumn="AGE" />
+              <Mapping SourceColumn="PACODE" DataSetColumn="PACODE" />
+              <Mapping SourceColumn="INDEPENDENT" DataSetColumn="INDEPENDENT" />
+              <Mapping SourceColumn="SID" DataSetColumn="SID" />
+              <Mapping SourceColumn="SID1" DataSetColumn="SID1" />
+              <Mapping SourceColumn="SYMBOL_NAME" DataSetColumn="SYMBOL_NAME" />
+              <Mapping SourceColumn="SYMBOL" DataSetColumn="SYMBOL" />
+              <Mapping SourceColumn="LARGESYMBOL" DataSetColumn="LARGESYMBOL" />
+              <Mapping SourceColumn="temp" DataSetColumn="temp" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DSetBallot" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DSetBallot" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DSetBallot">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="NOMINATIONS" msprop:Generator_RowClassName="NOMINATIONSRow" msprop:Generator_RowEvHandlerName="NOMINATIONSRowChangeEventHandler" msprop:Generator_RowDeletedName="NOMINATIONSRowDeleted" msprop:Generator_RowDeletingName="NOMINATIONSRowDeleting" msprop:Generator_RowEvArgName="NOMINATIONSRowChangeEvent" msprop:Generator_TablePropName="NOMINATIONS" msprop:Generator_RowChangedName="NOMINATIONSRowChanged" msprop:Generator_UserTableName="NOMINATIONS" msprop:Generator_RowChangingName="NOMINATIONSRowChanging" msprop:Generator_TableClassName="NOMINATIONSDataTable" msprop:Generator_TableVarName="tableNOMINATIONS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="CID" msprop:Generator_ColumnPropNameInTable="CIDColumn" msprop:Generator_ColumnPropNameInRow="CID" msprop:Generator_ColumnVarNameInTable="columnCID" type="xs:int" />
+              <xs:element name="E_CODE" msprop:Generator_UserColumnName="E_CODE" msprop:Generator_ColumnPropNameInTable="E_CODEColumn" msprop:Generator_ColumnPropNameInRow="E_CODE" msprop:Generator_ColumnVarNameInTable="columnE_CODE" type="xs:short" minOccurs="0" />
+              <xs:element name="PSTCODE" msprop:Generator_UserColumnName="PSTCODE" msprop:Generator_ColumnPropNameInTable="PSTCODEColumn" msprop:Generator_ColumnPropNameInRow="PSTCODE" msprop:Generator_ColumnVarNameInTable="columnPSTCODE" type="xs:unsignedByte" />
+              <xs:element name="CONST_CODE" msprop:Generator_UserColumnName="CONST_CODE" msprop:Generator_ColumnPropNameInTable="CONST_CODEColumn" msprop:Generator_ColumnPropNameInRow="CONST_CODE" msprop:Generator_ColumnVarNameInTable="columnCONST_CODE" type="xs:short" />
+              <xs:element name="CAND_NAME" msprop:Generator_UserColumnName="CAND_NAME" msprop:Generator_ColumnPropNameInTable="CAND_NAMEColumn" msprop:Generator_ColumnPropNameInRow="CAND_NAME" msprop:Generator_ColumnVarNameInTable="columnCAND_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CAND_NAME_V1" msprop:Generator_UserColumnName="CAND_NAME_V1" msprop:Generator_ColumnPropNameInTable="CAND_NAME_V1Column" msprop:Generator_ColumnPropNameInRow="CAND_NAME_V1" msprop:Generator_ColumnVarNameInTable="columnCAND_NAME_V1" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CAND_SL_NO" msprop:Generator_UserColumnName="CAND_SL_NO" msprop:Generator_ColumnPropNameInTable="CAND_SL_NOColumn" msprop:Generator_ColumnPropNameInRow="CAND_SL_NO" msprop:Generator_ColumnVarNameInTable="columnCAND_SL_NO" type="xs:short" minOccurs="0" />
+              <xs:element name="GENDER" msprop:Generator_UserColumnName="GENDER" msprop:Generator_ColumnPropNameInTable="GENDERColumn" msprop:Generator_ColumnPropNameInRow="GENDER" msprop:Generator_ColumnVarNameInTable="columnGENDER">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="AGE" msprop:Generator_UserColumnName="AGE" msprop:Generator_ColumnPropNameInTable="AGEColumn" msprop:Generator_ColumnPropNameInRow="AGE" msprop:Generator_ColumnVarNameInTable="columnAGE" type="xs:unsignedByte" minOccurs="0" />
+              <xs:element name="PACODE" msprop:Generator_UserColumnName="PACODE" msprop:Generator_ColumnPropNameInTable="PACODEColumn" msprop:Generator_ColumnPropNameInRow="PACODE" msprop:Generator_ColumnVarNameInTable="columnPACODE" type="xs:short" minOccurs="0" />
+              <xs:element name="INDEPENDENT" msprop:Generator_UserColumnName="INDEPENDENT" msprop:Generator_ColumnPropNameInTable="INDEPENDENTColumn" msprop:Generator_ColumnPropNameInRow="INDEPENDENT" msprop:Generator_ColumnVarNameInTable="columnINDEPENDENT" type="xs:boolean" />
+              <xs:element name="SID" msprop:Generator_UserColumnName="SID" msprop:Generator_ColumnPropNameInTable="SIDColumn" msprop:Generator_ColumnPropNameInRow="SID" msprop:Generator_ColumnVarNameInTable="columnSID" type="xs:short" minOccurs="0" />
+              <xs:element name="SID1" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnPropNameInRow="SID1" msprop:Generator_ColumnPropNameInTable="SID1Column" msprop:Generator_ColumnVarNameInTable="columnSID1" msprop:Generator_UserColumnName="SID1" type="xs:short" />
+              <xs:element name="SYMBOL_NAME" msprop:Generator_ColumnPropNameInRow="SYMBOL_NAME" msprop:Generator_ColumnPropNameInTable="SYMBOL_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnSYMBOL_NAME" msprop:Generator_UserColumnName="SYMBOL_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SYMBOL" msprop:Generator_ColumnPropNameInRow="SYMBOL" msprop:Generator_ColumnPropNameInTable="SYMBOLColumn" msprop:Generator_ColumnVarNameInTable="columnSYMBOL" msprop:Generator_UserColumnName="SYMBOL" type="xs:base64Binary" />
+              <xs:element name="LARGESYMBOL" msprop:Generator_ColumnPropNameInRow="LARGESYMBOL" msprop:Generator_ColumnPropNameInTable="LARGESYMBOLColumn" msprop:Generator_ColumnVarNameInTable="columnLARGESYMBOL" msprop:Generator_UserColumnName="LARGESYMBOL" type="xs:base64Binary" minOccurs="0" />
+              <xs:element name="temp" msprop:Generator_ColumnPropNameInRow="temp" msprop:Generator_ColumnPropNameInTable="tempColumn" msprop:Generator_ColumnVarNameInTable="columntemp" msprop:Generator_UserColumnName="temp" type="xs:base64Binary" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:NOMINATIONS" />
+      <xs:field xpath="mstns:CID" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

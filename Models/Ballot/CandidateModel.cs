@@ -7,13 +7,14 @@
         public string cNameV1 { get; set; }
         public string pstCode { get; set; }
         public string constCode { get; set; }
-        public int slNo { get; set; }
+        public string slNo { get; set; }
         public string panchayat { get; set; }
-        public char gender { get; set; }
+        public string gender { get; set; }
         public string formStatus { get; set; }
         public bool independent { get; set; }
         public string pacode { get; set; }  
         public string postCause { get; set;}
         public string sid { get; set; }
+        public string editValue { get; set; }
     }
 }
