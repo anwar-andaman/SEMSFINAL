@@ -754,7 +754,7 @@ namespace SEMS.Controllers
         #endregion
 
         #region BALLOT PAPER GENERATION
-        public IActionResult BallotPaper()
+        public IActionResult BallotPaper(int id,string ctype)
         {
             System.Data.DataSet ds = new System.Data.DataSet();
             System.Data.DataTable dt = new System.Data.DataTable();
@@ -767,20 +767,30 @@ namespace SEMS.Controllers
             int extension = (int)(DateTime.Now.Ticks >> 10);
             string mimeType = "application/pdf";
 
-            // Dictionary<string, string> parameters = new Dictionary<string, string>();
+            //Dictionary<string, string> parameters = new Dictionary<string, string>();
             string reportPath = "";
             reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayat.rdlc";
             dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
             dr["REVYEAR"] = 2024;
             dt.Rows.Add(dr);
+            qry = "SELECT D.SHORTNAME DISTRICT,T.SHORTNAME AS TEHSIL,C.CONST_NAME AS CNAME FROM TEHSIL AS T JOIN DISTRICT AS D ON T.DIST_CODE=";
+            qry += "D.DIST_CODE JOIN CONSTITUENCY AS C ON C.TCODE=T.TCODE AND C.CONST_CODE=" + id;
+            ds=dm.create_dataset(qry);
+            string dist, tehsil,cname,header;
+            dist = ds.Tables[0].Rows[0]["DISTRICT"].ToString();
+            tehsil = ds.Tables[0].Rows[0]["TEHSIL"].ToString();
+            cname = ds.Tables[0].Rows[0]["CNAME"].ToString();
+            header = id.ToString() + "-" + tehsil + "/" + ctype + "/" + dist + "/" + cname + "/2024/General";
             qry = "SELECT * FROM NOMINATIONS AS C LEFT JOIN PARTY AS P ON C.PACODE = P.PACODE LEFT JOIN SYMBOLS AS S ON ";
-            qry += "(P.SID = S.SID OR C.SID=S.SID) WHERE CONST_CODE=274 ORDER BY CAND_SL_NO";
+            qry += "(P.SID = S.SID OR C.SID=S.SID) WHERE CONST_CODE=" + id + " ORDER BY CAND_SL_NO";
             ds = dm.create_dataset(qry);
             Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
             report.ReportPath = reportPath;
             report.DataSources.Add(new ReportDataSource("CANDIDATES", ds.Tables[0]));
             //report.DataSources.Add(new ReportDataSource("PARAMETER", dt));
-            // report.SetParameters(new[] { new ReportParameter("Parameter1", "Parameter value") });
+            int cnt = ds.Tables[0].Rows.Count;
+            report.SetParameters(new[] { new ReportParameter("rows", cnt.ToString()) });
+            report.SetParameters(new[] { new ReportParameter("header", header) });
             byte[] pdf = report.Render("PDF");
             //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
             // return File(result.MainStream, mimeType);

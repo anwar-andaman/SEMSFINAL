@@ -13,7 +13,8 @@
     }
     function GenerateBallot() {
         var con = document.getElementById('ddwnConstituency').value;
-        var newurl = "https://" + window.location.host + "/Reports/BallotPaper/" + con;
+        var ctype = document.getElementById('ddwnPost').value;
+        var newurl = "https://" + window.location.host + "/Reports/BallotPaper/" + con + "?ctype=" + ctype;
         window.open(newurl);
     }
 </script> 
