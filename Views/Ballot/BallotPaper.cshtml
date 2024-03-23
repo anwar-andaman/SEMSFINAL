@@ -6,6 +6,11 @@
     DataSet posts = ViewBag.posts, panchayats = ViewBag.panchayats, constituencies = ViewBag.constituencies;
 }
 <script>
+   /* var element = document.getElementById('divPostal');
+    alert("SDfasd");
+    var element = document.getElementById("divPostal");
+    var computedDisplay = window.getComputedStyle(element).getPropertyValue("display");
+    alert(computedDisplay);*/
     function SubmitForm(item)
     {
         document.getElementById('hidPostCause').value = item;
@@ -14,8 +19,48 @@
     function GenerateBallot() {
         var con = document.getElementById('ddwnConstituency').value;
         var ctype = document.getElementById('ddwnPost').value;
-        var newurl = "https://" + window.location.host + "/Reports/BallotPaper/" + con + "?ctype=" + ctype;
+        if (document.getElementById('radNormal').checked) {
+            btype = "N";
+        }
+        else { 
+            btype = "P";
+        }
+        var fromValue = parseInt(document.getElementById('numFrom').value);
+        var toValue = parseInt(document.getElementById('numTo').value);
+        var newurl = "https://" + window.location.host + "/Reports/BallotPaper/" + con + "?ctype=" + ctype + "&btype=" + btype + "&from=" + fromValue + "&to=" + toValue;
         window.open(newurl);
+    }
+    function SwitchPostal() { 
+        var con = document.getElementById('radNormal').checked;
+        document.getElementById('numTo').value = 1;
+        document.getElementById('numFrom').value = 1;
+        if (con == true) {
+            document.getElementById('divPostal').style.display = "none";
+        }
+        else { 
+            document.getElementById('divPostal').style.display = "flex";
+        }
+    }
+    function SetToValue() {
+        var fromValue = parseInt(document.getElementById('numFrom').value);
+        if (fromValue == NaN) {
+            document.getElementById('numFrom').value = "1";
+        }
+        else { 
+            document.getElementById('numTo').min = fromValue;
+            document.getElementById('numTo').value = fromValue;
+        }
+        
+
+    }
+    function CheckToValue() {
+        var fromValue = parseInt(document.getElementById('numFrom').value);
+        var toValue = parseInt(document.getElementById('numTo').value);
+        if (toValue < fromValue) {
+            alert("To Value cannot be less than From Value");
+            document.getElementById('numTo').value = fromValue;
+        }
+        
     }
 </script> 
 
@@ -26,6 +71,15 @@
             <div class="col-sm-6" id="divMain">
                 <div class="row">
                     <h3 class="pageheading">Ballot Paper Generation</h3>
+                    <hr />
+                    <div class="col-sm-5">
+                        <input type="radio" id="radNormal" name="ballotType" asp-for="ballotType" value="N" checked onchange="SwitchPostal();" />
+                        <label for="radNormal" class="form-label mylabel">Normal Ballot</label>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="radio" id="radPostal" name="ballotType" asp-for="ballotType" value="P" onchange="SwitchPostal();" />
+                        <label for="radPostal" class="form-label mylabel">Postal Ballot</label>
+                    </div>
                     <hr />
                     @{
                         List<SelectListItem>
@@ -57,13 +111,13 @@
                                 s.Value = row["PNO"].ToString();
                                 items.Add(s);
                             }
-                            <div class="col-sm-3" style="margin-top:10px;">
-                                <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
-                            </div>
-                            <div class="col-sm-9" style="margin-top:10px;">
-                                <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
-                                </select>
-                            </div>
+                                                                            <div class="col-sm-3" style="margin-top:10px;">
+                                                                                <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                                                                            </div>
+                                                                            <div class="col-sm-9" style="margin-top:10px;">
+                                                                                <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
+                                                                                </select>
+                                                                            </div>
                            
                            
                         }
@@ -75,18 +129,32 @@
                             s.Value = row["CONST_CODE"].ToString();
                             items.Add(s);
                         }
-                        <div class="col-sm-3" style="margin-top:10px;">
-                            <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
-                        </div>
-                        <div class="col-sm-9" style="margin-top:10px;">
-                            
-                            <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items">
-                            </select>
-                        </div>
                     }
-                    <p></p>
-                    <hr />
+                    <div class="col-sm-3" style="margin-top:10px;">
+                        <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                    </div>
+                    <div class="col-sm-9" style="margin-top:10px;">
+                        <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items">
+                        </select>
+                    </div>
                 </div>
+                <div class="row" id="divPostal" style="margin-top:10px; display:none">
+                    <div class="col-sm-3">
+                        <label class="form-label mylabel" for="numFrom">From Sl. No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="number" min="1" id="numFrom" class="form-control mycontrol" value="1" onchange="SetToValue();" />
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label mylabel" for="numTo">To Sl. No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="number" min="1" id="numTo" class="form-control mycontrol" value="1" onchange="CheckToValue();" />
+                    </div>
+                   
+                </div>
+                <p></p>
+                <hr />
                 <div class="row">
                     <div class="col-7">
                     </div>

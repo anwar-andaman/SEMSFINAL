@@ -9,6 +9,8 @@ using System.Security.Cryptography;
 using System.Reflection.Metadata;
 //using AspNetCore.Reporting.ReportExecutionService;
 using System.IO;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace SEMS.Controllers
@@ -754,7 +756,7 @@ namespace SEMS.Controllers
         #endregion
 
         #region BALLOT PAPER GENERATION
-        public IActionResult BallotPaper(int id,string ctype)
+        public IActionResult BallotPaper(int id,string ctype,string btype,int from,int to)
         {
             System.Data.DataSet ds = new System.Data.DataSet();
             System.Data.DataTable dt = new System.Data.DataTable();
@@ -769,7 +771,15 @@ namespace SEMS.Controllers
 
             //Dictionary<string, string> parameters = new Dictionary<string, string>();
             string reportPath = "";
-            reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayat.rdlc";
+            if (btype=="P")
+            {
+                reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayatPostal.rdlc";
+            }
+            else
+            {
+                reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayat.rdlc";
+            }
+            
             dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
             dr["REVYEAR"] = 2024;
             dt.Rows.Add(dr);
@@ -784,6 +794,18 @@ namespace SEMS.Controllers
             qry = "SELECT * FROM NOMINATIONS AS C LEFT JOIN PARTY AS P ON C.PACODE = P.PACODE LEFT JOIN SYMBOLS AS S ON ";
             qry += "(P.SID = S.SID OR C.SID=S.SID) WHERE CONST_CODE=" + id + " ORDER BY CAND_SL_NO";
             ds = dm.create_dataset(qry);
+            //System.Data.DataColumn fromTo = new System.Data.DataColumn("SNO");
+            //ds.Tables[0].Columns.Add(fromTo);
+            //System.Data.DataSet ds1 = new System.Data.DataSet();
+            //ds1 = ds.Copy();
+            //ds1.Tables[0].Rows.Clear();
+            //for (int i = fromValue; i <= toValue; i++)
+            //    foreach (DataRow row in ds.Tables[0].Rows)
+            //    {    
+            //        row["SNO"] = i;
+            //        ds1.Tables[0].ImportRow(row);
+            //    }
+            //int cnt1 = ds1.Tables[0].Rows.Count;    
             Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
             report.ReportPath = reportPath;
             report.DataSources.Add(new ReportDataSource("CANDIDATES", ds.Tables[0]));
@@ -791,14 +813,49 @@ namespace SEMS.Controllers
             int cnt = ds.Tables[0].Rows.Count;
             report.SetParameters(new[] { new ReportParameter("rows", cnt.ToString()) });
             report.SetParameters(new[] { new ReportParameter("header", header) });
-            byte[] pdf = report.Render("PDF");
-            //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
-            // return File(result.MainStream, mimeType);
-            Stream strm = new MemoryStream(pdf);
-            var result = new FileStreamResult(strm, "application/pdf");
+            Stream Mainstrm = new MemoryStream();
+            if (btype=="P")
+            {
+                List<PdfDocument> pdfDocuments = new List<PdfDocument>();
+                for (int i = from; i<=to; i++)
+                {
+                    report.SetParameters(new[] { new ReportParameter("sno", i.ToString()) });
+                    byte[] pdf = report.Render("PDF");
+                    //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+                    // return File(result.MainStream, mimeType);
+                    Stream strm = new MemoryStream(pdf);
+                    var result = new FileStreamResult(strm, "application/pdf");
+                    pdfDocuments.Add(PdfReader.Open(result.FileStream, PdfDocumentOpenMode.Import));
+                }
+                using (PdfDocument mergedPdf = new PdfDocument())
+                {
+                    foreach (var pdfDocument in pdfDocuments)
+                    {
+                        // Copy pages from each document to the merged document
+                        for (int i = 0; i < pdfDocument.PageCount; i++)
+                        {
+                            mergedPdf.AddPage(pdfDocument.Pages[i]);
+                        }
+                    }
+
+                    // Save the merged PDF to a new file or stream
+                    mergedPdf.Save(Mainstrm);
+                }
+                return File(Mainstrm, mimeType);
+            }
+            else
+            {
+                byte[] pdf = report.Render("PDF");
+                //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+                // return File(result.MainStream, mimeType);
+                Stream strm = new MemoryStream(pdf);
+                return File(strm, mimeType);
+                
+            }
+            //
             // return File(pdf, mimeType, "myreport.pdf", false);
-            return File(strm, mimeType);
-            return View();
+            //return File(Mainstrm, mimeType);
+            
         }
         #endregion
     }
