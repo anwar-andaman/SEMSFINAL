@@ -374,5 +374,65 @@ namespace SEMS.Controllers
         }
         #endregion
 
+        #region
+        public IActionResult CandidateList()
+        {
+            BallotModel md = new BallotModel();
+            qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.posts = ds;
+            md.pstCode = ds.Tables[0].Rows[0]["TYPE_CODE"].ToString();
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
+            if (md.pstCode == "1")
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+            }
+            else
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+            }
+            ds = dm.create_dataset(qry);
+            ViewBag.constituencies = ds;
+            md.constCode = ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
+            qry = "SELECT PACODE,PANAME FROM PARTY ORDER BY PANAME";
+            ds = dm.create_dataset(qry);
+            return View(md);
+
+        }
+        [HttpPost]
+        public IActionResult CandidateList(BallotModel md)
+        {
+            qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.posts = ds;
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            if (md.postCause == "ddwnPost")
+            {
+                md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
+            }
+            if (md.pstCode == "1")
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+            }
+            else
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+            }
+            ds = dm.create_dataset(qry);
+            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat")
+            {
+                md.constCode = ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
+            }
+            ViewBag.constituencies = ds;
+            return View(md);
+
+        }
+        #endregion
+
     }
 }

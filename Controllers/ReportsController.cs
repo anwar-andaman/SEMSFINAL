@@ -771,6 +771,7 @@ namespace SEMS.Controllers
 
             //Dictionary<string, string> parameters = new Dictionary<string, string>();
             string reportPath = "";
+            
             if (btype=="P")
             {
                 reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayatPostal.rdlc";
@@ -778,6 +779,7 @@ namespace SEMS.Controllers
             else
             {
                 reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepBallotPanchayat.rdlc";
+                //reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepCandidateListPanchayat.rdlc";
             }
             
             dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
@@ -856,6 +858,102 @@ namespace SEMS.Controllers
             // return File(pdf, mimeType, "myreport.pdf", false);
             //return File(Mainstrm, mimeType);
             
+        }
+        #endregion
+
+        #region CANDIDATE LIST
+        public IActionResult CandidateList(int id, string ctype, string btype, int from, int to)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            System.Data.DataColumn col1 = new System.Data.DataColumn("REVYEAR");
+            System.Data.DataColumn col2 = new System.Data.DataColumn("HEADER");
+            dt.Columns.Add(col1);
+            dt.Columns.Add(col2);
+            System.Data.DataRow dr = dt.NewRow();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+
+            //Dictionary<string, string> parameters = new Dictionary<string, string>();
+            string reportPath = "";
+            reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Ballot\\RepCandidateListPanchayat.rdlc";
+            dr["HEADER"] = "AS PER FINAL MUNICIPAL ROLL";
+            dr["REVYEAR"] = 2024;
+            dt.Rows.Add(dr);
+            qry = "SELECT D.SHORTNAME DISTRICT,T.SHORTNAME AS TEHSIL,C.CONST_NAME AS CNAME FROM TEHSIL AS T JOIN DISTRICT AS D ON T.DIST_CODE=";
+            qry += "D.DIST_CODE JOIN CONSTITUENCY AS C ON C.TCODE=T.TCODE AND C.CONST_CODE=" + id;
+            ds = dm.create_dataset(qry);
+            string dist, tehsil, cname, header;
+            dist = ds.Tables[0].Rows[0]["DISTRICT"].ToString();
+            tehsil = ds.Tables[0].Rows[0]["TEHSIL"].ToString();
+            cname = ds.Tables[0].Rows[0]["CNAME"].ToString();
+            header = id.ToString() + "-" + tehsil + "/" + ctype + "/" + dist + "/" + cname + "/2024/General";
+            qry = "SELECT * FROM NOMINATIONS AS C LEFT JOIN PARTY AS P ON C.PACODE = P.PACODE LEFT JOIN SYMBOLS AS S ON ";
+            qry += "(P.SID = S.SID OR C.SID=S.SID) WHERE CONST_CODE=" + id + " ORDER BY CAND_SL_NO";
+            ds = dm.create_dataset(qry);
+            //System.Data.DataColumn fromTo = new System.Data.DataColumn("SNO");
+            //ds.Tables[0].Columns.Add(fromTo);
+            //System.Data.DataSet ds1 = new System.Data.DataSet();
+            //ds1 = ds.Copy();
+            //ds1.Tables[0].Rows.Clear();
+            //for (int i = fromValue; i <= toValue; i++)
+            //    foreach (DataRow row in ds.Tables[0].Rows)
+            //    {    
+            //        row["SNO"] = i;
+            //        ds1.Tables[0].ImportRow(row);
+            //    }
+            //int cnt1 = ds1.Tables[0].Rows.Count;    
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("CANDIDATES", ds.Tables[0]));
+            //report.DataSources.Add(new ReportDataSource("PARAMETER", dt));
+            int cnt = ds.Tables[0].Rows.Count;
+            report.SetParameters(new[] { new ReportParameter("rows", cnt.ToString()) });
+            report.SetParameters(new[] { new ReportParameter("header", header) });
+            Stream Mainstrm = new MemoryStream();
+            if (btype == "P")
+            {
+                List<PdfDocument> pdfDocuments = new List<PdfDocument>();
+                for (int i = from; i <= to; i++)
+                {
+                    report.SetParameters(new[] { new ReportParameter("sno", i.ToString()) });
+                    byte[] pdf = report.Render("PDF");
+                    //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+                    // return File(result.MainStream, mimeType);
+                    Stream strm = new MemoryStream(pdf);
+                    var result = new FileStreamResult(strm, "application/pdf");
+                    pdfDocuments.Add(PdfReader.Open(result.FileStream, PdfDocumentOpenMode.Import));
+                }
+                using (PdfDocument mergedPdf = new PdfDocument())
+                {
+                    foreach (var pdfDocument in pdfDocuments)
+                    {
+                        // Copy pages from each document to the merged document
+                        for (int i = 0; i < pdfDocument.PageCount; i++)
+                        {
+                            mergedPdf.AddPage(pdfDocument.Pages[i]);
+                        }
+                    }
+
+                    // Save the merged PDF to a new file or stream
+                    mergedPdf.Save(Mainstrm);
+                }
+                return File(Mainstrm, mimeType);
+            }
+            else
+            {
+                byte[] pdf = report.Render("PDF");
+                //var result = report.Execute(RenderType.Pdf, extension, null, "application/pdf");
+                // return File(result.MainStream, mimeType);
+                Stream strm = new MemoryStream(pdf);
+                return File(strm, mimeType);
+
+            }
+            //
+            // return File(pdf, mimeType, "myreport.pdf", false);
+            //return File(Mainstrm, mimeType);
+
         }
         #endregion
     }
