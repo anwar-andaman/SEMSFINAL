@@ -294,19 +294,23 @@ namespace SEMS.Controllers
         {
             IFormFile ageProof = md.ageProof;
             IFormFile addProof = md.addressProof;
-            byte[] ageData = { }, addData = { };
+            IFormFile photo = md.photo;
+            byte[] ageData = { }, addData = { },photoData= { };
 
             if (ageProof != null && ageProof.Length != 0)
             {
                 var agepr = ageProof.OpenReadStream();
                 var add = addProof.OpenReadStream();
+                var phot = photo.OpenReadStream();
                 var ageStream = new MemoryStream();
                 var addStream = new MemoryStream();
+                var photoStream = new MemoryStream();
                 agepr.CopyTo(ageStream);
                 add.CopyTo(addStream);
-
+                phot.CopyTo(photoStream);
                 ageData = ageStream.ToArray();
                 addData = addStream.ToArray();
+                photoData = photoStream.ToArray();
             }
             string dob, age, addline1, addline2, vcode, post, mobile, email, panMun;
 
@@ -376,12 +380,13 @@ namespace SEMS.Controllers
 
             SqlParameter ageParam = new SqlParameter("ageparam", ageData);
             SqlParameter addParam = new SqlParameter("addparam", addData);
+            SqlParameter photoParam = new SqlParameter("photoparam", photoData);
             qry = "INSERT INTO SE_EROLL.DBO.FORMS(FORM_TYPE,ONLINE_FORM,PAN_MUN,PART_NO,ENAME,RLN_TYPE,RLN_NAME,HOUSE_NO,ADDRESS_LINE1,";
-            qry += "ADDRESS_LINE2,POSTOFF,VCODE,GENDER,AGE,DOB,REVISIONNO,REVISIONYEAR,MOBILENO,EMAIL,ADDRESS_PROOF,AGE_PROOF) VALUES('A',1,'" + panMun;
+            qry += "ADDRESS_LINE2,POSTOFF,VCODE,GENDER,AGE,DOB,REVISIONNO,REVISIONYEAR,MOBILENO,EMAIL,ADDRESS_PROOF,AGE_PROOF,PHOTO) VALUES('A',1,'" + panMun;
             qry += "'," + md.ward + ",'" + md.ename + "','" + md.rlnType + "','" + md.rlnName + "','" + md.houseNo + "',";
             qry += addline1 + "," + addline2 + "," + post + "," + vcode + ",'" + md.gender + "'," + age;
-            qry += "," + dob + "," + md.revisionNo + "," + md.revisionYear + "," + mobile + "," + email + "," + "@ageparam" + "," + "@addparam" + ") SELECT @@IDENTITY;";
-            decimal formid = dm.create_scalar_with_image(qry, ageParam, addParam);
+            qry += "," + dob + "," + md.revisionNo + "," + md.revisionYear + "," + mobile + "," + email + "," + "@ageparam" + "," + "@addparam" + "," + "@photoparam" + ") SELECT @@IDENTITY";
+            decimal formid = dm.create_scalar_with_image(qry, ageParam, addParam, photoParam);
             qry = "SELECT FORM_NO,FORM_DATE FROM SE_EROLL.DBO.FORMS WHERE FORMID=" + formid;
             ds = dm.create_dataset(qry);
             string formno = "";

@@ -41,12 +41,13 @@ namespace SEMS
             con.Close();
             return i;
         }
-        public decimal create_scalar_with_image(String sqlqry, SqlParameter img1, SqlParameter img2)
+        public decimal create_scalar_with_image(String sqlqry, SqlParameter img1, SqlParameter img2, SqlParameter img3)
         {
             makeconnection(ref con);
             SqlCommand cmd = new SqlCommand(sqlqry, con);
             cmd.Parameters.Add(img1);
             cmd.Parameters.Add(img2);
+            cmd.Parameters.Add(img3);
             decimal i = (decimal)cmd.ExecuteScalar();
             con.Close();
             return i;

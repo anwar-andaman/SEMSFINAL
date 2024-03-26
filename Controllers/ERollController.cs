@@ -708,7 +708,7 @@ namespace SEMS.Controllers
                 {
                     qry = "SELECT FH.FORMID,FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,F.ENAME,F.RLN_NAME,F.FORM_NO,CAST(F.FORM_DATE AS DATE) ";
                     qry += "AS FORM_DATE,CASE F.ONLINE_FORM WHEN 1 THEN 'ON' ELSE 'OF' END AS ONLINEFORM,P.PAN_NAME,PL.PART_NAME,F.SLNOINPART,F.EPIC_NO FROM SE_EROLL.DBO.FORM_HISTORY AS FH ";
-                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO ";
+                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
                     qry += "JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType +"' AND PL.PAN_MUN='P' AND FH.STAGE_ID ";
                     qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType +"'))";
 
@@ -717,7 +717,7 @@ namespace SEMS.Controllers
                 {
                     qry = "SELECT FH.FORMID,FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,F.ENAME,F.RLN_NAME,F.FORM_NO,CAST(F.FORM_DATE AS DATE) ";
                     qry += "AS FORM_DATE,CASE F.ONLINE_FORM WHEN 1 THEN 'ON' ELSE 'OF' END AS ONLINEFORM,P.WARD_NAME AS PAN_NAME,PL.PART_NAME,F.SLNOINPART,F.EPIC_NO FROM SE_EROLL.DBO.FORM_HISTORY AS FH ";
-                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO ";
+                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
                     qry += "JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='m' AND FH.STAGE_ID ";
                     qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
                 }
@@ -787,11 +787,34 @@ namespace SEMS.Controllers
                 }
             }//Authorization
 
-            qry = "SELECT P.TCODE,P.PCODE FROM SE_EROLL.DBO.FORMS AS F JOIN SE_EROLL.DBO.PARTLIST AS P ON F.PART_NO=";
+            qry = "SELECT P.TCODE,P.PCODE,F.*,ISNULL(CONVERT(VARCHAR,F.DOB,103),CAST(AGE AS VARCHAR)) AGEDOB FROM SE_EROLL.DBO.FORMS AS F JOIN SE_EROLL.DBO.PARTLIST AS P ON F.PART_NO=";
             qry += "P.PART_NO AND F.PAN_MUN=P.PAN_MUN WHERE F.FORMID=" + md.formid;
             ds = dm.create_dataset(qry);
-            md.tehsil = ds.Tables[0].Rows[0]["TCODE"].ToString();
-            md.panchayat = ds.Tables[0].Rows[0]["PCODE"].ToString();
+            DataRow formRow = ds.Tables[0].Rows[0];
+            md.tehsil = formRow["TCODE"].ToString();
+            md.panchayat = formRow["PCODE"].ToString();
+            md.ward= formRow["PART_NO"].ToString();
+            md.ageProof = (byte[])formRow["AGE_PROOF"];
+            md.addressProof = (byte[])formRow["ADDRESS_PROOF"];
+            md.photo = (byte[])formRow["PHOTO"];
+            md.ename = formRow["ENAME"].ToString();
+            if (formRow["RLN_TYPE"].ToString() == "F")
+                md.rlnType = "FATHER";
+            else if (formRow["RLN_TYPE"].ToString() == "M")
+                md.rlnType = "MOTHER";
+            else if (formRow["RLN_TYPE"].ToString() == "H")
+                md.rlnType = "HUSBAND";
+            else
+                md.rlnType = "OTHER";
+            md.rlnName= formRow["RLN_NAME"].ToString();
+            md.dob= formRow["AGEDOB"].ToString();
+            if (formRow["GENDER"].ToString() == "M")
+                md.gender = "MALE";
+            else if (formRow["GENDER"].ToString() == "F")
+                md.gender = "FEMALE";
+            else
+                md.gender = "THIRD GENDER";
+          
             if (md.panMun == "P")
             {
                 qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
@@ -819,7 +842,7 @@ namespace SEMS.Controllers
                 qry = "SELECT * FROM SE_EROLL.DBO.RLNTYPE ORDER BY RLNTYPE";
                 ds = dm.create_dataset(qry);
                 ViewBag.rlnTypes = ds;
-                qry = "SELECT VCODE,VNAME FROM VILLAGE WHERE TCODE=" + md.addressTehsil + " ORDER BY VNAME";
+                qry = "SELECT VCODE,VNAME FROM VILLAGE /*WHERE TCODE=" + md.addressTehsil + "*/ ORDER BY VNAME";
                 ds = dm.create_dataset(qry);
                 ViewBag.villages = ds;
             }
