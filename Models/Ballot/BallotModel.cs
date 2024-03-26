@@ -7,5 +7,6 @@
         public string panchayat { get; set; }
         public string postCause { get; set; }
         public string ballotType { get; set; }
+        public string panMun {  get; set; }
     }
 }

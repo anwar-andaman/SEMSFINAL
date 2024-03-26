@@ -233,6 +233,18 @@ namespace SEMS.Controllers
         #region RE-ORAGANIZE ELECTORS
         public IActionResult ReOrganizeElectorsPanchayat()
         {
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string electionType = HttpContext.Session.GetString("electionType");
             PanchayatHeaderModel md = new PanchayatHeaderModel();
             if (electionType == "P")
@@ -303,6 +315,18 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ReOrganizeElectorsPanchayat(PanchayatHeaderModel md)
         {
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string electionType = HttpContext.Session.GetString("electionType");
             if (electionType=="P")
             {
@@ -491,6 +515,18 @@ namespace SEMS.Controllers
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError","Home");
             }
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             PanchayatHeaderModel md = new PanchayatHeaderModel();
             string panMun = HttpContext.Session.GetString("electionType");
             if (panMun == "P")
@@ -531,6 +567,18 @@ namespace SEMS.Controllers
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot do any changes in the Roll now. For any assistance, Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
             string panMun = HttpContext.Session.GetString("electionType");
@@ -617,6 +665,18 @@ namespace SEMS.Controllers
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot process forms now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot process forms now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             md.panMun = HttpContext.Session.GetString("electionType");
             return View(md);
         }
@@ -627,6 +687,18 @@ namespace SEMS.Controllers
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot process forms now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot process forms now. For any assistance, Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
             string userType = HttpContext.Session.GetString("logUserType");
@@ -674,7 +746,7 @@ namespace SEMS.Controllers
             }
             return View(md);
         }
-            public IActionResult ProcessForm()
+        public IActionResult ProcessForm()
         {
             ProcessFormModel md = new ProcessFormModel();
             bool allOK = checkAuthorization(25);
@@ -688,31 +760,110 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ProcessForm(ProcessFormModel md)
         {
-            bool allOK = checkAuthorization(25);
-            if (!allOK)
+            {//Checking Authorization and Authenticity
+                bool allOK = checkAuthorization(25);
+                if (!allOK)
+                {
+                    HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                    return RedirectToAction("AuthorizationError", "Home");
+                }
+                if (HttpContext.Session.GetString("logUserType") == "FVO")
+                {
+
+                    //ds = dm.create_dataset(qry);
+                   // ViewBag.forms = ds;
+                }
+                else if (HttpContext.Session.GetString("logUserType") == "AERO")
+                {
+                }
+                else if (HttpContext.Session.GetString("logUserType") == "ERO")
+                {
+
+                }
+                else
+                {
+                    HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                    return RedirectToAction("AuthorizationError", "Home");
+                }
+            }//Authorization
+
+            qry = "SELECT P.TCODE,P.PCODE FROM SE_EROLL.DBO.FORMS AS F JOIN SE_EROLL.DBO.PARTLIST AS P ON F.PART_NO=";
+            qry += "P.PART_NO AND F.PAN_MUN=P.PAN_MUN WHERE F.FORMID=" + md.formid;
+            ds = dm.create_dataset(qry);
+            md.tehsil = ds.Tables[0].Rows[0]["TCODE"].ToString();
+            md.panchayat = ds.Tables[0].Rows[0]["PCODE"].ToString();
+            if (md.panMun == "P")
             {
-                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
-                return RedirectToAction("AuthorizationError", "Home");
+                qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.tehsils = ds;
+                ViewBag.addressTehsils = ds;
+                qry = "SELECT PCODE,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.panchayats = ds;
+                bool flag = false;
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    if (row[0].ToString() == md.panchayat.ToString())
+                    {
+                        flag = true;
+                    }
+                }
+                if (flag == false)
+                {
+                    md.panchayat = "0";
+                }
+                qry = "SELECT CONST_NO,WARD_NAME FROM PAN_WARD WHERE PCODE=" + md.panchayat + " ORDER BY WARD_NAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.wards = ds;
+                qry = "SELECT * FROM SE_EROLL.DBO.RLNTYPE ORDER BY RLNTYPE";
+                ds = dm.create_dataset(qry);
+                ViewBag.rlnTypes = ds;
+                qry = "SELECT VCODE,VNAME FROM VILLAGE WHERE TCODE=" + md.addressTehsil + " ORDER BY VNAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.villages = ds;
             }
-            if (HttpContext.Session.GetString("logUserType")=="FVO")
+            else if (HttpContext.Session.GetString("pan_mun") == "M")
             {
-                
-                ds=dm.create_dataset(qry);
-                ViewBag.forms = ds;
-            }
-            else if (HttpContext.Session.GetString("logUserType") == "AERO")
-            {
-            }
-            else if (HttpContext.Session.GetString("logUserType") == "ERO")
-            {
+                qry = "SELECT M_ID AS TCODE,MC_NAME AS TNAME FROM MUNICIPALS ORDER BY MC_NAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.tehsils = ds;
+                qry = "SELECT WARD_NO AS PCODE,WARD_NAME AS PAN_NAME FROM MUN_WARD WHERE M_ID=" + md.tehsil + " ORDER BY WARD_NO";
+                ds = dm.create_dataset(qry);
+                ViewBag.panchayats = ds;
+                bool flag = false;
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    if (row[0].ToString() == md.panchayat)
+                    {
+                        flag = true;
+                    }
+                }
+                if (flag == false)
+                {
+                    md.panchayat = "0";
+                }
+                qry = "SELECT PART_NO AS CONST_NO,PART_NAME AS WARD_NAME FROM SE_EROLL.DBO.PARTLIST WHERE AREA_TYPE='M' AND CONST_NO=" + md.panchayat + " ORDER BY WARD_NAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.wards = ds;
+                qry = "SELECT * FROM SE_EROLL.DBO.RLNTYPE ORDER BY RLNTYPE";
+                ds = dm.create_dataset(qry);
+                ViewBag.rlnTypes = ds;
+                qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 AND TCODE IN (SELECT TCODE FROM MUNICIPALS) ORDER BY TNAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.addressTehsils = ds;
+                qry = "SELECT VCODE,VNAME FROM VILLAGE WHERE TCODE=" + md.addressTehsil + " ORDER BY VNAME";
+                ds = dm.create_dataset(qry);
+                ViewBag.villages = ds;
 
             }
             else
             {
-                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
-                return RedirectToAction("AuthorizationError", "Home");
+                return RedirectToAction("Home","Home");
             }
-                return View(md);
+            return View(md);
+
+
         }
 
         #endregion

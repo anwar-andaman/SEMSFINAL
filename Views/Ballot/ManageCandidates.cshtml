@@ -7,6 +7,7 @@
     DataSet candidates = ViewBag.candidates,symbols = ViewBag.symbols;
 }
 <script>
+   
     function SubmitForm(item)
     {
         document.getElementById('hidPostCause').value = item;
@@ -67,39 +68,66 @@
             <h2 class="pageheading">Manage Candidates</h2>
             <hr />
         </div>
+        @{
+            if (Context.Session.GetString("electionType") != "P" && Context.Session.GetString("electionType") != "M")
+            {
+                <div class="row">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3">
+                        <input type="radio" id="radPanchayat" asp-for="panMun" value="P" checked onchange="SubmitForm('radio');" />
+                        <label class="form-label mylabel" for="radPanchayat">Panchayat Election</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" id="radMunicipal" asp-for="panMun" value="M" onchange="SubmitForm('radio');" />
+                        <label class="form-label mylabel" for="radMunicipal">Municipal Election</label>
+                    </div>
+                    <div class="col-sm-3"></div>
+                </div>
+                <hr />
+            }
+            else
+            {
+                <input type="hidden" asp-form="panMun"  />
+            }
+        }
         <div class="row" id="divMain">
             @{
                 List<SelectListItem>
                 items = new List<SelectListItem>();
-                foreach (DataRow row in posts.Tables[0].Rows)
+                if (Model.panMun=="P")
                 {
-                    SelectListItem s = new SelectListItem();
-                    s.Text = row["POSTNAME"].ToString();
-                    s.Value = row["TYPE_CODE"].ToString();
-                    items.Add(s);
-                }
-            }
-            <div class="col-sm-4">
-                <label class="form-label mylabel" for="ddwnPost">Contesting For</label>
-                <select class="form-select mycontrol" id="ddwnPost" asp-for="pstCode" asp-items="@items" onchange="SubmitForm('ddwnPost');">
-                </select>
-            </div>
-            @{
-                if (Model.pstCode=="1")
-                {
-                    items.Clear();
-                    foreach (DataRow row in panchayats.Tables[0].Rows)
+                    foreach (DataRow row in posts.Tables[0].Rows)
                     {
                         SelectListItem s = new SelectListItem();
-                        s.Text = row["PAN_NAME"].ToString();
-                        s.Value = row["PNO"].ToString();
+                        s.Text = row["POSTNAME"].ToString();
+                        s.Value = row["TYPE_CODE"].ToString();
                         items.Add(s);
                     }
-                            <div class="col-sm-4">
-                                <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
-                                <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
-                                </select>
-                            </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="ddwnPost">Contesting For</label>
+                        <select class="form-select mycontrol" id="ddwnPost" asp-for="pstCode" asp-items="@items" onchange="SubmitForm('ddwnPost');">
+                        </select>
+                    </div>
+                    if (Model.pstCode == "1")
+                    {
+                        items.Clear();
+                        foreach (DataRow row in panchayats.Tables[0].Rows)
+                        {
+                            SelectListItem s = new SelectListItem();
+                            s.Text = row["PAN_NAME"].ToString();
+                            s.Value = row["PNO"].ToString();
+                            items.Add(s);
+                        }
+                        <div class="col-sm-4">
+                            <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                            <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" name="panchayat" asp-items="@items" onchange="SubmitForm('ddwnPanchayat');">
+                            </select>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <input type="hidden" asp-for="pstCode" />
                 }
                 items.Clear();
                 foreach (DataRow row in constituencies.Tables[0].Rows)
@@ -109,11 +137,11 @@
                     s.Value = row["CONST_CODE"].ToString();
                     items.Add(s);
                 }
-                        <div class="col-sm-4">
-                            <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
-                            <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items" onchange="SubmitForm('ddwnConstituency');">
-                            </select>
-                        </div>
+                <div class="col-sm-4">
+                    <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                    <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constCode" asp-items="@items" onchange="SubmitForm('ddwnConstituency');">
+                    </select>
+                </div>
             }
         </div>
         @{

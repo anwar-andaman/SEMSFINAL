@@ -6,7 +6,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     DataSet party = ViewBag.party, symbols=ViewBag.symbols;
     // Model.symbol = (byte[])party.Tables[0].Rows[0]["SYMBOL"];
-    
+    if (TempData.ContainsKey("message"))
+    {
+        <script>
+            alert("@TempData["message"]");
+        </script>
+    }
 }
 <script>
    // alert("@Model.formStatus");
@@ -20,6 +25,7 @@
     }
    
 </script>
+
 <form id="frmParty" method="post">
     <input type="hidden" id ="hidStatus" asp-for="formStatus" />
     <input type="hidden" id="hidDeleteItem" name="deleteItem"  asp-for="deleteItem"/>
@@ -48,8 +54,8 @@
                     <div class="col-sm-9">
                         <h2 class="pageheading">Manage Political Parties</h2>
                         <hr />
-                        
-                                <div class="row">
+                   
+                       <div class="row">
                                     <div class="col-sm-6">
                                         <label class="form-label mylabel">Party Name</label>
                                         <input type="text" class="form-control mycontrol" id="txtPartyName" asp-for="partyName" required oninvalid="this.setCustomValidity('Party Name must be entered.')" oninput="setCustomValidity('')" />

@@ -429,8 +429,9 @@ namespace SEMS.Controllers
                 {
                     onOff=0;
                 }
+
                 qry = "SELECT H.STAGE_NO,S.STAGE,S.FLOW_LEVEL FROM SE_EROLL.DBO.FORM_HISTORY AS H JOIN SE_EROLL.DBO.FORM_STAGES AS S ";
-                qry += "ON H.STAGE_ID=S.STAGE_ID WHERE FORM_NO='" + formNo + "' AND CAST(FORM_DATE AS DATE)='" + formDate + "' AND ONLINE_FORM=" + onOff;
+                qry += "ON H.STAGE_ID=S.STAGE_ID WHERE FORMID=(SELECT FORMID FROM SE_EROLL.DBO.FORMS WHERE FORM_NO='" + formNo + "' AND CAST(FORM_DATE AS DATE)='" + formDate + "' AND ONLINE_FORM=" + onOff + ")";
                 ds = dm.create_dataset(qry);
                 ViewBag.status = ds;
                 byte maxLevel = 0, level;

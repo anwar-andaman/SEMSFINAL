@@ -282,6 +282,90 @@ namespace SEMS.Controllers
         }
         #endregion
 
+        #region FREEZE DATA
+
+        public ActionResult FreezeData()
+        {
+            string qry;
+            bool allOK = checkAuthorization(4);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError");
+            }
+            if (TempData.ContainsKey("freezeSuccess"))
+            {
+                ViewBag.freezeSuccess = TempData["freezeSuccess"].ToString();
+            }
+            if (TempData.ContainsKey("unfreezeSuccess"))
+            {
+                ViewBag.unfreezeSuccess = TempData["unfreezeSuccess"].ToString();
+            }
+            qry = "SELECT F_ID,FREEZE_ITEM,FREEZED FROM FREEZE_MASTER ORDER BY FREEZE_ITEM";
+            ds = dm.create_dataset(qry);
+            ViewBag.freezeItemList = ds;
+            if (HttpContext.Request.Method == "POST")
+            {
+                ViewBag.freezeItem = HttpContext.Request.Form["ddwnFreezeItem"];
+            }
+            return View();
+        }
+        public ActionResult FreezeItem()
+        {
+            string qry;
+            bool passwordMatched = false;
+            qry = "SELECT PASSWORD FROM USERS WHERE TYPE_ID=1";
+            dm.makeconnection(ref con);
+            ds = dm.create_dataset(qry);
+            foreach (DataRow row in ds.Tables[0].Rows)
+            {
+                if (HttpContext.Request.Form["txtFreezePassword"].ToString() == row[0].ToString())
+                {
+                    qry = "UPDATE FREEZE_MASTER SET FREEZED=1 WHERE F_ID=" + HttpContext.Request.Form["ddwnFreezeItem"];
+                    dm.runquery(qry);
+                    passwordMatched = true;
+                    break;
+                }
+            }
+            if (passwordMatched)
+            {
+                TempData["freezeSuccess"] = "success";
+            }
+            else
+            {
+                TempData["freezeSuccess"] = "failed";
+            }
+            return RedirectToActionPreserveMethod("FreezeData");
+        }
+        public ActionResult UnfreezeItem()
+        {
+            string qry;
+            bool passwordMatched = false;
+            qry = "SELECT PASSWORD FROM USERS WHERE TYPE_ID=1";
+            ds = dm.create_dataset(qry);
+            foreach (DataRow row in ds.Tables[0].Rows)
+            {
+                if (HttpContext.Request.Form["txtunFreezePassword"].ToString() == row[0].ToString())
+                {
+                    qry = "UPDATE FREEZE_MASTER SET FREEZED=0 WHERE F_ID=" + HttpContext.Request.Form["ddwnFreezeItem"];
+                    dm.runquery(qry);
+                    passwordMatched = true;
+                    break;
+                }
+            }
+            if (passwordMatched)
+            {
+                TempData["unfreezeSuccess"] = "success";
+            }
+            else
+            {
+                TempData["unfreezeSuccess"] = "failed";
+            }
+            return RedirectToActionPreserveMethod("FreezeData");
+        }
+
+
+        #endregion
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

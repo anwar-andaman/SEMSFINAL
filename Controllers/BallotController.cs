@@ -5,6 +5,8 @@ using Microsoft.Data.SqlClient;
 using SEMS.Models.Ballot;
 using Microsoft.CodeAnalysis.Elfie.Model;
 using System.Reflection.Emit;
+using System.Linq.Expressions;
+using Microsoft.IdentityModel.Tokens;
 namespace SEMS.Controllers
 {
     public class BallotController : Controller
@@ -63,6 +65,7 @@ namespace SEMS.Controllers
             ViewBag.symbols = ds;
             if (md.formStatus == "save")
                 md.formStatus = "new";
+            
             return View(md);
         }
 
@@ -77,14 +80,22 @@ namespace SEMS.Controllers
         public IActionResult UpdateParty(int id, PolPartyModel md)
         {
             qry = "UPDATE PARTY SET PANAME='" + md.partyName + "',PANAME_V1='" + md.partyNameV1 + "',SHORT_NAME='";
-            qry += md.shortName + "',SHORT_NAME_V1='" + md.shortNameV1 + "',SID=" + md.sid;
+            qry += md.shortName + "',SHORT_NAME_V1='" + md.shortNameV1 + "',SID=" + md.sid + " WHERE PACODE=" + id;
             dm.runquery(qry);
             return RedirectToAction("ManageParties");
         }
         public IActionResult DeleteParty(PolPartyModel md)
         {
-            qry = "DELETE FROM PARTY WHERE PACODE=" + md.deleteItem;
-            dm.runquery(qry);
+            try
+            {
+                qry = "DELETE FROM PARTY WHERE PACODE=" + md.deleteItem;
+                dm.runquery(qry);
+            }
+            catch (Exception ex)
+            {
+                TempData["message"] = "Could not be deleted. One or more candidates affiliated to this Political Party might have been added in the Candidate List. Please check.....";
+            }
+            
             return RedirectToAction("ManageParties");
         }
         #endregion
@@ -92,6 +103,18 @@ namespace SEMS.Controllers
         #region MANAGE SYMBOLS
         public IActionResult ManageSymbols()
         {
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count==0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Ballot Data is Freezed. You cannot do any changes in the Ballot now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"]==true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Ballot Data is Freezed. You cannot do any changes in the Ballot now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             SymbolsModel md = new SymbolsModel();
             qry = "SELECT SID,SYMBOL_NAME,SYMBOL FROM SYMBOLS ORDER BY SYMBOL_NAME";
             ds = dm.create_dataset(qry);
@@ -103,6 +126,18 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ManageSymbols(SymbolsModel md)
         {
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Ballot Data is Freezed. You cannot do any changes in the Ballot now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Ballot Data is Freezed. You cannot do any changes in the Ballot now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT SID,SYMBOL_NAME,SYMBOL FROM SYMBOLS ORDER BY SYMBOL_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.symbols = ds;
@@ -163,7 +198,27 @@ namespace SEMS.Controllers
         #region MANAGE CANDIDATES
         public IActionResult ManageCandidates()
         {
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Candidate List is Freezed. You cannot do any changes in the List now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Candidate List is Freezed. You cannot do any changes in the List now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             CandidateModel md = new CandidateModel();
+            if (HttpContext.Session.GetString("electionType")=="M")
+            {
+                md.panMun = "M";
+            }
+            else
+            {
+                md.panMun = "P";
+            }
             qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
             ds = dm.create_dataset(qry);
             ViewBag.posts = ds;
@@ -172,13 +227,20 @@ namespace SEMS.Controllers
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
             md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
-            if (md.pstCode=="1")
+            if (md.panMun=="P")
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                if (md.pstCode == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                }
             }
             else
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=5 ORDER BY CONST_NO";
             }
             ds = dm.create_dataset(qry);
             ViewBag.constituencies = ds;
@@ -186,7 +248,6 @@ namespace SEMS.Controllers
             qry = "SELECT PACODE,PANAME FROM PARTY ORDER BY PANAME";
             ds = dm.create_dataset(qry);
             ViewBag.parties = ds;
-           
             qry = "SELECT C.CID,C.CAND_SL_NO,C.CAND_NAME,C.CAND_NAME_V1,CASE C.GENDER WHEN 'M' THEN 'Male' WHEN 'F' THEN ";
             qry += "'Female' WHEN 'T' THEN 'Third Gender' END AS GENDER,CASE INDEPENDENT WHEN 1 THEN 'INDEPENDENT' ELSE ";
             qry += "P.PANAME END AS PANAME, S.SYMBOL FROM NOMINATIONS AS C LEFT JOIN PARTY AS P ON C.PACODE = P.PACODE ";
@@ -202,30 +263,51 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ManageCandidates(CandidateModel md)
         {
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Candidate List is Freezed. You cannot do any changes in the List now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Candidate List is Freezed. You cannot do any changes in the List now. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
             ds = dm.create_dataset(qry);
             ViewBag.posts = ds;
             qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
-            if (md.postCause=="ddwnPost")
+           
+            if (md.postCause=="ddwnPost" || md.panchayat.IsNullOrEmpty())
             {
                 md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
             }
-            if (md.pstCode == "1")
+            if (md.panMun=="P")
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                if (md.pstCode == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                }
             }
             else
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=5 ORDER BY CONST_NO";
             }
             ds = dm.create_dataset(qry);
-            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat")
+            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat" || md.postCause == "radio")
             {
                 md.constCode= ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
             }
             ViewBag.constituencies = ds;
+            
             qry = "SELECT PACODE,PANAME FROM PARTY ORDER BY PANAME";
             ds = dm.create_dataset(qry);
             ViewBag.parties = ds;
@@ -318,6 +400,14 @@ namespace SEMS.Controllers
         public IActionResult BallotPaper()
         {
             BallotModel md= new BallotModel();
+            if (HttpContext.Session.GetString("electionType") == "M")
+            {
+                md.panMun = "M";
+            }
+            else
+            {
+                md.panMun = "P";
+            }
             qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
             ds = dm.create_dataset(qry);
             ViewBag.posts = ds;
@@ -326,19 +416,27 @@ namespace SEMS.Controllers
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
             md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
-            if (md.pstCode == "1")
+            if (md.panMun=="P")
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                if (md.pstCode == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                }
             }
             else
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=5 ORDER BY CONST_NO";
             }
+            
             ds = dm.create_dataset(qry);
             ViewBag.constituencies = ds;
             md.constCode = ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
-            qry = "SELECT PACODE,PANAME FROM PARTY ORDER BY PANAME";
-            ds = dm.create_dataset(qry);
+            //qry = "SELECT PACODE,PANAME FROM PARTY ORDER BY PANAME";
+           // ds = dm.create_dataset(qry);
             return View(md);
             
         }
@@ -351,20 +449,30 @@ namespace SEMS.Controllers
             qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
-            if (md.postCause == "ddwnPost")
+            
+            if (md.postCause == "ddwnPost" || md.panchayat.IsNullOrEmpty())
             {
                 md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
             }
-            if (md.pstCode == "1")
+            if (md.panMun == "P")
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                if (md.pstCode == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                }
             }
             else
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=5 ORDER BY CONST_NO";
             }
+            
             ds = dm.create_dataset(qry);
-            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat")
+            
+            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat" || md.postCause == "ddwnPanMun")
             {
                 md.constCode = ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
             }
@@ -378,6 +486,14 @@ namespace SEMS.Controllers
         public IActionResult CandidateList()
         {
             BallotModel md = new BallotModel();
+            if (HttpContext.Session.GetString("electionType") == "M")
+            {
+                md.panMun = "M";
+            }
+            else
+            {
+                md.panMun = "P";
+            }
             qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
             ds = dm.create_dataset(qry);
             ViewBag.posts = ds;
@@ -386,14 +502,22 @@ namespace SEMS.Controllers
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
             md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
-            if (md.pstCode == "1")
+            if (md.panMun=="P")
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                if (md.pstCode == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                }
             }
             else
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=5 ORDER BY CONST_NO";
             }
+            
             ds = dm.create_dataset(qry);
             ViewBag.constituencies = ds;
             md.constCode = ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
@@ -411,20 +535,28 @@ namespace SEMS.Controllers
             qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
-            if (md.postCause == "ddwnPost")
+            if (md.postCause == "ddwnPost" || md.panchayat.IsNullOrEmpty())
             {
                 md.panchayat = ds.Tables[0].Rows[0]["PNO"].ToString();
             }
-            if (md.pstCode == "1")
+            if (md.panMun == "P")
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                if (md.pstCode == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=1 AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                }
             }
             else
             {
-                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=" + md.pstCode + " ORDER BY CONST_NAME";
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE=5 ORDER BY CONST_NO";
             }
+
             ds = dm.create_dataset(qry);
-            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat")
+            if (md.postCause == "ddwnPost" || md.postCause == "ddwnPanchayat" || md.postCause == "ddwnPanMun")
             {
                 md.constCode = ds.Tables[0].Rows[0]["CONST_CODE"].ToString();
             }

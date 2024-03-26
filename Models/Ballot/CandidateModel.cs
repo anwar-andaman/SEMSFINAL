@@ -16,5 +16,6 @@
         public string postCause { get; set;}
         public string sid { get; set; }
         public string editValue { get; set; }
+        public string panMun { get; set; }
     }
 }
