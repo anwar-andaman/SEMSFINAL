@@ -35,6 +35,8 @@
         public byte[] ageProof { get; set; } = { };
         public byte[] addressProof { get; set; } = { };
         public byte[] photo { get; set; } = { };
+        public bool electorFound { get; set; }
+        public string remarks { get; set; }
 
 
     }

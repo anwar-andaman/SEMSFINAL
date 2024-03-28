@@ -7,18 +7,48 @@
     DataSet rlnTypes = ViewBag.rlnTypes, villages = ViewBag.villages, addressTehsils = ViewBag.addressTehsils;
     string logUserType = Context.Session.GetString("logUserType");
     string selectedPanchayat = ViewBag.selectedPanchayat;
-    DataSet selectedWard = ViewBag.selectedWard;
+    DataSet selectedWard = ViewBag.selectedWard,formHistory=ViewBag.formHistory;
+
 }
 <script>
     function EditPS() { 
-        document.getElementById('ddwnTehsil').disabled = false;
-        document.getElementById('ddwnPanchayat').disabled = false;
-        document.getElementById('ddwnWard').disabled = false;
-        document.getElementById('btnEditPS').style.display = "none";
-        document.getElementById('ddwnWard').focus();
+        t = document.getElementById('btnEditPS');
+        if (t.value == "Edit Polling Station") { 
+            //document.getElementById('ddwnTehsil').disabled = false;
+            document.getElementById('ddwnPanchayat').disabled = false;
+            document.getElementById('ddwnPanchayat').remove(0);
+            document.getElementById('ddwnWard').disabled = false;
+            document.getElementById('ddwnWard').focus();
+            document.getElementById('hidPostCause').value = "editPS";
+            t.value = "Cancel";
+            document.getElementById('divMain').style.display = "none";
+        }
+        else
+        {
+            document.getElementById('hidPostCause').value = null;
+            document.getElementById('frmProcessForm').submit();
+            
+        }
+        
+        
     }
-    function SubmitForm() { 
+    function SubmitForm(item) { 
+        //document.getElementById('hidPostCause').value = item;
         document.getElementById('frmProcessForm').submit();
+    }
+    function ShowMain()
+    {
+        if (document.getElementById('ddwnWard').value == "") 
+        { 
+            document.getElementById('divMain').style.display = "none";
+            document.getElementById('btnSend').innerHTML = 'Update and Send for Field Verification';
+        }
+        else
+        {
+            document.getElementById('divMain').style.display = "flex";
+            document.getElementById('btnSend').innerHTML = 'Update and Send for Field Verification';
+        }
+        
     }
 </script>
 
@@ -99,8 +129,16 @@
                         // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
                         items.Add(s);
                     }
+                    // if (Model.postCause == "editPS")
+                    // {
+                    //         <select asp-for="tehsil" id="ddwnTehsil" name="tehsil" class="form-select mycontrol" asp-items="@items" onchange="SubmitForm('tehsil');" ></select>
+                    // }
+                    // else
+                    {
+                                            <select asp-for="tehsil" id="ddwnTehsil" name="tehsil" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('btnSend').innerHTML='Update and Send for Field Verification';SubmitForm('tehsil');" disabled></select>
+                    }
                 }
-                <select asp-for="tehsil" id="ddwnTehsil" name="tehsil" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('hidPostCause').value='tehsil';document.getElementById ('frmProcessForm').submit ();" disabled></select>
+                
             </div>
             <div class="col-sm-4">
                 <label class="form-label mylabel " for="ddwnPanchayat">Panchayat</label>
@@ -116,9 +154,18 @@
                         s.Value = row["PCODE"].ToString();
                         items.Add(s);
                     }
-                }
-                <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('hidPostCause').value='panchayat';document.getElementById ('frmProcessForm').submit ();" disabled></select>
+                    if (Model.postCause == "editPS")
+                    {
+                                            <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="SubmitForm('panchayat');"></select>
+                    }
+                    else
+                    {
+                                            <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('btnSend').innerHTML='Update and Send for Field Verification';SubmitForm('panchayat');" disabled></select>
+                    }
+                }                    
+                
             </div>
+           
             <div class="col-sm-4">
                 <label class="form-label mylabel" for="ddwnWard">Ward</label>
                 @{
@@ -134,10 +181,19 @@
                         // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
                         items.Add(s);
                     }
+                    if (Model.postCause == "editPS")
+                    {
+                                            <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="ShowMain();"></select>
+                    }
+                    else
+                    {
+                        <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="ShowMain();" disabled></select>
+                    }
+                                        <input type="button" id="btnEditPS" type="button" class="btn btn-link link-success" onclick="EditPS();" value="Edit Polling Station"></input>
                 }
-                <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" disabled></select>
-                <button id="btnEditPS" type="button" class="btn btn-link link-success" onclick="EditPS();">Edit Polling Station</button>
             </div>
+        </div>
+        <div class="row" id="divMain" style="margin-left:0px;">
             @{
                 if (Model.formType == "A")
                 {
@@ -187,7 +243,7 @@
                                 <img src="@imgSrcPhoto" style="width:110px;height:130px;margin-top:10px;"/>
                             </div>
                         </div>
-                        
+                                                        
                     </div>
 
                     <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
@@ -199,52 +255,230 @@
                     <div class="row" style="margin-left:0px;">
                         <div class="col-sm-2">
                             <label class="form-label mylabel " for="txtHouseNo">House No.</label>
-                            <input type="text" id="txtHouseNo"  asp-for="houseNo" name="houseNo" class="form-control" />
+                            <input type="text" id="txtHouseNo"  asp-for="houseNo" name="houseNo" class="form-control" disabled/>
                         </div>
                         <div class="col-sm-5">
                             <label class="form-label mylabel " for="txtAddLine1">Address Line1</label>
-                            <input type="text" id="txtAddLine1" asp-for="addLine1" name="addLine1" class="form-control" />
+                            <input type="text" id="txtAddLine1" asp-for="addLine1" name="addLine1" class="form-control" disabled/>
                         </div>
                         <div class="col-sm-5">
                             <label class="form-label mylabel" for="txtAddLine2">Address Line2</label>
-                            <input type="text" id="txtAddLine2"  asp-for="addLine2" name="addLine2" class="form-control" />
+                            <input type="text" id="txtAddLine2"  asp-for="addLine2" name="addLine2" class="form-control" disabled />
                         </div>
                     </div>
                     <div class="row" style="margin-left:0px;">
                         <div class="col-sm-4">
                             <label class="form-label mylabel " for="ddwnAddressTehsil">Tehsil</label>
-                            <input type="text" id="txttehsil" asp-for="addressTehsil" name="addressTehsil" class="form-control" />
+                            <input type="text" id="txttehsil" asp-for="addressTehsil" name="addressTehsil" class="form-control" disabled />
                         </div>
                         <div class="col-sm-4">
                             <label class="form-label mylabel " for="ddwnVillage">Village</label>
-                            <input type="text" id="txtvillage" asp-for="village" name="village" class="form-control" />
+                            <input type="text" id="txtvillage" asp-for="village" name="village" class="form-control" disabled />
                         </div>
                         <div class="col-sm-4">
                             <label class="form-label mylabel" for="txtPost">Post Office</label>
-                            <input type="text" id="txtPost" asp-for="post" name="post" class="form-control" />
+                            <input type="text" id="txtPost" asp-for="post" name="post" class="form-control" disabled />
                         </div>
                         <div class="col-sm-3">
                             <label class="form-label mylabel " for="txtMobile">Mobile No.</label>
-                            <input type="tel" id="txtMobile"  asp-for="mobileNo" name="mobileNo" class="form-control"  />
+                            <input type="tel" id="txtMobile"  asp-for="mobileNo" name="mobileNo" class="form-control" disabled  />
                         </div>
                         <div class="col-sm-4">
                             <label class="form-label mylabel " for="txtEmail">Email ID</label>
-                            <input type="email" id="txtEmail" asp-for="email" name="email" class="form-control" />
+                            <input type="email" id="txtEmail" asp-for="email" name="email" class="form-control" disabled />
                         </div>
                         <div class="col-sm-3">
                             <br />
                             <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#AddressProof" style="margin-top:9px;">See Address Proof</button>
                         </div>
-                        <p></p>
-                        <hr />
                     </div>
                 }
                 else if (Model.formType == "D")
                 {
-                    
+
+                }
+                int rowCount = formHistory.Tables[0].Rows.Count;
+                if (rowCount == 0)
+                {
+                    <div class="row">
+                        <p></p>
+                        <hr />
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-3">
+                            <button id="btnSend" class="btn btn-primary form-control" style="height:60px;" asp-action="SendForVerification">Send for Field Verification</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button id="btnReject" class="btn btn-danger form-control" style="height:60px;">Reject</button>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                }
+                /*else if (rowCount == 1)
+                {
+                    <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
+                        <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                            Field Verification Report
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="checkbox" id="chkElector" name="electorFound" asp-for="electorFound" />
+                        <label class="form-label mylabel" for="chkElector">Elector was found to be residing in the given address</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label mylabel" for="taRemarks">Field Verification Report</label>
+                        <textarea id="taRemarks" name="remarks" asp-for="remarks" class="form-control mycontrol" required></textarea>
+                    </div>
+                    <p></p>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-3">
+                            <button id="btnForward" class="btn btn-primary form-control" style="height:60px;" asp-action="ForwardVerification">Forward Form</button>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                }*/
+                else
+                {
+                    for (int i = 1; i < rowCount; i++)
+                    {
+                        DataRow row = formHistory.Tables[0].Rows[i];
+                        if (row["USER_TYPE"].ToString() == "FVO")
+                        {
+                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
+                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                                    Field Verification Report
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:0px;">
+                                <div class="col-sm-5">
+                                    @{
+                                        if ((bool)row["ELECTOR_FOUND"]==true)
+                                        {
+                                            <input type="checkbox" id="chkElector" name="electorFound" asp-for="electorFound" checked disabled />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" id="chkElector" name="electorFound" asp-for="electorFound" disabled />
+                                        }
+                                    }
+                                        
+                                    <label class="form-label mylabel" for="chkElector">Elector was found to be residing in the given address</label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label mylabel" for="taRemarks">Field Verification Report</label>
+                                    <textarea class="form-control mycontrol" readonly>@row["REMARKS"]</textarea>
+                                </div>
+                            </div>
+                        }
+                        else if (row["USER_TYPE"].ToString() == "AERO")
+                        {
+                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
+                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                                    AERO's REPORT
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:0px;">
+                                <div class="col-sm-6">
+                                    <label class="form-label mylabel" for="taRemarks">AERO's Report</label>
+                                    <textarea  class="form-control mycontrol" readonly>@row["REMARKS"]</textarea>
+                                </div>
+                            </div>
+                        }
+                    }
+                    if (Context.Session.GetString("logUserType") == "FVO")
+                    {
+                        <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
+                            <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                                Field Verification Report
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="checkbox" id="chkElector" name="electorFound" asp-for="electorFound" />
+                            <label class="form-label mylabel" for="chkElector">Elector was found to be residing in the given address</label>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label mylabel" for="taRemarks">Field Verification Report</label>
+                            <textarea id="taRemarks" name="remarks" asp-for="remarks" class="form-control mycontrol" required></textarea>
+                        </div>
+                        <p></p>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-3">
+                                <button id="btnForward" class="btn btn-primary form-control" style="height:60px;" asp-action="ForwardVerification">Forward Form</button>
+                            </div>
+                            <div class="col-sm-1"></div>
+                        </div>
+                    }
+                    else if (Context.Session.GetString("logUserType") == "AERO")
+                    {
+                        <div class="row">
+
+                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
+                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                                    AERO's REPORT
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label mylabel" for="taRemarks"> AERO's Report</label>
+                                <textarea id="taRemarks" name="remarks" asp-for="remarks" class="form-control mycontrol" required></textarea>
+                            </div>
+                            <p></p>
+                            <hr />
+                            <div class="col-sm-3"></div>
+
+                            <div class="col-sm-3">
+                                <button id="btnForward" class="btn btn-danger form-control" style="height:60px;" asp-action="ForwardForm">Forward to ERO</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <button id="btnSend" class="btn btn-primary form-control" style="height:60px;" asp-action="SendForVerification">Send for Re-Verification</button>
+                            </div>
+                            <div class="col-sm-1"></div>
+                        </div>
+                    }
+                    else if (Context.Session.GetString("logUserType") == "ERO")
+                    {
+                        <div class="row">
+                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
+                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                                    ERO's REPORT
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label mylabel" for="taRemarks"> ERO's Report</label>
+                                <textarea id="taRemarks" name="remarks" asp-for="remarks" class="form-control mycontrol" required></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <br />
+                                <input type="checkbox" id="chkReverify" />
+                                <label class="form-label mylabel" for="chkReverify">Re-Verification Required</label>
+                            </div>
+                            <p></p>
+                            <hr />
+                            <div class="col-sm-1"></div>
+                            <div class="col-sm-3">
+                                <button id="btnAccept" class="btn btn-success form-control" style="height:50px;" asp-action="AcceptReject" asp-route-id=1>Accept</button>
+                                <button id="btnAccept" class="btn btn-primary form-control" style="height:50px;" asp-action="SendForVerification">Send for Re-Verification</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <button id="btnForward" class="btn btn-danger form-control" style="height:50px;" asp-action="AcceptReject" asp-route-id=2>Reject</button>
+                            </div>
+                            
+                            <div class="col-sm-2"></div>
+                        </div>
+                    }
+
                 }
             }
-        </div>
+    }
     </div>
-    
+    </div>
+    <script>
+        var t = document.getElementById('ddwnPanchayat');
+        
+        if (t.disabled == false) {
+            document.getElementById('divMain').style.display = "none";
+        }
+    </script>
 </form>
