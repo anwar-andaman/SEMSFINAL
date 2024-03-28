@@ -891,12 +891,16 @@ namespace SEMS.Controllers
             {
                 return RedirectToAction("Home","Home");
             }
-            qry = "SELECT FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,FH.LATEST,F.FLOW_LEVEL,F.USERTYPEID,FH.ELECTOR_FOUND,";
+            qry = "SELECT FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,FH.LATEST,F.FLOW_LEVEL,F.USERTYPEID,ISNULL(FH.ELECTOR_FOUND,0) AS ELECTOR_FOUND,";
             qry += "FH.REMARKS,UT.USER_TYPE FROM SE_EROLL.DBO.FORM_HISTORY AS FH JOIN SE_EROLL.DBO.FORM_STAGES AS F ON FH.STAGE_ID = ";
             qry += "F.STAGE_ID JOIN USERS AS U ON FH.UID=U.UID JOIN USER_TYPE AS UT ON U.TYPE_ID=UT.TYPE_ID WHERE F.FLOW_LEVEL>1 AND FH.FORMID = " + md.formid;
             ds = dm.create_dataset(qry);
             ViewBag.formHistory = ds;
-            
+            qry = "SELECT UPPER(STAGE) FROM SE_EROLL.DBO.FORM_STAGES WHERE STAGE_ID=(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_HISTORY WHERE ";
+            qry += "FORMID=" + md.formid + " AND LATEST=1)";
+            ds = dm.create_dataset(qry);
+            ViewBag.FormStatus = ds.Tables[0].Rows[0][0].ToString();
+
             return View(md);
 
 
@@ -922,7 +926,7 @@ namespace SEMS.Controllers
                 //qry += "STAGE_ID = (SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_HISTORY WHERE FORMID =" + md.formid + " AND LATEST = 1))";
                 qry = "SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE FLOW_LEVEL=2";
                 string stageID = dm.create_dataset(qry).Tables[0].Rows[0][0].ToString();
-                if (md.ward != "" && !md.ward.IsNullOrEmpty())
+                if (md.ward == "" || md.ward.IsNullOrEmpty())
                 {
                     qry = "UPDATE SE_EROLL.DBO.FORMS SET ASSIGNED_PART_NO=ISNULL(ASSIGNED_PART_NO,PART_NO) WHERE FORMID=" + md.formid;
                 }
@@ -932,8 +936,9 @@ namespace SEMS.Controllers
                 }
                 
                 dm.do_transaction(qry, ref con, t);
-                qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID) VALUES(" + md.formid + "," + stageNo;
-                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ")";
+                qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID,ELECTOR_FOUND,REMARKS) VALUES(" + md.formid + "," + stageNo;
+                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
+                qry += ",'" + md.remarks + "')";
                 dm.do_transaction(qry,ref con,t);
                 t.Commit();
                 con.Close();
@@ -967,22 +972,18 @@ namespace SEMS.Controllers
                 qry = "SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE FLOW_LEVEL=(SELECT FLOW_LEVEL+1 FROM SE_EROLL.DBO.FORM_STAGES WHERE ";
                 qry += "STAGE_ID = (SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_HISTORY WHERE FORMID =" + md.formid + " AND LATEST = 1))";
                 string stageID = dm.create_dataset(qry).Tables[0].Rows[0][0].ToString();
-                if (md.ward !="" && !md.ward.IsNullOrEmpty())
+                if (md.ward == "" || md.ward.IsNullOrEmpty())
+                {
+                    qry = "UPDATE SE_EROLL.DBO.FORMS SET ASSIGNED_PART_NO=ISNULL(ASSIGNED_PART_NO,PART_NO) WHERE FORMID=" + md.formid;
+                }
+                else
                 {
                     qry = "UPDATE SE_EROLL.DBO.FORMS SET ASSIGNED_PART_NO=" + md.ward + " WHERE FORMID=" + md.formid;
                 }
                 dm.do_transaction(qry, ref con, t);
-                int efound;
-                if (md.electorFound == true)
-                {
-                    efound = 1;
-                }
-                else
-                {
-                    efound = 0;
-                }
+                
                 qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID,ELECTOR_FOUND,REMARKS) VALUES(" + md.formid + "," + stageNo;
-                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + "," + efound;
+                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
                 qry += ",'" + md.remarks + "')";
                 dm.do_transaction(qry, ref con, t);
                 t.Commit();
@@ -996,7 +997,86 @@ namespace SEMS.Controllers
             return RedirectToAction("ListForms", "Eroll");
         }
 
-        
+        public IActionResult AcceptReject(int id,ProcessFormModel md)
+        {
+            string status="";
+            if (id == 1)
+            {
+                status = "Accepted";
+            }
+            else if (id == 2)
+            {
+                status = "Rejected";
+            }
+            SqlConnection con = new SqlConnection();
+            try
+            {
+                dm.makeconnection(ref con);
+            }
+            catch (Exception ex)
+            {
+                TempData["message"] = "Connection to the Database Could not be established. Please try Again!";
+            }
+            SqlTransaction t = con.BeginTransaction();
+            try
+            {
+                qry = "SELECT ISNULL(MAX(STAGE_NO),0)+1 FROM SE_EROLL.DBO.FORM_HISTORY WHERE FORMID=" + md.formid;
+                string stageNo = dm.create_dataset(qry).Tables[0].Rows[0][0].ToString();
+                qry = "SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE STAGE='" + status + "'";
+                string stageID = dm.create_dataset(qry).Tables[0].Rows[0][0].ToString();
+                if (md.ward == "" || md.ward.IsNullOrEmpty())
+                {
+                    qry = "UPDATE SE_EROLL.DBO.FORMS SET ASSIGNED_PART_NO=ISNULL(ASSIGNED_PART_NO,PART_NO) WHERE FORMID=" + md.formid;
+                }
+                else
+                {
+                    qry = "UPDATE SE_EROLL.DBO.FORMS SET ASSIGNED_PART_NO=" + md.ward + " WHERE FORMID=" + md.formid;
+                }
+                dm.do_transaction(qry, ref con, t);
+                qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID,ELECTOR_FOUND,REMARKS) VALUES(" + md.formid + "," + stageNo;
+                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
+                qry += ",'" + md.remarks + "')";
+                dm.do_transaction(qry, ref con, t);
+                t.Commit();
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                t.Rollback();
+                TempData["message"] = "Could Not complete the Transaction. Please Try Again!";
+            }
+            return RedirectToAction("ListForms", "Eroll");
+        }
+        public IActionResult RevertForm(ProcessFormModel md)
+        {
+            SqlConnection con = new SqlConnection();
+            try
+            {
+                dm.makeconnection(ref con);
+            }
+            catch (Exception ex)
+            {
+                TempData["message"] = "Connection to the Database Could not be established. Please try Again!";
+            }
+            SqlTransaction t = con.BeginTransaction();
+            try
+            {
+                qry = "SELECT ISNULL(MAX(STAGE_NO),0) FROM SE_EROLL.DBO.FORM_HISTORY WHERE FORMID=" + md.formid;
+                string stageNo = dm.create_dataset(qry).Tables[0].Rows[0][0].ToString();
+                qry = "DELETE FROM SE_EROLL.DBO.FORM_HISTORY WHERE FORMID=" + md.formid + " AND STAGE_NO=" + stageNo;
+                dm.do_transaction(qry, ref con, t);
+                qry = "UPDATE SE_EROLL.DBO.FORM_HISTORY SET LATEST=1 WHERE FORMID=" + md.formid + " AND STAGE_NO=" + stageNo + "-1";
+                dm.do_transaction(qry, ref con, t);
+                t.Commit();
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                t.Rollback();
+                TempData["message"] = "Could Not complete the Transaction. Please Try Again!";
+            }
+            return RedirectToActionPreserveMethod("ProcessForm");
+        }
         #endregion
 
         #region FINAL ELECTORAL ROLL
