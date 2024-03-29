@@ -25,6 +25,7 @@
         public string rlnName { get; set; }
         public string revisionNo { get; set; }
         public string revisionYear { get; set; }
+        public string delRemarks { get; set; }
 
         public string qualifyingDate { get; set; }
         public string ageDob { get; set; }
@@ -37,7 +38,15 @@
         public byte[] photo { get; set; } = { };
         public bool electorFound { get; set; }
         public string remarks { get; set; }
-
+        public string applEpic { get; set; }
+        public string applEname { get; set; }
+        public string applRlnName { get; set; }
+        public string applPanchayat { get; set; }
+        public string applWard { get; set; }
+        public string epic { get; set; }
+        public string reason { get; set; }
+        public string delPanchayat { get; set; }
+        public string delWard { get; set; }
 
     }
 }

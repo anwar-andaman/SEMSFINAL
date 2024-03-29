@@ -718,8 +718,8 @@ namespace SEMS.Controllers
                         {
                             DataRow row = ds.Tables[0].Rows[0];
                             md.fetch = "true";
-                            md.partNo = (int)row["PART_NO"];
-                            md.slNo = int.Parse(row["SLNOINPART"].ToString());
+                            md.partNo = row["PART_NO"].ToString();
+                            md.slNo = row["SLNOINPART"].ToString();
                             md.epic = row["EPIC_NO"].ToString();
                             md.ename = row["ENAME"].ToString();
                             md.rlnName = row["RLN_NAME"].ToString();
@@ -729,8 +729,8 @@ namespace SEMS.Controllers
                         else
                         {
                            // md.fetch = "false";
-                            md.partNo = 0;
-                            md.slNo = 0;
+                            md.partNo = "1";
+                            md.slNo = "1";
                             //md.epic = "";
                             md.ename = "a";
                             md.rlnName = "";

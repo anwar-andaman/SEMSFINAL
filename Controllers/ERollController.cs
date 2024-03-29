@@ -706,11 +706,14 @@ namespace SEMS.Controllers
             {
                 if (md.panMun == "P")
                 {
-                    qry = "SELECT FH.FORMID,FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,F.ENAME,F.RLN_NAME,F.FORM_NO,CAST(F.FORM_DATE AS DATE) ";
-                    qry += "AS FORM_DATE,CASE F.ONLINE_FORM WHEN 1 THEN 'ON' ELSE 'OF' END AS ONLINEFORM,P.PAN_NAME,PL.PART_NAME,F.SLNOINPART,F.EPIC_NO FROM SE_EROLL.DBO.FORM_HISTORY AS FH ";
-                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
-                    qry += "JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='P' AND FH.STAGE_ID ";
-                    qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
+                   
+                        qry = "SELECT FH.FORMID,FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,F.ENAME,F.RLN_NAME,F.FORM_NO,CAST(F.FORM_DATE AS DATE) ";
+                        qry += "AS FORM_DATE,CASE F.ONLINE_FORM WHEN 1 THEN 'ON' ELSE 'OF' END AS ONLINEFORM,P.PAN_NAME,PL.PART_NAME,F.SLNOINPART,F.EPIC_NO FROM SE_EROLL.DBO.FORM_HISTORY AS FH ";
+                        qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
+                        qry += "JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='P' AND FH.STAGE_ID ";
+                        qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
+                   
+                    
 
                 }
                 else if (md.panMun == "M")
@@ -786,17 +789,27 @@ namespace SEMS.Controllers
             ds = dm.create_dataset(qry);
             DataRow formRow = ds.Tables[0].Rows[0];
             md.tehsil = formRow["TCODE"].ToString();
+            md.epic = formRow["EPIC_NO"].ToString();
             if (md.postCause.IsNullOrEmpty() || md.postCause == "")
             {
-               
                 md.panchayat = formRow["PCODE"].ToString();
                 md.ward = formRow["PART_NO"].ToString();
             }
-            
-            md.ageProof = (byte[])formRow["AGE_PROOF"];
-            md.addressProof = (byte[])formRow["ADDRESS_PROOF"];
-            md.photo = (byte[])formRow["PHOTO"];
-            md.ename = formRow["ENAME"].ToString();
+            if (formRow["DELETE_REASON"].ToString() == "E")
+            {
+                md.reason = "EXPIRED";
+            }
+            else if (formRow["DELETE_REASON"].ToString() == "N")
+            {
+                md.reason = "Not residing in the given Address";
+            }
+            else if (formRow["DELETE_REASON"].ToString() == "O")
+            {
+                md.reason = "Reasons as mentioned in Remarks";
+            }
+            md.applEpic = formRow["APPLICANT_ID"].ToString();
+
+            md.delRemarks = formRow["REMARKS"].ToString();
             if (formRow["RLN_TYPE"].ToString() == "F")
                 md.rlnType = "FATHER";
             else if (formRow["RLN_TYPE"].ToString() == "M")
@@ -805,8 +818,8 @@ namespace SEMS.Controllers
                 md.rlnType = "HUSBAND";
             else
                 md.rlnType = "OTHER";
-            md.rlnName= formRow["RLN_NAME"].ToString();
-            md.dob= formRow["AGEDOB"].ToString();
+
+            md.dob = formRow["AGEDOB"].ToString();
             if (formRow["GENDER"].ToString() == "M")
                 md.gender = "MALE";
             else if (formRow["GENDER"].ToString() == "F")
@@ -823,6 +836,46 @@ namespace SEMS.Controllers
             md.post = formRow["POSTOFF"].ToString();
             md.mobileNo = formRow["MOBILENO"].ToString();
             md.email = formRow["EMAIL"].ToString();
+            if (md.formType=="A")
+            {
+                md.ageProof = (byte[])formRow["AGE_PROOF"];
+                md.addressProof = (byte[])formRow["ADDRESS_PROOF"];
+                md.photo = (byte[])formRow["PHOTO"];
+                md.ename = formRow["ENAME"].ToString();
+                md.rlnName = formRow["RLN_NAME"].ToString();
+                
+            }
+            else if (md.formType=="D")
+            {
+                if (md.panMun=="P")
+                {
+                    qry = "SELECT UPPER(P.PAN_NAME) AS PAN_NAME,UPPER(C.PART_NAME) WARD FROM PANCHAYAT AS P JOIN SE_EROLL.DBO.PARTLIST AS C ON C.PCODE=";
+                    qry += "P.PCODE WHERE C.PART_NO = " + md.ward + " AND C.PAN_MUN = '" + md.panMun + "'";
+                    ds=dm.create_dataset(qry);
+                    md.delPanchayat = ds.Tables[0].Rows[0]["PAN_NAME"].ToString();
+                    md.delWard = ds.Tables[0].Rows[0]["WARD"].ToString();
+                    qry = "SELECT ENAME,RLN_NAME FROM SE_EROLL.DBO.E_DETAIL WHERE CHNGLISTNO IS NULL AND EPIC_NO='" + md.epic + "'";
+                    ds=dm.create_dataset(qry);
+                    md.ename= ds.Tables[0].Rows[0]["ENAME"].ToString();
+                    md.rlnName = ds.Tables[0].Rows[0]["RLN_NAME"].ToString();
+                    qry = "SELECT PART_NO,ENAME,RLN_NAME FROM SE_EROLL.DBO.E_DETAIL WHERE CHNGLISTNO IS NULL AND EPIC_NO='" + md.applEpic + "'";
+                    ds = dm.create_dataset(qry);
+                    md.applEname = ds.Tables[0].Rows[0]["ENAME"].ToString();
+                    md.applRlnName= ds.Tables[0].Rows[0]["RLN_NAME"].ToString();
+                    qry = "SELECT UPPER(P.PAN_NAME) AS PAN_NAME,UPPER(C.PART_NAME) WARD FROM PANCHAYAT AS P JOIN SE_EROLL.DBO.PARTLIST AS C ON C.PCODE=";
+                    qry += "P.PCODE WHERE C.PART_NO = " + ds.Tables[0].Rows[0]["PART_NO"].ToString() + " AND C.PAN_MUN = '" + md.panMun + "'";
+                    ds = dm.create_dataset(qry);
+                    md.applPanchayat = ds.Tables[0].Rows[0]["PAN_NAME"].ToString();
+                    md.applWard = ds.Tables[0].Rows[0]["WARD"].ToString();
+                }
+                else
+                {
+
+                }
+                
+               
+            }
+            
             if (md.panMun == "P")
             {
                 qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
@@ -833,11 +886,13 @@ namespace SEMS.Controllers
                 ds = dm.create_dataset(qry);
                 ViewBag.panchayats = ds;
                 bool flag = false;
+               
                 foreach (DataRow row in ds.Tables[0].Rows)
                 {
                    if (row[0].ToString() == md.panchayat.ToString())
                     {
                         flag = true;
+                       
                     }
                 }
                 if (flag == false)

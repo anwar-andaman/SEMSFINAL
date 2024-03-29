@@ -11,6 +11,28 @@
     function submitForm() {
         document.getElementById('frmDeleteElector').submit();
     }
+    function SearchBy() 
+    { 
+       
+        var item = document.getElementById('radByPart');
+        if (item.checked == true)
+        {
+            document.getElementById('divPartNo').style.display = "flex";
+            document.getElementById('divEpic').style.display = "none";
+            document.getElementById('txtPartNo').value = "";
+            document.getElementById('txtSlNo').value = "";
+            document.getElementById('txtEpic').value = "PRI";
+
+        }
+        else 
+        { 
+            document.getElementById('divPartNo').style.display = "none";
+            document.getElementById('divEpic').style.display = "flex";
+            document.getElementById('txtEpic').value = "";
+            document.getElementById('txtPartNo').value = "1";
+            document.getElementById('txtSlNo').value = "1";
+        }
+    }
 </script>
 <form id="frmDeleteElector" method="post">
     <input type="hidden" id="hidPostCause" asp-for="postCause" />
@@ -125,145 +147,143 @@
                 
             </div>
   
-        
-            <div class="col-sm-3">
-                <input type="radio" asp-for="searchBy" id="radByPart" value="P" name="searchBy" onchange="document.getElementById('hidPostCause').value='searchBy';submitForm();" />
-                <label for="radByPart" class="form-label mylabel">By Part No. & Sl.No.</label>
-            </div>
-            <div class="col-sm-3">
-                @{
-                    if (Context.Request.Method == "POST")
-                    {
-                        <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" onchange="document.getElementById('hidPostCause').value='searchBy'; submitForm();" />
-                    }
-                    else
-                    {
-                        <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" checked onchange="document.getElementById('hidPostCause').value='searchBy';submitForm();" />
-                    }
+            @{
+                if (Model.searchBy == "P")
+                {
+                    <div class="col-sm-3">
+                        <input type="radio" asp-for="searchBy" id="radByPart" value="P" name="searchBy" onchage="SearchBy();" checked />
+                        <label for="radByPart" class="form-label mylabel">By Part No. & Sl.No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" onchage="SearchBy();" />
+                        <label for="radByEpic" class="form-label mylabel">By Voter ID No.</label>
+                    </div>
                 }
-
-                <label for="radByEpic" class="form-label mylabel">By Voter ID No.</label>
-            </div>
-            <div class="row" style="margin-top:10px;">
-                @{
-                    switch (Model.searchBy)
-                    {
-                        case "P":
-                            {
-                                <div class="col-sm-1">
-                                    <label for="txtPartNo" class="form-label mylabel">Part No.</label>
-                                </div>
-                                <div class="col-sm-2">
-                                    <input class="form-control mycontrol" type="number" id="txtPartNo" asp-for="partNo" min="1" max="@ViewBag.maxPart" required />
-                                </div>
-                                <div class="col-sm-1">
-                                    <label for="txtSlNo" class="form-label mylabel">Sl. No.</label>
-                                </div>
-                                <div class="col-sm-2">
-                                    <input class="form-control mycontrol" type="number" id="txtSlNo" asp-for="slNo" min="1" max="@ViewBag.slNo" required />
-                                </div>
-                                <div class="col-sm-2">
-                                    <button type="submit" class="btn btn-success form-control" asp-action="FetchRecord" onclick="document.getElementById('hidPostCause').value='fetch';document.getElementById('hidFetchStatus').value='true';">Fetch Record</button>
-                                </div>
-                                break;
-                            }
-                        case "E":
-                        {
-                           
-                            <div class="col-sm-2">
-                                <label for="txtEpic" class="form-label mylabel">Voter ID No.</label>
-                            </div>
-                            <div class="col-sm-2">
-                                <input class="form-control mycontrol" type="text" id="txtEpic" asp-for="epic" maxlength="10" asp-for="epic" name="epic" required />
-                            </div>
-                            <div class="col-sm-2">
-                                    <button type="submit" class="btn btn-success form-control" asp-action="FetchRecord" onclick="document.getElementById('hidPostCause').value='fetch';document.getElementById('hidFetchStatus').value='true';">Fetch Record</button>
-                            </div>
-                            break;
-                        }
-                    }
-                    
+                else
+                {
+                    <div class="col-sm-3">
+                        <input type="radio" asp-for="searchBy" id="radByPart" value="P" name="searchBy" onchange="SearchBy();" />
+                        <label for="radByPart" class="form-label mylabel">By Part No. & Sl.No.</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input type="radio" asp-for="searchBy" id="radByEpic" value="E" name="searchBy" onchange="SearchBy();" checked />
+                        <label for="radByEpic" class="form-label mylabel">By Voter ID No.</label>
+                    </div>
                 }
-            </div>
-           
-                @{
-                    if (Model.fetch == "true") 
-                    {
-                        if (Model.ename!="a")
-                        {
-                            <div class="row " style="padding-bottom:10px;">
-                                <div class="col-sm-2">
-                                    <label for="txtApplicantID" class="form-label mylabel">Applicant ID</label>
-                                    <input type="text" class="form-control mycontrol" asp-for="epic" readonly />
-                                </div>
-                                <div class="col-sm-5">
-                                    <label for="txtApplicantName" class="form-label mylabel">Applicant Name</label>
-                                    <input type="text" class="form-control mycontrol" asp-for="ename" readonly />
-                                </div>
-                                <div class="col-sm-5">
-                                    <label for="txtApplicantRlnName" class="form-label mylabel">Relative Name</label>
-                                    <input type="text" class="form-control mycontrol" asp-for="rlnName" readonly />
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="form-label mylabel">Panchayat</label>
-                                    <input type="text" class="form-control mycontrol" asp-for="panchayat" readonly />
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="form-label mylabel">Ward</label>
-                                    <input type="text" class="form-control mycontrol" asp-for="ward" readonly />
-                                </div>
-                            </div>
-                            <div class="row formrow">
-                            <div>
-                                Other Details
-                            </div>
-                            </div>
-                            <div class="row ">
-                                <div class="col-sm-4">
-                                    <label for="ddwnReason" class="form-label mylabel">Remarks</label>
-                                    <select id="ddwnReason" class="form-select mycontrol" asp-for="reason">
-                                    @{
-                                        if (Model.epic!=Model.applEpic)
-                                        {
-                                            <option value="E">Expired</option>
-                                        }
-                                    }
-                                        <option value="N">Not residing in this Ward</option>
-                                        <option value="O">Other Reasons</option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-5">
-                                    <label for="txtRemarks" class="form-label mylabel mycontrol">Remarks</label>
-                                    <textarea id="txtRemarks" class="form-control mycontrol" asp-for="remarks" maxlength="100" required></textarea>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-top:10px;">
-                                <div class="col-sm-4"></div>
-                                <div class="col-sm-2">
-                                <button type="submit" class="btn btn-primary form-control" style="height:60px;" asp-action="SubmitDelete">Submit</button>
-                                </div>
-                            <div class="col-sm-2">
-                                <button type="submit" class="btn btn-danger form-control" style="height:60px;" asp-action="Home" formnovalidate>Cancel</button>
-                            </div>
-                           
-                                <div class="col-sm-4"></div>
-                            </div>
-                        }
-                        else
-                        {
-                            
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-4">
-                               <span style="color:red;font-weight:bold;font-size:large;">No Record Found</span>
-                           </div>
-                            
-                        }
-                    
-                    }
-               
-               }
+            }
             
+            
+            <div id="divPartNo" class="row" style="margin-top:10px;display:none;">
+                <div class="col-sm-1">
+                    <label for="txtPartNo" class="form-label mylabel">Part No.</label>
+                </div>
+                <div class="col-sm-2">
+                    <input class="form-control mycontrol" type="number" id="txtPartNo" asp-for="partNo" min="1" max="@ViewBag.maxPart" required value="@Model.partNo" />
+                </div>
+                <div class="col-sm-1">
+                    <label for="txtSlNo" class="form-label mylabel">Sl. No.</label>
+                </div>
+                <div class="col-sm-2">
+                    <input class="form-control mycontrol" type="number" id="txtSlNo" asp-for="slNo" min="1" max="@ViewBag.slNo" required value="@Model.slNo"/>
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-success form-control" asp-action="FetchRecord" onclick="document.getElementById('hidPostCause').value='fetch';document.getElementById('hidFetchStatus').value='true';">Fetch Record</button>
+                </div>
+            </div>
+                      
+            <div id="divEpic" class="row" style="margin-top:10px;">
+                <div class="col-sm-2">
+                    <label for="txtEpic" class="form-label mylabel">Voter ID No.</label>
+                </div>
+                <div class="col-sm-2">
+                    <input class="form-control mycontrol" type="text" id="txtEpic" asp-for="epic" maxlength="10" asp-for="epic" name="epic" value="@Model.epic" required />
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-success form-control" asp-action="FetchRecord" onclick="document.getElementById('hidPostCause').value='fetch';document.getElementById('hidFetchStatus').value='true';">Fetch Record</button>
+                </div>
+            </div>
+                       
+                    
+       
         </div>
+           
+        @{
+            if (Model.fetch == "true") 
+            {
+                if (Model.ename!="a")
+                {
+                    <div class="row " style="padding-bottom:10px;">
+                        <div class="col-sm-2">
+                            <label for="txtApplicantID" class="form-label mylabel">Epic No.</label>
+                            <input type="text" class="form-control mycontrol"  value="@Model.epic" readonly />
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtApplicantName" class="form-label mylabel">Elector Name</label>
+                            <input type="text" class="form-control mycontrol" asp-for="ename" readonly />
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtApplicantRlnName" class="form-label mylabel">Relative Name</label>
+                            <input type="text" class="form-control mycontrol" asp-for="rlnName" readonly />
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label mylabel">Panchayat</label>
+                            <input type="text" class="form-control mycontrol" asp-for="panchayat" readonly />
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label mylabel">Ward</label>
+                            <input type="text" class="form-control mycontrol" asp-for="ward" readonly />
+                        </div>
+                    </div>
+                    <div class="row formrow">
+                    <div>
+                        Other Details
+                    </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-sm-4">
+                            <label for="ddwnReason" class="form-label mylabel">Remarks</label>
+                            <select id="ddwnReason" class="form-select mycontrol" asp-for="reason">
+                            @{
+                                if (Model.epic!=Model.applEpic)
+                                {
+                                    <option value="E">Expired</option>
+                                }
+                            }
+                            <option value="N">Not residing in this Ward</option>
+                            <option value="O">Other Reasons</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtRemarks" class="form-label mylabel mycontrol">Remarks</label>
+                            <textarea id="txtRemarks" class="form-control mycontrol" asp-for="remarks" maxlength="100" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top:10px;">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-2">
+                        <button type="submit" class="btn btn-primary form-control" style="height:60px;" asp-action="SubmitDelete">Submit</button>
+                        </div>
+                    <div class="col-sm-2">
+                        <button type="submit" class="btn btn-danger form-control" style="height:60px;" asp-action="Home" formnovalidate>Cancel</button>
+                    </div>
+                                           
+                        <div class="col-sm-4"></div>
+                    </div>
+                }
+                else
+                {
+                            
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-4">
+                        <span style="color:red;font-weight:bold;font-size:large;">No Record Found</span>
+                    </div>
+                            
+                }
+                    
+            }
+        }
+            
+       
     </div>
 </form>
 

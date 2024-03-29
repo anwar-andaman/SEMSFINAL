@@ -19,8 +19,8 @@ namespace SEMS.Models
         public string postCause { get; set; }
         public string searchBy { get; set; } = "E";
         public string epic { get; set; }
-        public int partNo { get; set; }
-        public int slNo { get; set; }
+        public string partNo { get; set; } = "1";
+        public string slNo { get; set; } = "1";
         public string panMun { get; set; }
         public string fetch { get; set; } 
         public string ename { get; set; }

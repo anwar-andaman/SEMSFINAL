@@ -167,82 +167,89 @@
         <h2 class="pageheading">Form Processing </h2>
         <hr />
         <label class="form-label mylabel">Current Form Status:</label><span style="font-size:larger;color:red;font-weight:bold;"> @ViewBag.FormStatus</span>
-        <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;">
-            <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
-                Polling Station
-            </div>
-        </div>
-        <div class="row" style="margin-left:0px;">
-            <div class="col-sm-4">
-                <label class="form-label mylabel " for="ddwnTehsil">Tehsil</label>
-                @{
-                    List<SelectListItem>
-                    items = new List<SelectListItem>();
-                    SelectListItem listItem = new SelectListItem();
-                    listItem.Text = "<----Select---->";
-                    listItem.Value = "";
-                    items.Add(listItem);
-                    foreach (DataRow row in tehsils.Tables[0].Rows)
-                    {
-                        SelectListItem s = new SelectListItem();
-                        s.Text = row["TNAME"].ToString();
-                        s.Value = row["TCODE"].ToString();
-                        items.Add(s);
-                    }
-                    <select asp-for="tehsil" id="ddwnTehsil" name="tehsil" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('btnSend').innerHTML='Update and Send for Field Verification';SubmitForm('tehsil');" disabled></select>
-                }
-            </div>
-            <div class="col-sm-4">
-                <label class="form-label mylabel " for="ddwnPanchayat">Panchayat</label>
-                @{
-                    items.Clear();
-                    listItem.Text = "<----Select---->";
-                    listItem.Value = "";
-                    items.Add(listItem);
-                    foreach (DataRow row in panchayats.Tables[0].Rows)
-                    {
-                        SelectListItem s = new SelectListItem();
-                        s.Text = row["PAN_NAME"].ToString();
-                        s.Value = row["PCODE"].ToString();
-                        items.Add(s);
-                    }
-                    if (Model.postCause == "editPS")
-                    {
-                        <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="SubmitForm('panchayat');"></select>
-                    }
-                    else
-                    {
-                        <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('btnSend').innerHTML='Update and Send for Field Verification';SubmitForm('panchayat');" disabled></select>
-                    }
-                }                    
-            </div>
-            <div class="col-sm-4">
-                <label class="form-label mylabel" for="ddwnWard">Ward</label>
-                @{
-                    items.Clear();
-                    listItem.Text = "<----Select---->";
-                    listItem.Value = "";
-                    items.Add(listItem);
-                    foreach (DataRow row in wards.Tables[0].Rows)
-                    {
-                        SelectListItem s = new SelectListItem();
-                        s.Text = row["WARD_NAME"].ToString();
-                        s.Value = row["CONST_NO"].ToString();
-                        // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
-                        items.Add(s);
-                    }
-                    if (Model.postCause == "editPS")
-                    {
-                        <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="ShowMain();"></select>
-                    }
-                    else
-                    {
-                        <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="ShowMain();" disabled></select>
-                    }
-                    <input type="button" id="btnEditPS" type="button" class="btn btn-link link-success" onclick="EditPS();" value="Edit Polling Station"></input>
-                }
-            </div>
-        </div>
+        @{
+            if (Model.formType=="A")
+            {
+                <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;">
+                    <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                        Polling Station
+                    </div>
+                </div>
+                <div class="row" style="margin-left:0px;">
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="ddwnTehsil">Tehsil</label>
+                        @{
+                            List<SelectListItem>
+                            items = new List<SelectListItem>();
+                            SelectListItem listItem = new SelectListItem();
+                            listItem.Text = "<----Select---->";
+                            listItem.Value = "";
+                            items.Add(listItem);
+                            foreach (DataRow row in tehsils.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["TNAME"].ToString();
+                                s.Value = row["TCODE"].ToString();
+                                items.Add(s);
+                            }
+                            <select asp-for="tehsil" id="ddwnTehsil" name="tehsil" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('btnSend').innerHTML='Update and Send for Field Verification';SubmitForm('tehsil');" disabled></select>
+                        }
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="ddwnPanchayat">Panchayat</label>
+                        @{
+                            items.Clear();
+                            listItem.Text = "<----Select---->";
+                            listItem.Value = "";
+                            items.Add(listItem);
+                            foreach (DataRow row in panchayats.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["PAN_NAME"].ToString();
+                                s.Value = row["PCODE"].ToString();
+                                items.Add(s);
+                            }
+                            if (Model.postCause == "editPS")
+                            {
+                                <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="SubmitForm('panchayat');"></select>
+                            }
+                            else
+                            {
+                                <select asp-for="panchayat" id="ddwnPanchayat" name="panchayat" class="form-select mycontrol" asp-items="@items" onchange="document.getElementById('btnSend').innerHTML='Update and Send for Field Verification';SubmitForm('panchayat');" disabled></select>
+                            }
+                        }
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="ddwnWard">Ward</label>
+                        @{
+                            items.Clear();
+                            listItem.Text = "<----Select---->";
+                            listItem.Value = "";
+                            items.Add(listItem);
+                            foreach (DataRow row in wards.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["WARD_NAME"].ToString();
+                                s.Value = row["CONST_NO"].ToString();
+                                // s.Selected = row["PCODE"].ToString() == selectedPanchayat ? true : false;
+                                items.Add(s);
+                            }
+                            if (Model.postCause == "editPS")
+                            {
+                                <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="ShowMain();"></select>
+                            }
+                            else
+                            {
+                                <select asp-for="ward" id="ddwnWard" name="ward" class="form-select mycontrol" asp-items="@items" onchange="ShowMain();" disabled></select>
+                            }
+                            <input type="button" id="btnEditPS" type="button" class="btn btn-link link-success" onclick="EditPS();" value="Edit Polling Station"></input>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        
+       
         <div class="row" id="divMain" style="margin-left:0px;">
             @{
                 if (Model.formType == "A")
@@ -340,18 +347,127 @@
                 else if (Model.formType == "D")
                 {
 
+                    <div class="row formrow" style="margin-top:10px;">
+                        <div>
+                            Applicant Details
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="txtApplicantID" class="form-label mylabel">Applicant ID</label>
+                        <input type="text" class="form-control mycontrol" asp-for="applEpic" readonly />
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="txtApplicantName" class="form-label mylabel">Applicant Name</label>
+                        <input type="text" class="form-control mycontrol" asp-for="applEname" readonly />
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="txtApplicantRlnName" class="form-label mylabel">Relative Name</label>
+                        <input type="text" class="form-control mycontrol" asp-for="applRlnName" readonly />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel">Panchayat</label>
+                        <input type="text" class="form-control mycontrol" asp-for="applPanchayat" readonly />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel">Ward</label>
+                        <input type="text" class="form-control mycontrol" asp-for="applWard" readonly />
+                    </div>
+                    
+                    
+                    <div class="row formrow" style="margin-top:10px;">
+                        <div>
+                            Address & Contact Details
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="form-label mylabel " for="txtHouseNo">House No.</label>
+                        <input type="text" id="txtHouseNo" asp-for="houseNo" name="houseNo" class="form-control" readonly />
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="form-label mylabel " for="txtAddLine1">Address Line1</label>
+                        <input type="text" id="txtAddLine1" asp-for="addLine1" name="addLine1" class="form-control" readonly />
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="form-label mylabel" for="txtAddLine2">Address Line2</label>
+                        <input type="text" id="txtAddLine2" asp-for="addLine2" name="addLine2" class="form-control" readonly />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="ddwnAddressTehsil">Tehsil</label>
+                        <input asp-for="addressTehsil" id="ddwnAddressTehsil" name="addressTehsil" class="form-control mycontrol" readonly></input>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="ddwnAddressTehsil">Village</label>
+                        <input class="form-control mycontrol" asp-for="village" id="ddwnAddressVillage" name="village" readonly></input>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="txtPost">Post Office</label>
+                        <input type="text" id="txtPost" asp-for="post" name="post" class="form-control" readonly />
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label mylabel " for="txtMobile">Mobile No.</label>
+                        <input type="tel" id="txtMobile" asp-for="mobileNo" name="mobileNo" class="form-control" readonly />
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel " for="txtEmail">Email ID</label>
+                        <input type="email" id="txtEmail"  asp-for="email" name="email" class="form-control" readonly/>
+                           
+                    </div>
+                    <div class="row formrow" style="margin-top:10px;">
+                        <div>
+                            Details of Elector proposed to be Deleted
+                        </div>
+                    </div>
+                    <div class="row " style="padding-bottom:10px;">
+                        <div class="col-sm-2">
+                            <label for="txtApplicantID" class="form-label mylabel">Epic No.</label>
+                            <input type="text" class="form-control mycontrol" asp-for="epic" readonly />
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtApplicantName" class="form-label mylabel">Elector Name</label>
+                            <input type="text" class="form-control mycontrol" asp-for="ename" readonly />
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtApplicantRlnName" class="form-label mylabel">Relative Name</label>
+                            <input type="text" class="form-control mycontrol" asp-for="rlnName" readonly />
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label mylabel">Panchayat</label>
+                            <input type="text" class="form-control mycontrol" asp-for="delPanchayat" readonly />
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label mylabel">Ward</label>
+                            <input type="text" class="form-control mycontrol" asp-for="delWard" readonly />
+                        </div>
+                    </div>
+                    <div class="row formrow">
+                        <div>
+                            Other Details
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-sm-4">
+                            <label for="ddwnReason" class="form-label mylabel">Reason for Deletion</label>
+                           
+                            <input class="form-control mycontrol" asp-for="reason" name="reason" readonly />
+                        </div>
+                        <div class="col-sm-5">
+                            <label for="txtRemarks" class="form-label mylabel mycontrol">Remarks</label>
+                            <textarea id="txtRemarks" class="form-control mycontrol" asp-for="delRemarks" maxlength="100" readonly></textarea>
+                        </div>
+                    </div>
                 }
                 int rowCount = formHistory.Tables[0].Rows.Count;
                 
-                if (rowCount>0)
-                {
+                
+                //if (rowCount>0)
+                //{
                     for (int i = 1; i < rowCount; i++)
                     {
                         DataRow row = formHistory.Tables[0].Rows[i];
                         if (row["USER_TYPE"].ToString() == "FVO")
                         {
-                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
-                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                            <div class="row formrow" style="padding-left:10px;padding-right:10px;">
+                                <div class="col-sm-12 " style="text-align:center; ">
                                     Field Verification Report
                                 </div>
                             </div>
@@ -377,8 +493,8 @@
                         }
                         else if (row["USER_TYPE"].ToString() == "AERO")
                         {
-                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
-                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                            <div class="row formrow" style="padding-left:10px;padding-right:10px;">
+                                <div class="col-sm-12" style="text-align:center;">
                                     AERO's REPORT
                                 </div>
                             </div>
@@ -391,8 +507,8 @@
                         }
                         else if (row["USER_TYPE"].ToString() == "ERO")
                         {
-                            <div class="row" style="padding-left:10px;padding-right:10px;border-top-left-radius:10px;border-top-right-radius:10px;margin-top:10px;">
-                                <div class="col-sm-12" style="text-align:center; background-color:darkcyan; color:white;font-size:large;border-top-left-radius:10px;border-top-right-radius:10px;">
+                            <div class="row formrow" style="padding-left:10px;padding-right:10px;">
+                                <div class="col-sm-12" style="text-align:center;">
                                     ERO's REPORT
                                 </div>
                             </div>
@@ -524,7 +640,7 @@
                         
                     }
                 }
-            }
+            
         </div>
     </div>
     <script>
