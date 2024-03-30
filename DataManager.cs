@@ -110,7 +110,10 @@ namespace SEMS
         public int do_transaction(String sqlqry, ref SqlConnection con, SqlTransaction t)
         {
 
-            SqlCommand cmd = new SqlCommand(sqlqry, con, t);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText= sqlqry;
+            cmd.Connection=con;
+            cmd.Transaction=t;
             int n = (int)cmd.ExecuteNonQuery();
             //con.Close();
             return n;

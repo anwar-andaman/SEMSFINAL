@@ -859,9 +859,9 @@ namespace SEMS.Controllers
                 remarks = md.remarks.ToString();
             }
 
-            qry = "INSERT INTO SE_EROLL.DBO.FORMS(FORM_TYPE,ONLINE_FORM,APPLICANT_ID,PAN_MUN,PART_NO,SLNOINPART,EPIC_NO,";
+            qry = "INSERT INTO SE_EROLL.DBO.FORMS(FORM_TYPE,ONLINE_FORM,APPLICANT_ID,PAN_MUN,PART_NO,SLNOINPART,ENAME,RLN_NAME,EPIC_NO,";
             qry += "HOUSE_NO,ADDRESS_LINE1,ADDRESS_LINE2,POSTOFF,VCODE,REVISIONNO,REVISIONYEAR,MOBILENO,EMAIL,DELETE_REASON,REMARKS) VALUES(";
-            qry += "'D',1,'" + md.applEpic + "','" + md.panMun + "'," + md.partNo + "," + md.slNo + ",'" + md.epic + "','";
+            qry += "'D',1,'" + md.applEpic + "','" + md.panMun + "'," + md.partNo + "," + md.slNo + ",'" + md.ename + "','" + md.rlnName + "','" + md.epic + "','";
             qry += md.houseNo + "'," + addline1 + "," + addline2 + "," + post + "," + vcode + ",";
             qry += md.revisionNo + "," + md.revisionYear + "," + mobile + "," + email + ",'" + md.reason + "','" + md.remarks + "') SELECT @@IDENTITY";
             decimal formid = dm.insertRecord(qry);

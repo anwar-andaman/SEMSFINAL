@@ -89,7 +89,7 @@
     <input type="hidden" id="hidPanMun" asp-for="panMun" />
     <input type="hidden" id="hidFormId" asp-for="formid" />
     <div class="container">
-        <h2 class="pageheading">Form Processing </h2>
+        <h2 class="pageheading">E-Roll Updation </h2>
         <div class="row">
             <div class="col-sm-4">
                 <label class="form-label mylabel" for="ddwnFormType">Form Type</label>
@@ -117,7 +117,7 @@
             </div>
         </div>
         <div class="row" style="margin-top:10px">
-            <span class="mycontrol" style="font-size:small;">2 Forms Pending</span>
+            <span class="mycontrol" style="font-size:small;">@Model.rowCount Forms Pending</span>
             @{
                 if (Model.rowCount != 0)
                 {
