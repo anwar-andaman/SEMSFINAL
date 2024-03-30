@@ -1313,7 +1313,144 @@ namespace SEMS.Controllers
 
         #endregion
 
+        #region
+        public IActionResult UpdateToRoll()
+        {
+            ProcessFormModel md = new ProcessFormModel();
+            bool allOK = checkAuthorization(28);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot perform Eroll Updation. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot perform Eroll Updation. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            md.panMun = HttpContext.Session.GetString("electionType");
+            return View(md);
+        }
+        [HttpPost]
+        public IActionResult UpdateToRoll(ProcessFormModel md)
+        {
+            bool allOK = checkAuthorization(28);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
+            ds = dm.create_dataset(qry);
+            if (ds.Tables[0].Rows.Count == 0)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot perform Eroll Updation. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            else if ((bool)ds.Tables[0].Rows[0]["FREEZED"] == true)
+            {
+                HttpContext.Session.SetString("errorMessage", "Electoral Roll is Freezed. You cannot perform Eroll Updation. For any assistance, Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            string userType = HttpContext.Session.GetString("logUserType");
+            if (userType == "AERO" || userType == "ERO" || userType == "FVO")
+            {
+                if (md.panMun == "P")
+                {
 
+                    qry = "SELECT FH.FORMID,FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,F.ENAME,F.RLN_NAME,F.FORM_NO,CAST(F.FORM_DATE AS DATE) ";
+                    qry += "AS FORM_DATE,CASE F.ONLINE_FORM WHEN 1 THEN 'ON' ELSE 'OF' END AS ONLINEFORM,P.PAN_NAME,PL.PART_NAME,F.SLNOINPART,F.EPIC_NO FROM SE_EROLL.DBO.FORM_HISTORY AS FH ";
+                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
+                    qry += "JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE WHERE F.UPDATEDTOROLL=0 AND FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='P' AND FH.STAGE_ID ";
+                    qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE UPPER(STAGE)='ACCEPTED')";
+                
+                }
+                else if (md.panMun == "M")
+                {
+                    qry = "SELECT FH.FORMID,FH.STAGE_NO,FH.STAGE_ID,FH.STAGE_DATE,F.ENAME,F.RLN_NAME,F.FORM_NO,CAST(F.FORM_DATE AS DATE) ";
+                    qry += "AS FORM_DATE,CASE F.ONLINE_FORM WHEN 1 THEN 'ON' ELSE 'OF' END AS ONLINEFORM,P.WARD_NAME AS PAN_NAME,PL.PART_NAME,F.SLNOINPART,F.EPIC_NO FROM SE_EROLL.DBO.FORM_HISTORY AS FH ";
+                    qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
+                    qry += "JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO WHERE F.UPDATEDTOROLL=0 AND FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='M' AND FH.STAGE_ID ";
+                    qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE UPPER(STAGE)='ACCEPTED')";
+                }
+                ds = dm.create_dataset(qry);
+                DataColumn dc = new DataColumn("SNO");
+                ds.Tables[0].Columns.Add(dc);
+                int cnt = 0;
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    dr["SNO"] = ++cnt;
+                }
+                md.rowCount = cnt;
+                ViewBag.forms = ds;
+            }
+
+            else
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
+            return View(md);
+        }
+        public IActionResult UpdateRoll(ProcessFormModel md)
+        {
+            SqlConnection con = new SqlConnection();
+            try
+            {
+                dm.makeconnection(ref con);
+            }
+            catch (Exception ex)
+            {
+                TempData["message"] = "Connection to the Database Could not be established. Please try Again!";
+            }
+            SqlTransaction t = con.BeginTransaction();
+            try
+            {
+                if (md.formType=="A")
+                {
+                    qry = "SELECT REVISIONNO,REVISIONYEAR FROM REVISIONS WHERE ISACTIVE=1";
+                    ds = dm.create_dataset(qry);
+                    int revisionNo = (int)ds.Tables[0].Rows[0][0], revisionYear= (int)ds.Tables[0].Rows[0][1];
+                    qry = "SELECT *FROM SE_EROLL.DBO.FORMS WHERE FORMID=" + md.formid;
+                    ds = dm.create_dataset(qry);
+                    DataRow dr = ds.Tables[0].Rows[0];
+                    qry = "INSERT INTO SE_EROLL.DBO.E_DETAIL(PART_NO,PAN_MUN,FORMID,ENAME,RLN_TYPE,RLN_NAME,";
+                    qry += "HOUSE_NO,STATUSTYPE,ROLL_STATUSTYPE,GENDER,AGE,DOB,ORGLISTNO,REVISIONNO,REVISIONYEAR,ENTRYDATE,";
+                    qry +="NEWFORM,MOBILENO,EMAIL)";
+                    qry += "VALUES(" + dr["PART_NO"] + ",'" + dr["PAN_MUN"] + "'," + md.formid + ",'" + dr["ENAME"] + "','";
+                    qry += dr["RLN_TYPE"] + "','" + dr["RLN_NAME"] + "','" + dr["HOUSE_NO"] + "','A','A','" + dr["GENDER"];
+                    qry += "'," + dr["AGE"] + ",'" + dr["DOB"] + "'," + revisionNo + "," + revisionYear + ",'" + DateTime.Now;
+                    qry += "',1," + dr["MOBILENO"] + ",'" + dr["EMAIL"] + "')";
+                    dm.do_transaction(qry,ref con,t);
+                    t.Commit();
+                }
+                else if (md.formType== "D")
+                {
+                    qry = "";
+                }
+               
+                dm.do_transaction(qry, ref con, t);
+                qry = "";
+                dm.do_transaction(qry, ref con, t);
+                t.Commit();
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                t.Rollback();
+                TempData["message"] = "Could Not complete the Transaction. Please Try Again!";
+            }
+            return RedirectToActionPreserveMethod("UpdateToRoll");
+        }    
+
+        #endregion
 
 
 
