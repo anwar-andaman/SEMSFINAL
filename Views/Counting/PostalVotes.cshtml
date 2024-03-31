@@ -5,6 +5,7 @@
 @using System.Data;
     DataSet constTypes = ViewBag.constTypes, districts = ViewBag.districts, tehsils = ViewBag.tehsils;
     DataSet panchayats = ViewBag.panchayats, pollingStations = ViewBag.pollingStations, constituencies = ViewBag.constituencies;
+    DataSet candidateList = ViewBag.candidateList;
 }
 <script>
     
@@ -26,7 +27,7 @@
             </div>
             <div class="col-sm-3">
                 <input type="radio" value="A" id="radAuto" name="mode" asp-for="mode" checked onchange="SubmitForm(this);"/>
-                <label class="form-label mylabel" for="radAuto">By Constituency No.</label>
+                <label class="form-label mylabel" for="radAuto">By Polling Station No.</label>
             </div>
             <div class="col-sm-3">
                 <input type="radio" value="M" id="radManual" name="mode" asp-for="mode" onchange="SubmitForm(this);" />
@@ -123,12 +124,55 @@
             </div>
             <div class="col-sm-2" >
                 <label class="form-label mylabel" for="numPS">Polling Station No.</label>
-                <input type="number" class="form-control mycontrol" id="numPS" min="1" max="686" style="text-align:center;"  />
+                <input type="number" class="form-control mycontrol" id="numPS" asp-for="psNo" min="1" max="@ViewBag.psCnt" style="text-align:center;"  required />
             </div>
             <div class="col-sm-2">
-               <label class="form-label">.</label><button class="btn btn-danger form-control">Fetch List</button>
+               <label class="form-label">.</label>
+               <button id="btnFetch" class="btn btn-danger form-control" onclick="document.getElementById('hidPostCause').value='btnFetch';">Fetch List</button>
             </div>
-
+            
+        </div>
+        <div class="row">
+            <p></p>
+            <hr />
+            @{
+                if (Model.postCause=="btnFetch")
+                {
+                    <div class="col-10">
+                        
+                        <table class="table mylabel table-bordered" style="text-align:center">
+                            <th>S. No.</th>
+                            <th>Candidate Name</th>
+                            <th>Gender</th>
+                            <th>Party </th>
+                            <th>Symbol</th>
+                            <th>No. of Votes</th>
+                           
+                            @{
+                                foreach (DataRow row in candidateList.Tables[0].Rows)
+                                {
+                                    byte[] img = { };
+                                    if (row["SYMBOL"].ToString().Length != 0)
+                                    {
+                                        img = (byte[])row["SYMBOL"];
+                                    }
+                                    <tr class="mycontrol">
+                                        <td>@row["CAND_SL_NO"]</td>
+                                        <td>@row["CAND_NAME"]</td>
+                                        <td>@row["GENDER"]</td>
+                                        <td>@row["PANAME"]</td>
+                                        <td> <img src="data:image/jpeg;base64,@Convert.ToBase64String(img)" style="width:65px;height:65px;" /></td>
+                                        <td>
+                                            <input type="number" id="sd" class="form-control mycontrol" min="0" max="100" style="text-align:center;" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                    </div>
+                }
+               
+            }
+           
         </div>
     </div>
     <script>
@@ -141,8 +185,8 @@
                 document.getElementById('divDistrict').style.display = "none";
                 document.getElementById('divTehsil').style.display = "block";
                 document.getElementById('divPanchayat').style.display = "block";
-                document.getElementById('divConstituency').style.display = "block";
-                document.getElementById('divPS').style.display = "none";
+                document.getElementById('divConstituency').style.display = "none";
+                document.getElementById('divPS').style.display = "block";
             }
             else if (constType == "2") 
             { 
