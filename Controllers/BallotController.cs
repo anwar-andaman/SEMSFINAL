@@ -60,7 +60,7 @@ namespace SEMS.Controllers
 
                 }
             }
-            qry = "SELECT SID,SYMBOL_NAME FROM SYMBOLS WHERE SID NOT IN(SELECT SID FROM PARTY) ORDER BY SYMBOL_NAME";
+            qry = "SELECT SID,SYMBOL_NAME FROM SYMBOLS  ORDER BY SYMBOL_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.symbols = ds;
             if (md.formStatus == "save")
@@ -71,16 +71,16 @@ namespace SEMS.Controllers
 
         public IActionResult AddParty(PolPartyModel md)
         {
-            qry = "INSERT INTO PARTY(PANAME,PANAME_V1,SHORT_NAME,SHORT_NAME_V1,SID) VALUES('" + md.partyName + "','";
-            qry += md.partyNameV1 + "','" + md.shortName + "','" + md.shortNameV1 + "'," + md.sid + ")";
+            qry = "INSERT INTO PARTY(PANAME,PANAME_V1,SHORT_NAME,SHORT_NAME_V1,SID) VALUES('" + md.partyName + "',N'";
+            qry += md.partyNameV1 + "','" + md.shortName + "',N'" + md.shortNameV1 + "'," + md.sid + ")";
             dm.runquery(qry);
             return RedirectToAction("ManageParties");
         }
 
         public IActionResult UpdateParty(int id, PolPartyModel md)
         {
-            qry = "UPDATE PARTY SET PANAME='" + md.partyName + "',PANAME_V1='" + md.partyNameV1 + "',SHORT_NAME='";
-            qry += md.shortName + "',SHORT_NAME_V1='" + md.shortNameV1 + "',SID=" + md.sid + " WHERE PACODE=" + id;
+            qry = "UPDATE PARTY SET PANAME='" + md.partyName + "',PANAME_V1=N'" + md.partyNameV1 + "',SHORT_NAME='";
+            qry += md.shortName + "',SHORT_NAME_V1=N'" + md.shortNameV1 + "',SID=" + md.sid + " WHERE PACODE=" + id;
             dm.runquery(qry);
             return RedirectToAction("ManageParties");
         }
