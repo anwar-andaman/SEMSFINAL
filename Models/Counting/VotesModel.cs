@@ -15,5 +15,6 @@
         public string mode { get; set; } = "A";
 
         public int rejected {  get; set; }
+        public int tendered { get; set; }
     }
 }
