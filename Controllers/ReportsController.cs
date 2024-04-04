@@ -12,6 +12,9 @@ using System.IO;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using Humanizer;
+using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 namespace SEMS.Controllers
 {
@@ -899,6 +902,52 @@ namespace SEMS.Controllers
             string constcy = dm.create_dataset(qry).Tables[0].Rows[0][0].ToString();
             report.SetParameters(new[] { new ReportParameter("constituency", constcy) });
             
+            byte[] pdf = report.Render("PDF");
+            Stream strm = new MemoryStream(pdf);
+            return File(strm, mimeType);
+        }
+        #endregion
+
+        #region PROGRESS REPORT FOR RETURNING OFFICERS
+        public IActionResult ProgressReport(int id,string btype)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+            string reportPath = "";
+            reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepResultProgress.rdlc";
+            qry = "SELECT C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED ";
+            qry += "FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = ";
+            qry += "PS.PSCODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE AND T.PSCODE = PV.PSCODE /*AND T.BALLOT_TYPE ";
+            qry += "=PV.BALLOT_TYPE*/ WHERE C.CONST_CODE = " + id + " AND PV.BALLOT_TYPE like '" + btype + "' GROUP BY C.CID,";
+            qry += "C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO";
+            ds = dm.create_dataset(qry);
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("RESULTS", ds.Tables[0]));
+            qry = "SELECT CM.TYPE_NAME + ' - ' + CAST(C.CONST_NO AS VARCHAR) + ' - ' + C.CONST_NAME FROM ";
+            qry += "CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE = CM.TYPE_CODE WHERE CONST_CODE = " + id;
+            ds = dm.create_dataset(qry);
+            string header;
+            if (btype=="%")
+            {
+                header = ds.Tables[0].Rows[0][0].ToString();
+            }
+            else if (btype=="P")
+            {
+                header = ds.Tables[0].Rows[0][0].ToString() + " (POSTAL VOTES)";
+            }
+            else if(btype=="N")
+            {
+                header = ds.Tables[0].Rows[0][0].ToString() + " (NORMAL VOTES)";
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            report.SetParameters(new[] { new ReportParameter("header", header) });
             byte[] pdf = report.Render("PDF");
             Stream strm = new MemoryStream(pdf);
             return File(strm, mimeType);

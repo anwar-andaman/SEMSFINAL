@@ -60,6 +60,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DSetBallot.xsd</DependentUpon>
     </Compile>
+    <Compile Update="DataSets\DSetResults.Designer.cs">
+      <DependentUpon>DSetResults.xsd</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="DataSets\SE_EROLLDataSet.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -91,6 +96,11 @@
     <None Update="DataSets\DSetBallot.xsd">
       <SubType>Designer</SubType>
       <LastGenOutput>DSetBallot.Designer.cs</LastGenOutput>
+      <Generator>MSDataSetGenerator</Generator>
+    </None>
+    <None Update="DataSets\DSetResults.xsd">
+      <SubType>Designer</SubType>
+      <LastGenOutput>DSetResults.Designer.cs</LastGenOutput>
       <Generator>MSDataSetGenerator</Generator>
     </None>
     <None Update="DataSets\SE_EROLLDataSet.xsd">

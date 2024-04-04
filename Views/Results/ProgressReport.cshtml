@@ -1,0 +1,106 @@
+﻿@model SEMS.Models.Counting.VotesModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "ProgressReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet constTypes = ViewBag.constTypes, districts = ViewBag.districts, tehsils = ViewBag.tehsils;
+    DataSet panchayats = ViewBag.panchayats, pollingStations = ViewBag.pollingStations, constituencies = ViewBag.constituencies;
+    DataSet candidateList = ViewBag.candidateList;
+}
+<script>
+
+    function SubmitForm(item) {
+        var pc = item.id;
+        document.getElementById("hidPostCause").value = pc;
+        document.getElementById('frmProgressReport').submit();
+    }
+
+    function GenerateReport() 
+    {
+        var constcode = document.getElementById('ddwnConstituency').value;
+        var btype = document.getElementById('ddwnBallotType').value;
+        var newurl = "https://" + window.location.host + "/Reports/ProgressReport/" + constcode + "?btype=" + btype;
+        window.open(newurl);
+    }
+</script>
+<form id="frmProgressReport" method="post">
+    <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <input type="hidden" id="hidPanMun" asp-for="panMun" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                    <h3 class="pageheading">Progress Report Parameters</h3>
+                    <hr />
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="divConstType">Constituency Type</label>
+                    </div>
+                    <div class="col-sm-8">
+                        
+                        @{
+                            List<SelectListItem> items = new List<SelectListItem>();
+                            foreach (DataRow row in constTypes.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["TYPE_NAME"].ToString();
+                                s.Value = row["TYPE_CODE"].ToString();
+                                items.Add(s);
+                            }
+                        }
+                        <select class="form-select mycontrol" id="ddwnConstType" asp-for="constType" asp-items="@items" onchange="SubmitForm(this);"></select>
+                    </div>
+                    <div class="col-sm-4" style="margin-top:10px;">
+                        <label class="form-label mylabel" for="ddwnTehsil">Tehsil</label>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:10px;">
+                        @{
+                            items.Clear();
+                            foreach (DataRow row in tehsils.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["TNAME"].ToString();
+                                s.Value = row["TCODE"].ToString();
+                                items.Add(s);
+                            }
+                        }
+                       
+                        <select class="form-select mycontrol" id="ddwnTehsil" asp-for="tehsil" asp-items="@items" onchange="SubmitForm(this);"></select>
+                    </div>
+                    <div class="col-sm-4" style="margin-top:10px;">
+                        <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:10px;">
+                        @{
+                            items.Clear();
+                            foreach (DataRow row in constituencies.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["CONST_NAME"].ToString();
+                                s.Value = row["CONST_CODE"].ToString();
+                                items.Add(s);
+                            }
+                        }
+                        
+                        <select id="ddwnConstituency" class="form-select mycontrol" asp-for="constName" asp-items="@items"></select>
+                    </div>
+                    <div class="col-sm-4" style="margin-top:10px;">
+                        <label class="form-label mylabel" for="ddwnBallotType">Ballot Type</label>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:10px;">
+                        <select class="form-select mycontrol" id="ddwnBallotType">
+                            <option value="%">All</option>
+                            <option value="P">Postal Ballot</option>
+                            <option value="N">Normal Ballot</option>
+                        </select>
+                    </div>
+                    <p></p>
+                    <hr />
+                    <div class="col-sm-8"></div>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-danger form-control" onclick="GenerateReport();">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

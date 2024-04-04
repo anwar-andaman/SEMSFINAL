@@ -89,7 +89,7 @@ namespace SEMS.Controllers
             qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.panchayats = ds;
-            if (md.panMun=="P")
+            if (md.panMun == "P")
             {
                 if (md.constType == "1")
                 {
@@ -132,7 +132,7 @@ namespace SEMS.Controllers
                 ds = dm.create_dataset(qry);
                 ViewBag.pollingStations = ds;
             }
-            else if (md.panMun=="M")
+            else if (md.panMun == "M")
             {
                 qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
                 qry += " ORDER BY CONST_NO";
@@ -163,7 +163,7 @@ namespace SEMS.Controllers
                         if (md.constType == "1")
                         {
                             qry = "SELECT CAST(CONST_CODE AS INT) FROM CONSTITUENCY WHERE TYPE_CODE=" + md.constType + " AND CONST_NO=(SELECT ";
-                            qry += "CONST_NO FROM POLLING_STATION WHERE PAN_MUN='P' AND PS_NO=" + psNo + ")"; ;
+                            qry += "CONST_NO FROM POLLING_STATION WHERE PAN_MUN='P' AND PS_NO=" + psNo + ")";
                         }
                         else if (md.constType == "2" || md.constType == "3")
                         {
@@ -176,7 +176,7 @@ namespace SEMS.Controllers
                             qry += "ZILLA_CODE FROM CONSTITUENCY WHERE TYPE_CODE=1 AND CONST_NO=" + psNo + ")";
                         }
 
-                       
+
                     }
                     else if (md.panMun == "M")
                     {
@@ -194,8 +194,16 @@ namespace SEMS.Controllers
                 {
                     qry = "SELECT CAST(PS_NO AS INT) FROM POLLING_STATION WHERE PSCODE=" + md.pollingStation;
                     psNo = dm.create_scalar(qry);
+                    if (md.constType == "1")
+                    {
+
+                        qry = "SELECT CAST(CONST_CODE AS INT) FROM CONSTITUENCY WHERE TYPE_CODE=" + md.constType + " AND CONST_NO=(SELECT ";
+                        qry += "CONST_NO FROM POLLING_STATION WHERE PAN_MUN='P' AND PS_NO=" + psNo + ")";
+                        md.constName = dm.create_scalar(qry).ToString();
+                    }
+
                 }
-                
+
                 qry = "SELECT CID FROM NOMINATIONS WHERE CONST_CODE=" + md.constName + " ORDER BY CAND_SL_NO";
                 ds = dm.create_dataset(qry);
                 qry = "SELECT COUNT(*) FROM PSWISE_VOTES WHERE CONST_CODE=" + md.constName + " AND PSCODE=";
@@ -248,11 +256,11 @@ namespace SEMS.Controllers
                 qry += "'Female' WHEN 'T' THEN 'Third Gender' END AS GENDER,CASE INDEPENDENT WHEN 1 THEN 'INDEPENDENT' ELSE ";
                 qry += "P.SHORT_NAME END AS PANAME, S.SYMBOL,CAST(PV.VOTES AS INT) AS VOTES FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID=C.CID ";
                 qry += "AND PV.CONST_CODE=C.CONST_CODE AND PV.BALLOT_TYPE='P' LEFT JOIN PARTY AS P ON C.PACODE = P.PACODE ";
-                qry += "LEFT JOIN SYMBOLS AS S ON (P.SID = S.SID OR C.SID=S.SID) WHERE C.CONST_CODE=" + md.constName; 
+                qry += "LEFT JOIN SYMBOLS AS S ON (P.SID = S.SID OR C.SID=S.SID) WHERE C.CONST_CODE=" + md.constName;
                 qry += " AND PV.PSCODE=" + md.pollingStation + " ORDER BY CAND_SL_NO";
                 ds = dm.create_dataset(qry);
                 int arrCnt = 0;
-                foreach (DataRow row in ds.Tables[0].Rows ) 
+                foreach (DataRow row in ds.Tables[0].Rows)
                 {
                     int votes = int.Parse(row["VOTES"].ToString());
                     md.votes[arrCnt++] = votes;
@@ -291,7 +299,7 @@ namespace SEMS.Controllers
                         qry += "ZILLA_CODE FROM CONSTITUENCY WHERE TYPE_CODE=1 AND CONST_NO=" + psNo + ")";
                     }
 
-                    
+
                 }
                 else if (md.panMun == "M")
                 {
@@ -304,6 +312,18 @@ namespace SEMS.Controllers
                     return RedirectToAction("Login", "Home");
                 }
                 md.constName = dm.create_scalar(qry).ToString();
+            }
+            else
+            {
+                qry = "SELECT CAST(PS_NO AS INT) FROM POLLING_STATION WHERE PSCODE=" + md.pollingStation;
+                psNo = dm.create_scalar(qry);
+                if (md.constType == "1")
+                {
+
+                    qry = "SELECT CAST(CONST_CODE AS INT) FROM CONSTITUENCY WHERE TYPE_CODE=" + md.constType + " AND CONST_NO=(SELECT ";
+                    qry += "CONST_NO FROM POLLING_STATION WHERE PAN_MUN='P' AND PS_NO=" + psNo + ")";
+                    md.constName = dm.create_scalar(qry).ToString();
+                }
             }
             qry = "SELECT CID FROM NOMINATIONS WHERE CONST_CODE=" + md.constName + " ORDER BY CAND_SL_NO";
             ds = dm.create_dataset(qry);
@@ -357,7 +377,6 @@ namespace SEMS.Controllers
                 qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
                 qry += " AND PAN_MUN='M' ORDER BY CONST_NAME";
             }
-
             ds = dm.create_dataset(qry);
             ViewBag.constituencies = ds;
             md.constName = "1";
@@ -369,7 +388,6 @@ namespace SEMS.Controllers
             qry = "SELECT COUNT(*) FROM POLLING_STATION WHERE PAN_MUN='" + md.panMun + "'";
             ViewBag.psCnt = dm.create_scalar(qry);
             return View(md);
-
         }
         [HttpPost]
         public IActionResult NormalVotes(VotesModel md)
@@ -493,8 +511,14 @@ namespace SEMS.Controllers
                 {
                     qry = "SELECT CAST(PS_NO AS INT) FROM POLLING_STATION WHERE PSCODE=" + md.pollingStation;
                     psNo = dm.create_scalar(qry);
-                }
+                    if (md.constType == "1")
+                    {
 
+                        qry = "SELECT CAST(CONST_CODE AS INT) FROM CONSTITUENCY WHERE TYPE_CODE=" + md.constType + " AND CONST_NO=(SELECT ";
+                        qry += "CONST_NO FROM POLLING_STATION WHERE PAN_MUN='P' AND PS_NO=" + psNo + ")";
+                        md.constName = dm.create_scalar(qry).ToString();
+                    }
+                }
                 qry = "SELECT CID FROM NOMINATIONS WHERE CONST_CODE=" + md.constName + " ORDER BY CAND_SL_NO";
                 ds = dm.create_dataset(qry);
                 qry = "SELECT COUNT(*) FROM PSWISE_VOTES WHERE CONST_CODE=" + md.constName + " AND PSCODE=";
@@ -606,6 +630,18 @@ namespace SEMS.Controllers
                 }
                 md.constName = dm.create_scalar(qry).ToString();
             }
+            else
+            {
+                qry = "SELECT CAST(PS_NO AS INT) FROM POLLING_STATION WHERE PSCODE=" + md.pollingStation;
+                psNo = dm.create_scalar(qry);
+                if (md.constType == "1")
+                {
+
+                    qry = "SELECT CAST(CONST_CODE AS INT) FROM CONSTITUENCY WHERE TYPE_CODE=" + md.constType + " AND CONST_NO=(SELECT ";
+                    qry += "CONST_NO FROM POLLING_STATION WHERE PAN_MUN='P' AND PS_NO=" + psNo + ")";
+                    md.constName = dm.create_scalar(qry).ToString();
+                }
+            }
             qry = "SELECT CID FROM NOMINATIONS WHERE CONST_CODE=" + md.constName + " ORDER BY CAND_SL_NO";
             ds = dm.create_dataset(qry);
             int rowCnt = 1;
@@ -623,5 +659,6 @@ namespace SEMS.Controllers
             return RedirectToActionPreserveMethod("NormalVotes");
         }
         #endregion
-    }
+
+    }   
 }

@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DSetResults" targetNamespace="http://tempuri.org/DSetResults.xsd" xmlns:mstns="http://tempuri.org/DSetResults.xsd" xmlns="http://tempuri.org/DSetResults.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection ConnectionStringObject="Data Source=.;Initial Catalog=STATE_ELECTION;Persist Security Info=True;User ID=sa;Password=sa@Admin;Encrypt=False" IsAppSettingsProperty="false" Modifier="Assembly" Name="anwar.STATE_ELECTION.dbo" ParameterPrefix="@" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="RESULTSTableAdapter" GeneratorDataComponentClassName="RESULTSTableAdapter" Name="RESULTS" UserDataComponentName="RESULTSTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED FROM 
+NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE 
+JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE 
+WHERE C.CONST_CODE = 799 AND PV.BALLOT_TYPE like '%' GROUP BY REJECTED,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="CID" DataSetColumn="CID" />
+              <Mapping SourceColumn="CAND_NAME" DataSetColumn="CAND_NAME" />
+              <Mapping SourceColumn="PSCODE" DataSetColumn="PSCODE" />
+              <Mapping SourceColumn="PS_NO" DataSetColumn="PS_NO" />
+              <Mapping SourceColumn="PS_NAME" DataSetColumn="PS_NAME" />
+              <Mapping SourceColumn="VOTES" DataSetColumn="VOTES" />
+              <Mapping SourceColumn="CAND_SL_NO" DataSetColumn="CAND_SL_NO" />
+              <Mapping SourceColumn="REJECTED" DataSetColumn="REJECTED" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DSetResults" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DSetResults" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DSetResults">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="RESULTS" msprop:Generator_RowEvHandlerName="RESULTSRowChangeEventHandler" msprop:Generator_RowDeletedName="RESULTSRowDeleted" msprop:Generator_RowDeletingName="RESULTSRowDeleting" msprop:Generator_RowEvArgName="RESULTSRowChangeEvent" msprop:Generator_TablePropName="RESULTS" msprop:Generator_RowChangedName="RESULTSRowChanged" msprop:Generator_UserTableName="RESULTS" msprop:Generator_RowChangingName="RESULTSRowChanging" msprop:Generator_RowClassName="RESULTSRow" msprop:Generator_TableClassName="RESULTSDataTable" msprop:Generator_TableVarName="tableRESULTS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnPropNameInTable="CIDColumn" msprop:Generator_ColumnPropNameInRow="CID" msprop:Generator_UserColumnName="CID" msprop:Generator_ColumnVarNameInTable="columnCID" type="xs:int" />
+              <xs:element name="CAND_NAME" msprop:Generator_ColumnPropNameInTable="CAND_NAMEColumn" msprop:Generator_ColumnPropNameInRow="CAND_NAME" msprop:Generator_UserColumnName="CAND_NAME" msprop:Generator_ColumnVarNameInTable="columnCAND_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PSCODE" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnPropNameInTable="PSCODEColumn" msprop:Generator_ColumnPropNameInRow="PSCODE" msprop:Generator_UserColumnName="PSCODE" msprop:Generator_ColumnVarNameInTable="columnPSCODE" type="xs:short" />
+              <xs:element name="PS_NO" msprop:Generator_ColumnPropNameInTable="PS_NOColumn" msprop:Generator_ColumnPropNameInRow="PS_NO" msprop:Generator_UserColumnName="PS_NO" msprop:Generator_ColumnVarNameInTable="columnPS_NO" type="xs:short" />
+              <xs:element name="PS_NAME" msprop:Generator_ColumnPropNameInTable="PS_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PS_NAME" msprop:Generator_UserColumnName="PS_NAME" msprop:Generator_ColumnVarNameInTable="columnPS_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="VOTES" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="VOTESColumn" msprop:Generator_ColumnPropNameInRow="VOTES" msprop:Generator_UserColumnName="VOTES" msprop:Generator_ColumnVarNameInTable="columnVOTES" type="xs:int" minOccurs="0" />
+              <xs:element name="CAND_SL_NO" msprop:Generator_ColumnPropNameInTable="CAND_SL_NOColumn" msprop:Generator_ColumnPropNameInRow="CAND_SL_NO" msprop:Generator_UserColumnName="CAND_SL_NO" msprop:Generator_ColumnVarNameInTable="columnCAND_SL_NO" type="xs:short" minOccurs="0" />
+              <xs:element name="REJECTED" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="REJECTED" msprop:Generator_ColumnPropNameInTable="REJECTEDColumn" msprop:Generator_ColumnVarNameInTable="columnREJECTED" msprop:Generator_UserColumnName="REJECTED" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:RESULTS" />
+      <xs:field xpath="mstns:CID" />
+      <xs:field xpath="mstns:PSCODE" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

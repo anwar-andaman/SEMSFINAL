@@ -204,7 +204,8 @@
         var mode = "@Model.mode";
         var constType = "@Model.constType";
         if (mode == 'M') {
-            document.getElementById("divPSNo").style.display = "none";
+            //document.getElementById("divPSNo").style.display = "none";
+            document.getElementById('numPS').disabled = true;
             if (constType == "1") {
                 document.getElementById('divDistrict').style.display = "none";
                 document.getElementById('divTehsil').style.display = "block";
@@ -242,12 +243,13 @@
             }
         }
         else {
-            document.getElementById("divPSNo").style.display = "block";
+            //document.getElementById("divPSNo").style.display = "block";
             document.getElementById('divDistrict').style.display = "none";
             document.getElementById('divTehsil').style.display = "none";
             document.getElementById('divPanchayat').style.display = "none";
             document.getElementById('divConstituency').style.display = "none";
             document.getElementById('divPS').style.display = "none";
+            document.getElementById('numPS').disabled = false;
         }
 
     </script>
