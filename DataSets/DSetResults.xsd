@@ -33,6 +33,34 @@ WHERE C.CONST_CODE = 799 AND PV.BALLOT_TYPE like '%' GROUP BY REJECTED,C.CID,C.C
             </Mappings>
             <Sources />
           </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="FORM20GPMTableAdapter" GeneratorDataComponentClassName="FORM20GPMTableAdapter" Name="FORM20GPM" UserDataComponentName="FORM20GPMTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED 
+FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE
+JOIN CONSTITUENCY AS CN ON CN.CONST_NO=PS.CONST_NO AND C.CONST_CODE=CN.CONST_CODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE =PV.BALLOT_TYPE
+WHERE PV.BALLOT_TYPE like '%' AND CN.TYPE_CODE=1 AND CN.PCODE=42 GROUP BY CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="CID" DataSetColumn="CID" />
+              <Mapping SourceColumn="CAND_NAME" DataSetColumn="CAND_NAME" />
+              <Mapping SourceColumn="CAND_SL_NO" DataSetColumn="CAND_SL_NO" />
+              <Mapping SourceColumn="PSCODE" DataSetColumn="PSCODE" />
+              <Mapping SourceColumn="PS_NO" DataSetColumn="PS_NO" />
+              <Mapping SourceColumn="PS_NAME" DataSetColumn="PS_NAME" />
+              <Mapping SourceColumn="VOTES" DataSetColumn="VOTES" />
+              <Mapping SourceColumn="REJECTED" DataSetColumn="REJECTED" />
+              <Mapping SourceColumn="CONST_NAME" DataSetColumn="CONST_NAME" />
+              <Mapping SourceColumn="CONST_NO" DataSetColumn="CONST_NO" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
         </Tables>
         <Sources />
       </DataSource>
@@ -63,7 +91,41 @@ WHERE C.CONST_CODE = 799 AND PV.BALLOT_TYPE like '%' GROUP BY REJECTED,C.CID,C.C
               </xs:element>
               <xs:element name="VOTES" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="VOTESColumn" msprop:Generator_ColumnPropNameInRow="VOTES" msprop:Generator_UserColumnName="VOTES" msprop:Generator_ColumnVarNameInTable="columnVOTES" type="xs:int" minOccurs="0" />
               <xs:element name="CAND_SL_NO" msprop:Generator_ColumnPropNameInTable="CAND_SL_NOColumn" msprop:Generator_ColumnPropNameInRow="CAND_SL_NO" msprop:Generator_UserColumnName="CAND_SL_NO" msprop:Generator_ColumnVarNameInTable="columnCAND_SL_NO" type="xs:short" minOccurs="0" />
-              <xs:element name="REJECTED" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="REJECTED" msprop:Generator_ColumnPropNameInTable="REJECTEDColumn" msprop:Generator_ColumnVarNameInTable="columnREJECTED" msprop:Generator_UserColumnName="REJECTED" type="xs:int" minOccurs="0" />
+              <xs:element name="REJECTED" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="REJECTEDColumn" msprop:Generator_ColumnPropNameInRow="REJECTED" msprop:Generator_UserColumnName="REJECTED" msprop:Generator_ColumnVarNameInTable="columnREJECTED" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="FORM20GPM" msprop:Generator_RowClassName="FORM20GPMRow" msprop:Generator_RowEvHandlerName="FORM20GPMRowChangeEventHandler" msprop:Generator_RowDeletedName="FORM20GPMRowDeleted" msprop:Generator_RowDeletingName="FORM20GPMRowDeleting" msprop:Generator_RowEvArgName="FORM20GPMRowChangeEvent" msprop:Generator_TablePropName="FORM20GPM" msprop:Generator_RowChangedName="FORM20GPMRowChanged" msprop:Generator_UserTableName="FORM20GPM" msprop:Generator_RowChangingName="FORM20GPMRowChanging" msprop:Generator_TableClassName="FORM20GPMDataTable" msprop:Generator_TableVarName="tableFORM20GPM">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="CID" msprop:Generator_ColumnPropNameInTable="CIDColumn" msprop:Generator_ColumnPropNameInRow="CID" msprop:Generator_ColumnVarNameInTable="columnCID" type="xs:int" />
+              <xs:element name="CAND_NAME" msprop:Generator_UserColumnName="CAND_NAME" msprop:Generator_ColumnPropNameInTable="CAND_NAMEColumn" msprop:Generator_ColumnPropNameInRow="CAND_NAME" msprop:Generator_ColumnVarNameInTable="columnCAND_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CAND_SL_NO" msprop:Generator_UserColumnName="CAND_SL_NO" msprop:Generator_ColumnPropNameInTable="CAND_SL_NOColumn" msprop:Generator_ColumnPropNameInRow="CAND_SL_NO" msprop:Generator_ColumnVarNameInTable="columnCAND_SL_NO" type="xs:short" minOccurs="0" />
+              <xs:element name="PSCODE" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_UserColumnName="PSCODE" msprop:Generator_ColumnPropNameInTable="PSCODEColumn" msprop:Generator_ColumnPropNameInRow="PSCODE" msprop:Generator_ColumnVarNameInTable="columnPSCODE" type="xs:short" />
+              <xs:element name="PS_NO" msprop:Generator_UserColumnName="PS_NO" msprop:Generator_ColumnPropNameInTable="PS_NOColumn" msprop:Generator_ColumnPropNameInRow="PS_NO" msprop:Generator_ColumnVarNameInTable="columnPS_NO" type="xs:short" />
+              <xs:element name="PS_NAME" msprop:Generator_UserColumnName="PS_NAME" msprop:Generator_ColumnPropNameInTable="PS_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PS_NAME" msprop:Generator_ColumnVarNameInTable="columnPS_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="VOTES" msdata:ReadOnly="true" msprop:Generator_UserColumnName="VOTES" msprop:Generator_ColumnPropNameInTable="VOTESColumn" msprop:Generator_ColumnPropNameInRow="VOTES" msprop:Generator_ColumnVarNameInTable="columnVOTES" type="xs:int" minOccurs="0" />
+              <xs:element name="REJECTED" msdata:ReadOnly="true" msprop:Generator_UserColumnName="REJECTED" msprop:Generator_ColumnPropNameInTable="REJECTEDColumn" msprop:Generator_ColumnPropNameInRow="REJECTED" msprop:Generator_ColumnVarNameInTable="columnREJECTED" type="xs:int" minOccurs="0" />
+              <xs:element name="CONST_NAME" msprop:Generator_ColumnPropNameInRow="CONST_NAME" msprop:Generator_ColumnPropNameInTable="CONST_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnCONST_NAME" msprop:Generator_UserColumnName="CONST_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CONST_NO" msprop:Generator_ColumnPropNameInRow="CONST_NO" msprop:Generator_ColumnPropNameInTable="CONST_NOColumn" msprop:Generator_ColumnVarNameInTable="columnCONST_NO" msprop:Generator_UserColumnName="CONST_NO" type="xs:short" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -71,6 +133,11 @@ WHERE C.CONST_CODE = 799 AND PV.BALLOT_TYPE like '%' GROUP BY REJECTED,C.CID,C.C
     </xs:complexType>
     <xs:unique name="Constraint1" msdata:PrimaryKey="true">
       <xs:selector xpath=".//mstns:RESULTS" />
+      <xs:field xpath="mstns:CID" />
+      <xs:field xpath="mstns:PSCODE" />
+    </xs:unique>
+    <xs:unique name="FORM20GPM_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:FORM20GPM" />
       <xs:field xpath="mstns:CID" />
       <xs:field xpath="mstns:PSCODE" />
     </xs:unique>

@@ -15,6 +15,8 @@ using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using Humanizer;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using System;
 
 namespace SEMS.Controllers
 {
@@ -920,8 +922,8 @@ namespace SEMS.Controllers
             reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepResultProgress.rdlc";
             qry = "SELECT C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED ";
             qry += "FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = ";
-            qry += "PS.PSCODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE AND T.PSCODE = PV.PSCODE /*AND T.BALLOT_TYPE ";
-            qry += "=PV.BALLOT_TYPE*/ WHERE C.CONST_CODE = " + id + " AND PV.BALLOT_TYPE like '" + btype + "' GROUP BY C.CID,";
+            qry += "PS.PSCODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE ";
+            qry += "=PV.BALLOT_TYPE WHERE C.CONST_CODE = " + id + " AND PV.BALLOT_TYPE like '" + btype + "' GROUP BY C.CID,";
             qry += "C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO";
             ds = dm.create_dataset(qry);
             Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
@@ -952,6 +954,46 @@ namespace SEMS.Controllers
             Stream strm = new MemoryStream(pdf);
             return File(strm, mimeType);
         }
+
+        #endregion
+
+        #region FORM-20 - FINAL RESULT SHEET
+        public IActionResult Form20(int id,int gpm)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+            string reportPath = "";
+            if (gpm == 1)
+            {
+                reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepForm20GPM.rdlc";
+                qry = "SELECT CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,";
+                qry += "SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
+                qry += "C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE JOIN CONSTITUENCY AS CN ON CN.CONST_NO = ";
+                qry += "PS.CONST_NO AND C.CONST_CODE = CN.CONST_CODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE ";
+                qry += "AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE WHERE PV.BALLOT_TYPE like '%' AND CN.TYPE_CODE ";
+                qry += "= 1 AND CN.PCODE = " + id + " GROUP BY CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO";
+            }
+            else
+            {
+                reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\Form20.rdlc";
+            }
+            ds = dm.create_dataset(qry);
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            report.DataSources.Add(new ReportDataSource("RESULTS", ds.Tables[0]));
+            qry = "SELECT CM.TYPE_NAME + ' - ' + CAST(C.CONST_NO AS VARCHAR) + ' - ' + C.CONST_NAME FROM ";
+            qry += "CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE = CM.TYPE_CODE WHERE CONST_CODE = " + id;
+            ds = dm.create_dataset(qry);
+            string header;
+            report.SetParameters(new[] { new ReportParameter("header", "dsfs") });
+            byte[] pdf = report.Render("PDF");
+            Stream strm = new MemoryStream(pdf);
+            return File(strm, mimeType);
+        }
+
         #endregion
     }
 }

@@ -256,6 +256,55 @@ namespace SEMS.Controllers
             return View(md);
 
         }
+
+        public IActionResult Form20()
+        {
+            VotesModel md = new VotesModel();
+            if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
+                return RedirectToAction("Login", "Home");
+            md.panMun = HttpContext.Session.GetString("electionType");
+            qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "' ORDER BY TYPE_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.constTypes = ds;
+            md.constType = ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.tehsils = ds;
+            md.tehsil = ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+            qry += " AND TCODE=" + md.tehsil + " ORDER BY CONST_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.constituencies = ds;
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            return View(md);
+        }
+        [HttpPost]
+        public IActionResult Form20(VotesModel md)
+        {
+            
+            if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
+                return RedirectToAction("Login", "Home");
+            md.panMun = HttpContext.Session.GetString("electionType");
+            qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "' ORDER BY TYPE_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.constTypes = ds;
+            
+            qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.tehsils = ds;
+           
+            qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+            qry += " AND TCODE=" + md.tehsil + " ORDER BY CONST_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.constituencies = ds;
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            return View(md);
+        }
+
         #endregion
     }
 }
