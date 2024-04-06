@@ -958,7 +958,7 @@ namespace SEMS.Controllers
         #endregion
 
         #region FORM-20 - FINAL RESULT SHEET
-        public IActionResult Form20(int id,int gpm)
+        public IActionResult Form20(int id,int ctype)
         {
             System.Data.DataSet ds = new System.Data.DataSet();
             System.Data.DataTable dt = new System.Data.DataTable();
@@ -966,29 +966,47 @@ namespace SEMS.Controllers
             int extension = (int)(DateTime.Now.Ticks >> 10);
             string mimeType = "application/pdf";
             string reportPath = "";
-            if (gpm == 1)
+            if (ctype == 1)
             {
                 reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepForm20GPM.rdlc";
                 qry = "SELECT CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,";
-                qry += "SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
+                qry += "SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED,SUM(T.TENDERED) AS TENDERED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
                 qry += "C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE JOIN CONSTITUENCY AS CN ON CN.CONST_NO = ";
                 qry += "PS.CONST_NO AND C.CONST_CODE = CN.CONST_CODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE ";
-                qry += "AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE WHERE PV.BALLOT_TYPE like '%' AND CN.TYPE_CODE ";
+                qry += "AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE WHERE CN.TYPE_CODE ";
                 qry += "= 1 AND CN.PCODE = " + id + " GROUP BY CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO";
             }
             else
             {
-                reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\Form20.rdlc";
+                reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepForm20.rdlc";
+                qry = "SELECT CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,";
+                qry += "SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED,SUM(T.TENDERED) AS TENDERED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
+                qry += "C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE JOIN CONSTITUENCY AS CN ON ";
+                qry += "C.CONST_CODE = CN.CONST_CODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE ";
+                qry += "AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE WHERE CN.CONST_CODE = " + id + " GROUP BY CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO";
             }
             ds = dm.create_dataset(qry);
             Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
             report.ReportPath = reportPath;
             report.DataSources.Add(new ReportDataSource("RESULTS", ds.Tables[0]));
-            qry = "SELECT CM.TYPE_NAME + ' - ' + CAST(C.CONST_NO AS VARCHAR) + ' - ' + C.CONST_NAME FROM ";
-            qry += "CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE = CM.TYPE_CODE WHERE CONST_CODE = " + id;
-            ds = dm.create_dataset(qry);
             string header;
-            report.SetParameters(new[] { new ReportParameter("header", "dsfs") });
+            if (ctype == 1)
+            {
+                qry = "SELECT PAN_NAME FROM PANCHAYAT WHERE PNO=" + id;
+                ds = dm.create_dataset(qry);
+                header = "Election to the Gram Panchayat Member under the " + ds.Tables[0].Rows[0][0].ToString() + " Panchayat";
+            }
+            else
+            {
+                qry = "SELECT CM.TYPE_NAME,C.CONST_NAME FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE = ";
+                qry += "CM.TYPE_CODE WHERE CONST_CODE = " + id;
+                ds = dm.create_dataset(qry);
+                header = "Election to the " + ds.Tables[0].Rows[0][0].ToString() + " from the " + ds.Tables[0].Rows[0][1].ToString() + " Constituency";
+            }
+           
+            
+           
+            report.SetParameters(new[] { new ReportParameter("header", header) });
             byte[] pdf = report.Render("PDF");
             Stream strm = new MemoryStream(pdf);
             return File(strm, mimeType);

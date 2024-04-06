@@ -20,16 +20,16 @@
         if (ct == "1") 
         {
             var constcode = document.getElementById('ddwnPanchayat').value;
-            var gpm = 1;
+            
         }
         else 
         { 
             var constcode = document.getElementById('ddwnConstituency').value;
-            gpm = 0;
+            
         }
             
         
-        var newurl = "https://" + window.location.host + "/Reports/Form20/" + constcode + "?gpm=" + gpm;
+        var newurl = "https://" + window.location.host + "/Reports/Form20/" + constcode + "?ctype=" + ct;
         window.open(newurl);
     }
 
@@ -41,7 +41,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="row">
-                    <h3 class="pageheading">Progress Report Parameters</h3>
+                    <h3 class="pageheading">Report Parameters</h3>
                     <hr />
                     <div class="col-sm-4">
                         <label class="form-label mylabel" for="divConstType">Constituency Type</label>
