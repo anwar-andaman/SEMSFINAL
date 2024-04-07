@@ -1,0 +1,209 @@
+﻿@model SEMS.Models.Counting.VotesModel
+@{
+    ViewData["Title"] = "DeclareResult";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    @using System.Data;
+    DataSet constTypes = ViewBag.constTypes,  tehsils = ViewBag.tehsils;
+    DataSet panchayats = ViewBag.panchayats,  constituencies = ViewBag.constituencies;
+    DataSet candidateList = ViewBag.candidateList;
+}
+<script>
+    function SubmitForm(item) {
+        var pc = item.id;
+        document.getElementById("hidPostCause").value = pc;
+        document.getElementById('frmDeclareResult').submit();
+    }
+    function SetKey(key) { 
+        document.getElementById("hidKeyValue").value = key;
+    }
+</script>
+
+<form id="frmDeclareResult" method="post">
+    <input type="hidden" id="hidPostCause" asp-for="postCause" />
+    <input type="hidden" id="hidPanMun" asp-for="panMun" />
+    <input type="hidden" id="hidKeyValue" asp-for="keyValue" />
+    <div class="container">
+        <div class="modal fade" id="ModalDeclare" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Authentication</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Password<input type="password" id="txtPassword" name="txtPassword" style="margin-left:10px;" /></p>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger" asp-action="DeclareWinner">Declare</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="ModalRollback" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Authentication</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Password<input type="password" id="txtPassword" name="txtPassword" style="margin-left:10px;" /></p>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger" asp-action="RollbackWinner">Rollback</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 class="pageheading">Result Declaration</h2>
+        <div class="row">
+            <div class="col-sm-4">
+                <label class="form-label mylabel" for="divConstType">Constituency Type</label>
+                @{
+                    List<SelectListItem> items = new List<SelectListItem>();
+                    foreach (DataRow row in constTypes.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["TYPE_NAME"].ToString();
+                        s.Value = row["TYPE_CODE"].ToString();
+                        items.Add(s);
+                    }
+                }
+                <select class="form-select mycontrol" id="divConstType" asp-for="constType" asp-items="@items" onchange="SubmitForm(this);"></select>
+            </div>
+            
+            <div class="col-sm-3" id="divTehsil">
+                @{
+                    items.Clear();
+                    foreach (DataRow row in tehsils.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["TNAME"].ToString();
+                        s.Value = row["TCODE"].ToString();
+                        items.Add(s);
+                    }
+                }
+                <label class="form-label mylabel" for="divTehsil">Tehsil</label>
+                <select class="form-select mycontrol" id="divTehsil" asp-for="tehsil" asp-items="@items" onchange="SubmitForm(this);"></select>
+            </div>
+            <div class="col-sm-4" id="divPanchayat">
+                @{
+                    items.Clear();
+                    foreach (DataRow row in panchayats.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["PAN_NAME"].ToString();
+                        s.Value = row["PNO"].ToString();
+                        items.Add(s);
+                    }
+                }
+                <label class="form-label mylabel" for="divPanchayat">Panchayat</label>
+                <select class="form-select mycontrol" id="divPanchayat" asp-for="panchayat" asp-items="@items" onchange="SubmitForm(this);"></select>
+            </div>
+            <div class="col-sm-3" id="divConstituency">
+                @{
+                    items.Clear();
+                    foreach (DataRow row in constituencies.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["CONST_NAME"].ToString();
+                        s.Value = row["CONST_CODE"].ToString();
+                        items.Add(s);
+                    }
+                }
+                <label class="form-label mylabel" for="divConstituency">Constituency</label>
+                <select class="form-select mycontrol" asp-for="constName" asp-items="@items" onchange="SubmitForm(this);"></select>
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label">.</label>
+                <button id="btnFetch" class="btn btn-danger form-control" onclick="document.getElementById('hidPostCause').value='btnFetch';">Fetch List</button>
+            </div>
+        </div>
+        <div class="row">
+            <p></p>
+            <hr />
+            @{
+                if (Model.postCause == "btnFetch")
+                {
+                        <div class="col-sm-12">
+
+                            <table class="table mylabel table-bordered" style="text-align:center">
+                                <th>S. No.</th>
+                                <th>Candidate Name</th>
+                                <th>Gender</th>
+                                <th>Party </th>
+                                <th>Symbol</th>
+                                <th>No. of Votes</th>
+                                <th></th>
+
+                                @{
+                        int rowCnt = 0;
+                        foreach (DataRow row in candidateList.Tables[0].Rows)
+                        {
+                            rowCnt++;
+                            string id = "numVotes" + rowCnt;
+                            string aspFor = "votes[" + (rowCnt - 1) + "]";
+                            byte[] img = { };
+                            if (row["SYMBOL"].ToString().Length != 0)
+                            {
+                                img = (byte[])row["SYMBOL"];
+                            }
+                                    <tr class="mycontrol">
+                                        <td>@row["CAND_SL_NO"]</td>
+                                        <td style="text-align:left">@row["CAND_NAME"]</td>
+                                        <td>@row["GENDER"]</td>
+                                        <td>@row["PANAME"]</td>
+                                        <td> <img src="data:image/jpeg;base64,@Convert.ToBase64String(img)" style="width:65px;height:65px;" /></td>
+                                        <td>
+                                            @row["VOTES"]
+                                        </td>
+                                        <td>
+                                            @{
+                                        string winStatus = row["WIN_STATUS"].ToString();
+                                        if (winStatus == "W" )
+                                        {
+                                                                <button class="btn btn-primary " type="button" data-bs-toggle="modal" data-bs-target="#ModalRollback" onclick="SetKey('@row["CID"]')">Rollback Result</button>
+                                        }
+                                        else if ((winStatus == "C" && (int)row["VOTES"] == @Model.maxVotes) || winStatus == "U")
+                                        {
+                                                                <button class="btn btn-primary " type="button" data-bs-toggle="modal" data-bs-target="#ModalDeclare" onclick="SetKey('@row["CID"]')">Declare as Winner</button>
+                                        }
+                                            }
+                                        </td>
+                                    </tr>
+                        }
+                                }
+                            </table>
+                        </div>
+                            
+                }
+
+            }
+
+        </div>
+    </div>
+    <script>
+
+        
+        var constType = "@Model.constType";
+       
+        if (constType == "1") 
+        {
+            document.getElementById('divPanchayat').style.display = "block";
+        }
+        else 
+        {
+            document.getElementById('divPanchayat').style.display = "none";
+        }
+            
+        
+
+    </script>
+</form>
+
+
+

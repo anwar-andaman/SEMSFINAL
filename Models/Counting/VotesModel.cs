@@ -16,5 +16,7 @@
 
         public int rejected {  get; set; }
         public int tendered { get; set; }
+        public int maxVotes { get; set; } = 0;
+        public int keyValue { get; set; }
     }
 }

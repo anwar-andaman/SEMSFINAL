@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace SEMS.Controllers
 {
@@ -966,6 +967,7 @@ namespace SEMS.Controllers
             int extension = (int)(DateTime.Now.Ticks >> 10);
             string mimeType = "application/pdf";
             string reportPath = "";
+            string header = "";
             if (ctype == 1)
             {
                 reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepForm20GPM.rdlc";
@@ -989,7 +991,6 @@ namespace SEMS.Controllers
             Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
             report.ReportPath = reportPath;
             report.DataSources.Add(new ReportDataSource("RESULTS", ds.Tables[0]));
-            string header;
             if (ctype == 1)
             {
                 qry = "SELECT PAN_NAME FROM PANCHAYAT WHERE PNO=" + id;
@@ -1003,9 +1004,39 @@ namespace SEMS.Controllers
                 ds = dm.create_dataset(qry);
                 header = "Election to the " + ds.Tables[0].Rows[0][0].ToString() + " from the " + ds.Tables[0].Rows[0][1].ToString() + " Constituency";
             }
+            report.DataSources.Add(new ReportDataSource("CANDIDATELIST", ds.Tables[0]));
+            report.SetParameters(new[] { new ReportParameter("header", header) });
+            byte[] pdf = report.Render("PDF");
+            Stream strm = new MemoryStream(pdf);
+            return File(strm, mimeType);
+        }
+
+        #endregion
+
+        #region LIST OF CONTESTING CANDIDATES
+        public IActionResult ContestingCandidates(int id)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+            string reportPath = "";
+            string header = "jgk";
            
-            
+            reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepContestingCandidates.rdlc";
            
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            qry = "SELECT T.TNAME,CM.TYPE_CODE,CM.POSTNAME AS TYPE_NAME,P.PNO,P.PAN_NAME,C.CONST_NAME,N.CAND_SL_NO,";
+            qry += "N.CAND_NAME,CASE INDEPENDENT WHEN 1 THEN 'Independent' WHEN 0 THEN PT.PANAME ELSE NULL END AS ";
+            qry += "PARTY,S.SYMBOL_NAME AS SYMBOL FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE=CM.TYPE_CODE ";
+            qry += "JOIN PANCHAYAT AS P ON C.PCODE=P.PNO JOIN NOMINATIONS AS N ON N.CONST_CODE=C.CONST_CODE JOIN TEHSIL ";
+            qry += "AS T ON C.TCODE=T.TCODE LEFT JOIN PARTY AS PT ON N.PACODE=PT.PACODE JOIN SYMBOLS AS S ON PT.SID=";
+            qry += "S.SID WHERE T.TCODE=" + id + " ORDER BY T.TNO,P.PNO,CM.TYPE_CODE";
+            ds = dm.create_dataset(qry);
+            header = "LIST OF CONTESTING CANDIDATES IN PANCHAYAT ELECTION - 2024";
+            report.DataSources.Add(new ReportDataSource("CANDIDATELIST", ds.Tables[0]));
             report.SetParameters(new[] { new ReportParameter("header", header) });
             byte[] pdf = report.Render("PDF");
             Stream strm = new MemoryStream(pdf);
