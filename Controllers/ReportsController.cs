@@ -921,7 +921,7 @@ namespace SEMS.Controllers
             string mimeType = "application/pdf";
             string reportPath = "";
             reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepResultProgress.rdlc";
-            qry = "SELECT C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED ";
+            qry = "SELECT C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,SUM(PV.VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED ";
             qry += "FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = ";
             qry += "PS.PSCODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE ";
             qry += "=PV.BALLOT_TYPE WHERE C.CONST_CODE = " + id + " AND PV.BALLOT_TYPE like '" + btype + "' GROUP BY C.CID,";
@@ -972,7 +972,7 @@ namespace SEMS.Controllers
             {
                 reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepForm20GPM.rdlc";
                 qry = "SELECT CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,";
-                qry += "SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED,SUM(T.TENDERED) AS TENDERED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
+                qry += "SUM(PV.VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED,SUM(T.TENDERED) AS TENDERED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
                 qry += "C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE JOIN CONSTITUENCY AS CN ON CN.CONST_NO = ";
                 qry += "PS.CONST_NO AND C.CONST_CODE = CN.CONST_CODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE ";
                 qry += "AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE WHERE CN.TYPE_CODE ";
@@ -982,7 +982,7 @@ namespace SEMS.Controllers
             {
                 reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepForm20.rdlc";
                 qry = "SELECT CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,C.CAND_SL_NO,PS.PSCODE,PS.PS_NO,PS.PS_NAME,";
-                qry += "SUM(VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED,SUM(T.TENDERED) AS TENDERED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
+                qry += "SUM(PV.VOTES) AS VOTES,SUM(T.REJECTED) AS REJECTED,SUM(T.TENDERED) AS TENDERED FROM NOMINATIONS AS C JOIN PSWISE_VOTES AS PV ON PV.CID = ";
                 qry += "C.CID JOIN POLLING_STATION AS PS ON PV.PSCODE = PS.PSCODE JOIN CONSTITUENCY AS CN ON ";
                 qry += "C.CONST_CODE = CN.CONST_CODE JOIN TENDERED_REJECTED AS T ON T.CONST_CODE = C.CONST_CODE ";
                 qry += "AND T.PSCODE = PV.PSCODE AND T.BALLOT_TYPE = PV.BALLOT_TYPE WHERE CN.CONST_CODE = " + id + " GROUP BY CN.CONST_NAME,CN.CONST_NO,C.CID,C.CAND_NAME,PS.PSCODE,PS.PS_NO,PS.PS_NAME,C.CAND_SL_NO";
@@ -1037,6 +1037,38 @@ namespace SEMS.Controllers
             ds = dm.create_dataset(qry);
             header = "LIST OF CONTESTING CANDIDATES IN PANCHAYAT ELECTION - 2024";
             report.DataSources.Add(new ReportDataSource("CANDIDATELIST", ds.Tables[0]));
+            report.SetParameters(new[] { new ReportParameter("header", header) });
+            byte[] pdf = report.Render("PDF");
+            Stream strm = new MemoryStream(pdf);
+            return File(strm, mimeType);
+        }
+
+        #endregion
+
+        #region LIST OF WINNING CANDIDATES
+        public IActionResult WinningCandidates(int id)
+        {
+            System.Data.DataSet ds = new System.Data.DataSet();
+            System.Data.DataTable dt = new System.Data.DataTable();
+            string format = "PDF";
+            int extension = (int)(DateTime.Now.Ticks >> 10);
+            string mimeType = "application/pdf";
+            string reportPath = "";
+            string header = "jgk";
+
+            reportPath = $"{this._webHostEnv.WebRootPath}\\Reports\\Result\\RepWinningCandidates.rdlc";
+
+            Microsoft.Reporting.NETCore.LocalReport report = new Microsoft.Reporting.NETCore.LocalReport();
+            report.ReportPath = reportPath;
+            qry = "SELECT T.TNAME,CM.TYPE_CODE,CM.POSTNAME AS TYPE_NAME,P.PNO,P.PAN_NAME,C.CONST_NAME,N.CAND_SL_NO,";
+            qry += "N.CAND_NAME,CASE INDEPENDENT WHEN 1 THEN 'Independent' WHEN 0 THEN PT.PANAME ELSE NULL END AS ";
+            qry += "PARTY,S.SYMBOL_NAME AS SYMBOL,N.VOTES,N.MARGIN FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE=CM.TYPE_CODE ";
+            qry += "JOIN PANCHAYAT AS P ON C.PCODE=P.PNO JOIN NOMINATIONS AS N ON N.CONST_CODE=C.CONST_CODE JOIN TEHSIL ";
+            qry += "AS T ON C.TCODE=T.TCODE LEFT JOIN PARTY AS PT ON N.PACODE=PT.PACODE JOIN SYMBOLS AS S ON PT.SID=";
+            qry += "S.SID WHERE T.TCODE=" + id + " AND N.WIN_STATUS='W' ORDER BY T.TNO,P.PNO,CM.TYPE_CODE";
+            ds = dm.create_dataset(qry);
+            header = "LIST OF WINNING CANDIDATES IN PANCHAYAT ELECTION - 2024";
+            report.DataSources.Add(new ReportDataSource("WINNERS", ds.Tables[0]));
             report.SetParameters(new[] { new ReportParameter("header", header) });
             byte[] pdf = report.Render("PDF");
             Stream strm = new MemoryStream(pdf);

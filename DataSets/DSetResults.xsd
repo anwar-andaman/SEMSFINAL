@@ -93,13 +93,13 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE</CommandText>
           </TableAdapter>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="WINNERSTableAdapter" GeneratorDataComponentClassName="WINNERSTableAdapter" Name="WINNERS" UserDataComponentName="WINNERSTableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+              <DbSource ConnectionRef="anwar.STATE_ELECTION.dbo" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
-                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT T.TNAME,CM.TYPE_CODE,CM.TYPE_NAME,P.PNO,P.PAN_NAME,C.CONST_NAME,N.CAND_SL_NO,N.CAND_NAME,CASE INDEPENDENT WHEN 1 THEN
-'Independent' WHEN 0 THEN PT.PANAME ELSE NULL END AS PARTY,S.SYMBOL FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE=CM.TYPE_CODE
+'Independent' WHEN 0 THEN PT.PANAME ELSE NULL END AS PARTY,S.SYMBOL,N.VOTES,N.MARGIN FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE=CM.TYPE_CODE
 JOIN PANCHAYAT AS P ON C.PCODE=P.PNO JOIN NOMINATIONS AS N ON N.CONST_CODE=C.CONST_CODE JOIN TEHSIL AS T ON C.TCODE=
-T.TCODE LEFT JOIN PARTY AS PT ON N.PACODE=PT.PACODE JOIN SYMBOLS AS S ON PT.SID=S.SID 
+T.TCODE LEFT JOIN PARTY AS PT ON N.PACODE=PT.PACODE JOIN SYMBOLS AS S ON PT.SID=S.SID WHERE N.WIN_STATUS='W'
 ORDER BY T.TNO,P.PNO,CM.TYPE_CODE</CommandText>
                     <Parameters />
                   </DbCommand>
@@ -117,6 +117,8 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE</CommandText>
               <Mapping SourceColumn="CAND_NAME" DataSetColumn="CAND_NAME" />
               <Mapping SourceColumn="PARTY" DataSetColumn="PARTY" />
               <Mapping SourceColumn="SYMBOL" DataSetColumn="SYMBOL" />
+              <Mapping SourceColumn="VOTES" DataSetColumn="VOTES" />
+              <Mapping SourceColumn="MARGIN" DataSetColumn="MARGIN" />
             </Mappings>
             <Sources />
           </TableAdapter>
@@ -189,7 +191,59 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE</CommandText>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="CANDIDATELIST" msprop:Generator_RowClassName="CANDIDATELISTRow" msprop:Generator_RowEvHandlerName="CANDIDATELISTRowChangeEventHandler" msprop:Generator_RowDeletedName="CANDIDATELISTRowDeleted" msprop:Generator_RowDeletingName="CANDIDATELISTRowDeleting" msprop:Generator_RowEvArgName="CANDIDATELISTRowChangeEvent" msprop:Generator_TablePropName="CANDIDATELIST" msprop:Generator_RowChangedName="CANDIDATELISTRowChanged" msprop:Generator_UserTableName="CANDIDATELIST" msprop:Generator_RowChangingName="CANDIDATELISTRowChanging" msprop:Generator_TableClassName="CANDIDATELISTDataTable" msprop:Generator_TableVarName="tableCANDIDATELIST">
+        <xs:element name="CANDIDATELIST" msprop:Generator_RowEvHandlerName="CANDIDATELISTRowChangeEventHandler" msprop:Generator_RowDeletedName="CANDIDATELISTRowDeleted" msprop:Generator_RowDeletingName="CANDIDATELISTRowDeleting" msprop:Generator_RowEvArgName="CANDIDATELISTRowChangeEvent" msprop:Generator_TablePropName="CANDIDATELIST" msprop:Generator_RowChangedName="CANDIDATELISTRowChanged" msprop:Generator_UserTableName="CANDIDATELIST" msprop:Generator_RowChangingName="CANDIDATELISTRowChanging" msprop:Generator_RowClassName="CANDIDATELISTRow" msprop:Generator_TableClassName="CANDIDATELISTDataTable" msprop:Generator_TableVarName="tableCANDIDATELIST">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TNAME" msprop:Generator_ColumnPropNameInTable="TNAMEColumn" msprop:Generator_ColumnPropNameInRow="TNAME" msprop:Generator_UserColumnName="TNAME" msprop:Generator_ColumnVarNameInTable="columnTNAME" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="TYPE_CODE" msprop:Generator_ColumnPropNameInTable="TYPE_CODEColumn" msprop:Generator_ColumnPropNameInRow="TYPE_CODE" msprop:Generator_UserColumnName="TYPE_CODE" msprop:Generator_ColumnVarNameInTable="columnTYPE_CODE" type="xs:unsignedByte" />
+              <xs:element name="TYPE_NAME" msprop:Generator_ColumnPropNameInTable="TYPE_NAMEColumn" msprop:Generator_ColumnPropNameInRow="TYPE_NAME" msprop:Generator_UserColumnName="TYPE_NAME" msprop:Generator_ColumnVarNameInTable="columnTYPE_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="25" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PNO" msprop:Generator_ColumnPropNameInTable="PNOColumn" msprop:Generator_ColumnPropNameInRow="PNO" msprop:Generator_UserColumnName="PNO" msprop:Generator_ColumnVarNameInTable="columnPNO" type="xs:short" />
+              <xs:element name="PAN_NAME" msprop:Generator_ColumnPropNameInTable="PAN_NAMEColumn" msprop:Generator_ColumnPropNameInRow="PAN_NAME" msprop:Generator_UserColumnName="PAN_NAME" msprop:Generator_ColumnVarNameInTable="columnPAN_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CONST_NAME" msprop:Generator_ColumnPropNameInTable="CONST_NAMEColumn" msprop:Generator_ColumnPropNameInRow="CONST_NAME" msprop:Generator_UserColumnName="CONST_NAME" msprop:Generator_ColumnVarNameInTable="columnCONST_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CAND_SL_NO" msprop:Generator_ColumnPropNameInTable="CAND_SL_NOColumn" msprop:Generator_ColumnPropNameInRow="CAND_SL_NO" msprop:Generator_UserColumnName="CAND_SL_NO" msprop:Generator_ColumnVarNameInTable="columnCAND_SL_NO" type="xs:short" minOccurs="0" />
+              <xs:element name="CAND_NAME" msprop:Generator_ColumnPropNameInTable="CAND_NAMEColumn" msprop:Generator_ColumnPropNameInRow="CAND_NAME" msprop:Generator_UserColumnName="CAND_NAME" msprop:Generator_ColumnVarNameInTable="columnCAND_NAME">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PARTY" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInTable="PARTYColumn" msprop:Generator_ColumnPropNameInRow="PARTY" msprop:Generator_UserColumnName="PARTY" msprop:Generator_ColumnVarNameInTable="columnPARTY" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SYMBOL" msprop:Generator_ColumnPropNameInTable="SYMBOLColumn" msprop:Generator_ColumnPropNameInRow="SYMBOL" msprop:Generator_UserColumnName="SYMBOL" msprop:Generator_ColumnVarNameInTable="columnSYMBOL" type="xs:base64Binary" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="WINNERS" msprop:Generator_RowClassName="WINNERSRow" msprop:Generator_RowEvHandlerName="WINNERSRowChangeEventHandler" msprop:Generator_RowDeletedName="WINNERSRowDeleted" msprop:Generator_RowDeletingName="WINNERSRowDeleting" msprop:Generator_RowEvArgName="WINNERSRowChangeEvent" msprop:Generator_TablePropName="WINNERS" msprop:Generator_RowChangedName="WINNERSRowChanged" msprop:Generator_UserTableName="WINNERS" msprop:Generator_RowChangingName="WINNERSRowChanging" msprop:Generator_TableClassName="WINNERSDataTable" msprop:Generator_TableVarName="tableWINNERS">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="TNAME" msprop:Generator_UserColumnName="TNAME" msprop:Generator_ColumnPropNameInTable="TNAMEColumn" msprop:Generator_ColumnPropNameInRow="TNAME" msprop:Generator_ColumnVarNameInTable="columnTNAME" minOccurs="0">
@@ -238,58 +292,8 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE</CommandText>
                 </xs:simpleType>
               </xs:element>
               <xs:element name="SYMBOL" msprop:Generator_UserColumnName="SYMBOL" msprop:Generator_ColumnPropNameInTable="SYMBOLColumn" msprop:Generator_ColumnPropNameInRow="SYMBOL" msprop:Generator_ColumnVarNameInTable="columnSYMBOL" type="xs:base64Binary" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="WINNERS" msprop:Generator_RowEvHandlerName="WINNERSRowChangeEventHandler" msprop:Generator_RowDeletedName="WINNERSRowDeleted" msprop:Generator_RowDeletingName="WINNERSRowDeleting" msprop:Generator_RowEvArgName="WINNERSRowChangeEvent" msprop:Generator_TablePropName="WINNERS" msprop:Generator_RowChangedName="WINNERSRowChanged" msprop:Generator_RowChangingName="WINNERSRowChanging" msprop:Generator_TableClassName="WINNERSDataTable" msprop:Generator_RowClassName="WINNERSRow" msprop:Generator_TableVarName="tableWINNERS" msprop:Generator_UserTableName="WINNERS">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="TNAME" msprop:Generator_ColumnPropNameInRow="TNAME" msprop:Generator_ColumnPropNameInTable="TNAMEColumn" msprop:Generator_ColumnVarNameInTable="columnTNAME" msprop:Generator_UserColumnName="TNAME" minOccurs="0">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="50" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="TYPE_CODE" msprop:Generator_ColumnPropNameInRow="TYPE_CODE" msprop:Generator_ColumnPropNameInTable="TYPE_CODEColumn" msprop:Generator_ColumnVarNameInTable="columnTYPE_CODE" msprop:Generator_UserColumnName="TYPE_CODE" type="xs:unsignedByte" />
-              <xs:element name="TYPE_NAME" msprop:Generator_ColumnPropNameInRow="TYPE_NAME" msprop:Generator_ColumnPropNameInTable="TYPE_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnTYPE_NAME" msprop:Generator_UserColumnName="TYPE_NAME">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="25" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="PNO" msprop:Generator_ColumnPropNameInRow="PNO" msprop:Generator_ColumnPropNameInTable="PNOColumn" msprop:Generator_ColumnVarNameInTable="columnPNO" msprop:Generator_UserColumnName="PNO" type="xs:short" />
-              <xs:element name="PAN_NAME" msprop:Generator_ColumnPropNameInRow="PAN_NAME" msprop:Generator_ColumnPropNameInTable="PAN_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnPAN_NAME" msprop:Generator_UserColumnName="PAN_NAME">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="50" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="CONST_NAME" msprop:Generator_ColumnPropNameInRow="CONST_NAME" msprop:Generator_ColumnPropNameInTable="CONST_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnCONST_NAME" msprop:Generator_UserColumnName="CONST_NAME">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="50" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="CAND_SL_NO" msprop:Generator_ColumnPropNameInRow="CAND_SL_NO" msprop:Generator_ColumnPropNameInTable="CAND_SL_NOColumn" msprop:Generator_ColumnVarNameInTable="columnCAND_SL_NO" msprop:Generator_UserColumnName="CAND_SL_NO" type="xs:short" minOccurs="0" />
-              <xs:element name="CAND_NAME" msprop:Generator_ColumnPropNameInRow="CAND_NAME" msprop:Generator_ColumnPropNameInTable="CAND_NAMEColumn" msprop:Generator_ColumnVarNameInTable="columnCAND_NAME" msprop:Generator_UserColumnName="CAND_NAME">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="PARTY" msdata:ReadOnly="true" msprop:Generator_ColumnPropNameInRow="PARTY" msprop:Generator_ColumnPropNameInTable="PARTYColumn" msprop:Generator_ColumnVarNameInTable="columnPARTY" msprop:Generator_UserColumnName="PARTY" minOccurs="0">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="100" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="SYMBOL" msprop:Generator_ColumnPropNameInRow="SYMBOL" msprop:Generator_ColumnPropNameInTable="SYMBOLColumn" msprop:Generator_ColumnVarNameInTable="columnSYMBOL" msprop:Generator_UserColumnName="SYMBOL" type="xs:base64Binary" />
+              <xs:element name="VOTES" msprop:Generator_ColumnPropNameInRow="VOTES" msprop:Generator_ColumnPropNameInTable="VOTESColumn" msprop:Generator_ColumnVarNameInTable="columnVOTES" msprop:Generator_UserColumnName="VOTES" type="xs:int" minOccurs="0" />
+              <xs:element name="MARGIN" msprop:Generator_ColumnPropNameInRow="MARGIN" msprop:Generator_ColumnPropNameInTable="MARGINColumn" msprop:Generator_ColumnVarNameInTable="columnMARGIN" msprop:Generator_UserColumnName="MARGIN" type="xs:int" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -304,6 +308,10 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE</CommandText>
       <xs:selector xpath=".//mstns:FORM20GPM" />
       <xs:field xpath="mstns:CID" />
       <xs:field xpath="mstns:PSCODE" />
+    </xs:unique>
+    <xs:unique name="WINNERS_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:WINNERS" />
+      <xs:field xpath="mstns:TYPE_CODE" />
     </xs:unique>
   </xs:element>
 </xs:schema>

@@ -36,7 +36,6 @@ namespace SEMS.Controllers
                 string logUserType = HttpContext.Session.GetString("logUserType");
                 qry = "SELECT STATUS FROM USER_FUNCTION_MAPPING WHERE FUNCTION_ID=" + fid + " AND USER_TYPE_ID=";
                 qry += "(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + logUserType + "')";
-                dm.makeconnection(ref con);
                 ds = dm.create_dataset(qry);
                 if (ds.Tables[0].Rows.Count > 0)
                 {
@@ -315,7 +314,7 @@ namespace SEMS.Controllers
             string qry;
             bool passwordMatched = false;
             qry = "SELECT PASSWORD FROM USERS WHERE TYPE_ID=1";
-            dm.makeconnection(ref con);
+            
             ds = dm.create_dataset(qry);
             foreach (DataRow row in ds.Tables[0].Rows)
             {
@@ -367,7 +366,76 @@ namespace SEMS.Controllers
 
         #endregion
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        #region GRANT/REVOKE APPLICATION FEATURES
+        public IActionResult GrantRevoke()
+        {
+            bool allOK = checkAuthorization(6);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError");
+            }
+            GrantRevokeModel md = new GrantRevokeModel();
+            string qry = "";
+            qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE WHERE USER_TYPE NOT LIKE 'ADMIN' ORDER BY USER_TYPE";
+           
+            ds = dm.create_dataset(qry);
+            ViewBag.userTypeList = ds;
+            md.userType = ds.Tables[0].Rows[0][0].ToString();
+            if (TempData.ContainsKey("grantsupdated"))
+            {
+                ViewBag.grantsupdated = TempData["grantsupdated"];
+                
+            }
+            qry = "SELECT MODULE_ID,MODULE_NAME FROM MODULE ORDER BY MODULE_ID";
+            ds = dm.create_dataset(qry);
+            ViewBag.moduleList = ds;
+            qry = "SELECT U.FUNCTION_ID,FM.FUNCTION_NAME,FM.MODULE_ID,CASE U.STATUS WHEN 1 then '1' ELSE '0' END AS STATUS FROM USER_FUNCTION_MAPPING AS U JOIN FUNCTION_MASTER";
+            qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
+            ds = dm.create_dataset(qry);
+            ViewBag.featureList = ds;
+            return View(md);
+        }
+        [HttpPost]
+        public IActionResult GrantRevoke(GrantRevokeModel md)
+        {
+            bool allOK = checkAuthorization(6);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError");
+            }
+            string qry = "";
+            qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE WHERE USER_TYPE NOT LIKE 'ADMIN' ORDER BY USER_TYPE";
+            
+            ds = dm.create_dataset(qry);
+            ViewBag.userTypeList = ds;
+            if (TempData.ContainsKey("grantsupdated"))
+            {
+                ViewBag.grantsupdated = TempData["grantsupdated"];
+
+            }
+            
+                qry = "SELECT MODULE_ID,MODULE_NAME FROM MODULE ORDER BY MODULE_ID";
+            
+
+           
+            ds = dm.create_dataset(qry);
+            ViewBag.moduleList = ds;
+            
+                qry = "SELECT U.FUNCTION_ID,FM.FUNCTION_NAME,FM.MODULE_ID,CASE U.STATUS WHEN 1 then '1' ELSE '0' END AS STATUS FROM USER_FUNCTION_MAPPING AS U JOIN FUNCTION_MASTER";
+                qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
+            
+
+            
+            ds = dm.create_dataset(qry);
+            ViewBag.featureList = ds;
+            return View(md);
+        }
+
+
+            #endregion
+            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

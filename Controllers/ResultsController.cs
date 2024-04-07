@@ -460,6 +460,18 @@ namespace SEMS.Controllers
             return RedirectToActionPreserveMethod("DeclareResult");
         }
         #endregion
+
+        #region LIST OF WINNING CANDIDATES
+        public IActionResult WinningCandidates()
+        {
+            if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
+                return RedirectToAction("Login", "Home");
+            qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.tehsils = ds;
+            return View();
+        }
+        #endregion
     }
 }
 

@@ -1583,6 +1583,10 @@ namespace SEMS.DataSets {
             
             private global::System.Data.DataColumn columnSYMBOL;
             
+            private global::System.Data.DataColumn columnVOTES;
+            
+            private global::System.Data.DataColumn columnMARGIN;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public WINNERSDataTable() {
@@ -1698,6 +1702,22 @@ namespace SEMS.DataSets {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn VOTESColumn {
+                get {
+                    return this.columnVOTES;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public global::System.Data.DataColumn MARGINColumn {
+                get {
+                    return this.columnMARGIN;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1733,7 +1753,7 @@ namespace SEMS.DataSets {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
-            public WINNERSRow AddWINNERSRow(string TNAME, byte TYPE_CODE, string TYPE_NAME, short PNO, string PAN_NAME, string CONST_NAME, short CAND_SL_NO, string CAND_NAME, string PARTY, byte[] SYMBOL) {
+            public WINNERSRow AddWINNERSRow(string TNAME, byte TYPE_CODE, string TYPE_NAME, short PNO, string PAN_NAME, string CONST_NAME, short CAND_SL_NO, string CAND_NAME, string PARTY, byte[] SYMBOL, int VOTES, int MARGIN) {
                 WINNERSRow rowWINNERSRow = ((WINNERSRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         TNAME,
@@ -1745,10 +1765,19 @@ namespace SEMS.DataSets {
                         CAND_SL_NO,
                         CAND_NAME,
                         PARTY,
-                        SYMBOL};
+                        SYMBOL,
+                        VOTES,
+                        MARGIN};
                 rowWINNERSRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowWINNERSRow);
                 return rowWINNERSRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public WINNERSRow FindByTYPE_CODE(byte TYPE_CODE) {
+                return ((WINNERSRow)(this.Rows.Find(new object[] {
+                            TYPE_CODE})));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1778,6 +1807,8 @@ namespace SEMS.DataSets {
                 this.columnCAND_NAME = base.Columns["CAND_NAME"];
                 this.columnPARTY = base.Columns["PARTY"];
                 this.columnSYMBOL = base.Columns["SYMBOL"];
+                this.columnVOTES = base.Columns["VOTES"];
+                this.columnMARGIN = base.Columns["MARGIN"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1803,8 +1834,15 @@ namespace SEMS.DataSets {
                 base.Columns.Add(this.columnPARTY);
                 this.columnSYMBOL = new global::System.Data.DataColumn("SYMBOL", typeof(byte[]), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSYMBOL);
+                this.columnVOTES = new global::System.Data.DataColumn("VOTES", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnVOTES);
+                this.columnMARGIN = new global::System.Data.DataColumn("MARGIN", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMARGIN);
+                this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
+                                this.columnTYPE_CODE}, true));
                 this.columnTNAME.MaxLength = 50;
                 this.columnTYPE_CODE.AllowDBNull = false;
+                this.columnTYPE_CODE.Unique = true;
                 this.columnTYPE_NAME.AllowDBNull = false;
                 this.columnTYPE_NAME.MaxLength = 25;
                 this.columnPNO.AllowDBNull = false;
@@ -2618,6 +2656,38 @@ namespace SEMS.DataSets {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public int VOTES {
+                get {
+                    try {
+                        return ((int)(this[this.tableWINNERS.VOTESColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'VOTES\' in table \'WINNERS\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableWINNERS.VOTESColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public int MARGIN {
+                get {
+                    try {
+                        return ((int)(this[this.tableWINNERS.MARGINColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'MARGIN\' in table \'WINNERS\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableWINNERS.MARGINColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public bool IsTNAMENull() {
                 return this.IsNull(this.tableWINNERS.TNAMEColumn);
             }
@@ -2650,6 +2720,30 @@ namespace SEMS.DataSets {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
             public void SetPARTYNull() {
                 this[this.tableWINNERS.PARTYColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsVOTESNull() {
+                return this.IsNull(this.tableWINNERS.VOTESColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetVOTESNull() {
+                this[this.tableWINNERS.VOTESColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public bool IsMARGINNull() {
+                return this.IsNull(this.tableWINNERS.MARGINColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "17.0.0.0")]
+            public void SetMARGINNull() {
+                this[this.tableWINNERS.MARGINColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -3464,6 +3558,8 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE";
             tableMapping.ColumnMappings.Add("CAND_NAME", "CAND_NAME");
             tableMapping.ColumnMappings.Add("PARTY", "PARTY");
             tableMapping.ColumnMappings.Add("SYMBOL", "SYMBOL");
+            tableMapping.ColumnMappings.Add("VOTES", "VOTES");
+            tableMapping.ColumnMappings.Add("MARGIN", "MARGIN");
             this._adapter.TableMappings.Add(tableMapping);
         }
         
@@ -3482,9 +3578,9 @@ ORDER BY T.TNO,P.PNO,CM.TYPE_CODE";
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = @"SELECT T.TNAME,CM.TYPE_CODE,CM.TYPE_NAME,P.PNO,P.PAN_NAME,C.CONST_NAME,N.CAND_SL_NO,N.CAND_NAME,CASE INDEPENDENT WHEN 1 THEN
-'Independent' WHEN 0 THEN PT.PANAME ELSE NULL END AS PARTY,S.SYMBOL FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE=CM.TYPE_CODE
+'Independent' WHEN 0 THEN PT.PANAME ELSE NULL END AS PARTY,S.SYMBOL,N.VOTES,N.MARGIN FROM CONST_TYPE_MASTER AS CM JOIN CONSTITUENCY AS C ON C.TYPE_CODE=CM.TYPE_CODE
 JOIN PANCHAYAT AS P ON C.PCODE=P.PNO JOIN NOMINATIONS AS N ON N.CONST_CODE=C.CONST_CODE JOIN TEHSIL AS T ON C.TCODE=
-T.TCODE LEFT JOIN PARTY AS PT ON N.PACODE=PT.PACODE JOIN SYMBOLS AS S ON PT.SID=S.SID 
+T.TCODE LEFT JOIN PARTY AS PT ON N.PACODE=PT.PACODE JOIN SYMBOLS AS S ON PT.SID=S.SID WHERE N.WIN_STATUS='W'
 ORDER BY T.TNO,P.PNO,CM.TYPE_CODE";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
         }

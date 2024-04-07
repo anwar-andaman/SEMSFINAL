@@ -1,0 +1,65 @@
+﻿@model SEMS.Models.Counting.VotesModel
+@{
+    @using System.Data;
+    ViewData["Title"] = "WinningCandidates";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DataSet tehsils = ViewBag.tehsils;
+}
+<script>
+    function GenerateReport() {
+        var ct = document.getElementById("ddwnElectionType").value;
+        var tcode = document.getElementById("ddwnTehsil").value;
+        if (ct == "P") {
+            var newurl = "https://" + window.location.host + "/Reports/WinningCandidates/" + tcode;
+        }
+        else {
+            var newurl = "https://" + window.location.host + "/Reports/WinningCandidates/" + tcode;
+        }
+        window.open(newurl);
+    }
+</script>
+<form id="frmProgressReport" method="post">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                    <h3 class="pageheading">Report Parameters</h3>
+                    <hr />
+                    <div class="col-sm-4">
+                        <label class="form-label mylabel" for="ddwnElectionType">Election Type</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <select class="form-select mycontrol" id="ddwnElectionType">
+                            <option value="P">Panchayat Election</option>
+                            <option value="M">Municipal Election</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4" style="margin-top:10px;">
+                        <label class="form-label mylabel" for="ddwnTehsil">Tehsil</label>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:10px;">
+                        @{
+                            List<SelectListItem> items = new List<SelectListItem>();
+                            foreach (DataRow row in tehsils.Tables[0].Rows)
+                            {
+                                SelectListItem s = new SelectListItem();
+                                s.Text = row["TNAME"].ToString();
+                                s.Value = row["TCODE"].ToString();
+                                items.Add(s);
+                            }
+                        }
+                        <select class="form-select mycontrol" id="ddwnTehsil" asp-for="tehsil" asp-items="@items"></select>
+                    </div>
+                    <p></p>
+                    <hr />
+                    <div class="col-sm-8"></div>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-danger form-control" onclick="GenerateReport();">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
