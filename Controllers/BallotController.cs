@@ -25,9 +25,44 @@ namespace SEMS.Controllers
             this.myDbContext = myDbContext;
 
         }
+        #region CHECK AUTHORIZATION
+        public bool checkAuthorization(int fid)
+        {
+            bool allOK = true;
+            string qry = "";
+            byte[] logn;
+            if (HttpContext.Session.TryGetValue("logUserType", out logn))
+            {
+                string logUserType = HttpContext.Session.GetString("logUserType");
+                qry = "SELECT STATUS FROM USER_FUNCTION_MAPPING WHERE FUNCTION_ID=" + fid + " AND USER_TYPE_ID=";
+                qry += "(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + logUserType + "')";
+                ds = dm.create_dataset(qry);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    if (!(bool)ds.Tables[0].Rows[0][0])
+                        allOK = false;
+                }
+                else
+                {
+                    allOK = false;
+                }
+            }
+            else
+            {
+                allOK = false;
+            }
+            return allOK;
+        }
+        #endregion
         #region MANAGE POLITICAL PARTIES
         public IActionResult ManageParties()
         {
+            bool allOK = checkAuthorization(4);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             PolPartyModel md = new PolPartyModel();
             qry = "SELECT PACODE,PANAME,PANAME_V1,SHORT_NAME,SHORT_NAME_V1,S.SYMBOL,P.SID FROM PARTY AS P ";
             qry += "JOIN SYMBOLS AS S ON P.SID=S.SID ORDER BY PANAME";
@@ -41,6 +76,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ManageParties(PolPartyModel md)
         {
+            bool allOK = checkAuthorization(4);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             qry = "SELECT PACODE,PANAME,PANAME_V1,SHORT_NAME,SHORT_NAME_V1,S.SYMBOL,P.SID FROM PARTY AS P ";
             qry += "JOIN SYMBOLS AS S ON P.SID=S.SID ORDER BY PANAME";
             ds = dm.create_dataset(qry);
@@ -71,6 +112,12 @@ namespace SEMS.Controllers
 
         public IActionResult AddParty(PolPartyModel md)
         {
+            bool allOK = checkAuthorization(4);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             qry = "INSERT INTO PARTY(PANAME,PANAME_V1,SHORT_NAME,SHORT_NAME_V1,SID) VALUES('" + md.partyName + "',N'";
             qry += md.partyNameV1 + "','" + md.shortName + "',N'" + md.shortNameV1 + "'," + md.sid + ")";
             dm.runquery(qry);
@@ -79,6 +126,12 @@ namespace SEMS.Controllers
 
         public IActionResult UpdateParty(int id, PolPartyModel md)
         {
+            bool allOK = checkAuthorization(4);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             qry = "UPDATE PARTY SET PANAME='" + md.partyName + "',PANAME_V1=N'" + md.partyNameV1 + "',SHORT_NAME='";
             qry += md.shortName + "',SHORT_NAME_V1=N'" + md.shortNameV1 + "',SID=" + md.sid + " WHERE PACODE=" + id;
             dm.runquery(qry);
@@ -86,6 +139,12 @@ namespace SEMS.Controllers
         }
         public IActionResult DeleteParty(PolPartyModel md)
         {
+            bool allOK = checkAuthorization(4);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             try
             {
                 qry = "DELETE FROM PARTY WHERE PACODE=" + md.deleteItem;
@@ -103,6 +162,12 @@ namespace SEMS.Controllers
         #region MANAGE SYMBOLS
         public IActionResult ManageSymbols()
         {
+            bool allOK = checkAuthorization(5);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count==0)
@@ -126,6 +191,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ManageSymbols(SymbolsModel md)
         {
+            bool allOK = checkAuthorization(5);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count == 0)
@@ -153,6 +224,12 @@ namespace SEMS.Controllers
 
         public IActionResult AddSymbol(SymbolsModel md)
         {
+            bool allOK = checkAuthorization(5);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             IFormFile sym = md.symbolfile1;
             byte[] symbolData = { };
             if (sym != null && sym.Length != 0)
@@ -170,6 +247,12 @@ namespace SEMS.Controllers
         }
         public IActionResult UpdateSymbol(SymbolsModel md)
         {
+            bool allOK = checkAuthorization(5);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             IFormFile sym = md.symbolfile;
             byte[] symbolData = { };
 
@@ -189,6 +272,12 @@ namespace SEMS.Controllers
 
         public IActionResult DeleteSymbol(SymbolsModel md)
         {
+            bool allOK = checkAuthorization(5);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             qry = "DELETE FROM SYMBOLS WHERE SID=" + md.sid;
             dm.runquery(qry);
             return RedirectToAction("ManageSymbols");
@@ -198,6 +287,12 @@ namespace SEMS.Controllers
         #region MANAGE CANDIDATES
         public IActionResult ManageCandidates()
         {
+            bool allOK = checkAuthorization(15);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count == 0)
@@ -263,6 +358,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ManageCandidates(CandidateModel md)
         {
+            bool allOK = checkAuthorization(15);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=24";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count == 0)
@@ -345,6 +446,12 @@ namespace SEMS.Controllers
         }
         public IActionResult SaveCandidate(CandidateModel md)
         {
+            bool allOK = checkAuthorization(15);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string ind,pacode,sid;
             if (HttpContext.Request.Form["chkIndependent"].ToArray().Length > 0 )
             {
@@ -367,6 +474,12 @@ namespace SEMS.Controllers
         
         public IActionResult UpdateCandidate(CandidateModel md)
         {
+            bool allOK = checkAuthorization(15);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string ind, pacode, sid;
             if (HttpContext.Request.Form["chkIndependent"].ToArray().Length > 0)
             {
@@ -388,6 +501,12 @@ namespace SEMS.Controllers
         }
         public IActionResult DeleteCandidate(CandidateModel md)
         {
+            bool allOK = checkAuthorization(15);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "DELETE FROM NOMINATIONS WHERE CID=" + md.editValue;
             dm.runquery(qry);
             return RedirectToActionPreserveMethod("ManageCandidates");
@@ -399,6 +518,12 @@ namespace SEMS.Controllers
         #region GENERATE BALLOT PAPER
         public IActionResult BallotPaper()
         {
+            bool allOK = checkAuthorization(16);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             BallotModel md= new BallotModel();
             if (HttpContext.Session.GetString("electionType") == "M")
             {
@@ -443,6 +568,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult BallotPaper(BallotModel md)
         {
+            bool allOK = checkAuthorization(16);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT POSTNAME,TYPE_CODE,POSTSHORTNAME FROM CONST_TYPE_MASTER WHERE STATUS=1 AND PAN_MUN='P' ORDER BY POSTNAME";
             ds = dm.create_dataset(qry);
             ViewBag.posts = ds;

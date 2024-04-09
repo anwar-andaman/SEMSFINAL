@@ -23,10 +23,44 @@ namespace SEMS.Controllers
             _logger = logger;
             this.myDbContext = myDbContext;
         }
-
+        #region CHECK AUTHORIZATION
+        public bool checkAuthorization(int fid)
+        {
+            bool allOK = true;
+            string qry = "";
+            byte[] logn;
+            if (HttpContext.Session.TryGetValue("logUserType", out logn))
+            {
+                string logUserType = HttpContext.Session.GetString("logUserType");
+                qry = "SELECT STATUS FROM USER_FUNCTION_MAPPING WHERE FUNCTION_ID=" + fid + " AND USER_TYPE_ID=";
+                qry += "(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + logUserType + "')";
+                ds = dm.create_dataset(qry);
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    if (!(bool)ds.Tables[0].Rows[0][0])
+                        allOK = false;
+                }
+                else
+                {
+                    allOK = false;
+                }
+            }
+            else
+            {
+                allOK = false;
+            }
+            return allOK;
+        }
+        #endregion
         #region POSTAL VOTES ENTRY
         public IActionResult PostalVotes()
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             VotesModel md = new VotesModel();
             if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
                 return RedirectToAction("Login", "Home");
@@ -75,6 +109,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult PostalVotes(VotesModel md)
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
                 return RedirectToAction("Login", "Home");
             qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "' ORDER BY TYPE_NAME";
@@ -275,6 +315,12 @@ namespace SEMS.Controllers
 
         public IActionResult UpdatePostalVotes(VotesModel md)
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             int psNo, constCode = 0;
             if (md.mode == "A")
             {
@@ -346,6 +392,12 @@ namespace SEMS.Controllers
         #region NORMAL VOTES ENTRY
         public IActionResult NormalVotes()
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             VotesModel md = new VotesModel();
             if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
                 return RedirectToAction("Login", "Home");
@@ -392,6 +444,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult NormalVotes(VotesModel md)
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
                 return RedirectToAction("Login", "Home");
             qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "' ORDER BY TYPE_NAME";
@@ -592,6 +650,12 @@ namespace SEMS.Controllers
 
         public IActionResult UpdateNormalVotes(VotesModel md)
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             int psNo, constCode = 0;
             if (md.mode == "A")
             {

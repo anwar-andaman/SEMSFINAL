@@ -65,12 +65,23 @@ namespace SEMS.Controllers
         #region SCHEDULE REVISION
         public IActionResult ScheduleRevision()
         {
+            bool allOK = checkAuthorization(3);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             return View(md);
         }
         [HttpPost]
         public IActionResult ScheduleRevision(RevisionModel md)
         {
-
+            bool allOK = checkAuthorization(3);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             if (TempData.ContainsKey("postCause"))
             {
                 if (TempData["postCause"].ToString() == "fetch")
@@ -121,15 +132,33 @@ namespace SEMS.Controllers
         }
         public IActionResult ClearRevision()
         {
+            bool allOK = checkAuthorization(3);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             return RedirectToAction("ScheduleRevision");
         }
         public IActionResult FetchRevision(RevisionModel md)
         {
+            bool allOK = checkAuthorization(3);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             TempData["postCause"] = "fetch";
             return RedirectToActionPreserveMethod("ScheduleRevision");
         }
         public IActionResult CreateRevision(RevisionModel md)
         {
+            bool allOK = checkAuthorization(19);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "INSERT INTO SE_EROLL.DBO.REVISIONS(REVISIONNO,REVISIONYEAR,REVISIONDATE,AGEASON,SUPPLEMENTNAME,PUBLICATIONDATE,";
             qry += "QUALIFYINGDATE,EROLL_HEADER,SUPPLEMENTTYPE,ISACTIVE) VALUES(" + md.revisionNo + "," + md.revisionYear + ",'";
             qry += md.revisionDate + "','" + md.ageAsOn + "','" + md.supplementName + "','" + md.publicationDate + "','" + md.qualifyingDate + "','";
@@ -141,6 +170,12 @@ namespace SEMS.Controllers
         }
         public IActionResult UpdateRevision(RevisionModel md)
         {
+            bool allOK = checkAuthorization(3);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "UPDATE SE_EROLL.DBO.REVISIONS SET REVISIONDATE='" + md.revisionDate + "',AGEASON='" + md.ageAsOn + "',SUPPLEMENTNAME='" + md.supplementName + "',";
             qry += "PUBLICATIONDATE='" + md.publicationDate + "',QUALIFYINGDATE='" + md.qualifyingDate + "',EROLL_HEADER='";
             qry += md.erollHeader + "',SUPPLEMENTTYPE='" + md.supplementType + "' WHERE REVISIONNO=" + md.revisionNo + " AND REVISIONYEAR=" + md.revisionYear;
@@ -154,6 +189,12 @@ namespace SEMS.Controllers
 
         public IActionResult FlowSettings()
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT STAGE_ID,STAGE,FLOW_LEVEL,USERTYPEID,CASE S.STATUS WHEN 1 THEN 'Active' ELSE 'Deactivated' ";
             qry += "END AS STATUS,U.USER_TYPE FROM SE_EROLL.DBO.FORM_STAGES AS S JOIN USER_TYPE AS U ON S.USERTYPEID=";
             qry += "U.TYPE_ID ORDER BY FLOW_LEVEL";
@@ -167,6 +208,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult FlowSettings(FlowModel md)
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT STAGE_ID,STAGE,FLOW_LEVEL,USERTYPEID,CASE S.STATUS WHEN 1 THEN 'Active' ELSE 'Deactivated' ";
             qry += "END AS STATUS,U.USER_TYPE FROM SE_EROLL.DBO.FORM_STAGES AS S JOIN USER_TYPE AS U ON S.USERTYPEID=";
             qry += "U.TYPE_ID ORDER BY FLOW_LEVEL";
@@ -187,6 +234,12 @@ namespace SEMS.Controllers
         }
         public IActionResult EditStage(int id)
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             TempData["postCause"] = "editStage";
             TempData["stage_id"] = id;
 
@@ -194,6 +247,12 @@ namespace SEMS.Controllers
         }
         public IActionResult UpdateStage(int id)
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             TempData["postCause"] = "updateStage";
             TempData["stage_id"] = id;
             string stage = HttpContext.Request.Form["stage"];
@@ -209,11 +268,23 @@ namespace SEMS.Controllers
 
         public IActionResult AddStage()
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             TempData["postCause"] = "addStage";
             return RedirectToActionPreserveMethod("FlowSettings");
         }
         public IActionResult DeleteStage(int id)
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             TempData["postCause"] = "deleteStage";
             string item = HttpContext.Request.Form["hidDeleteItem"].ToString();
             qry = "DELETE FROM SE_EROLL.DBO.FORM_STAGES WHERE STAGE_ID=" + item;
@@ -222,6 +293,12 @@ namespace SEMS.Controllers
         }
         public IActionResult SaveStage(FlowModel md)
         {
+            bool allOK = checkAuthorization(2);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "INSERT INTO SE_EROLL.DBO.FORM_STAGES(STAGE,FLOW_LEVEL,STATUS,USERTYPEID) VALUES('" + md.stage + "',";
             qry += md.flowLevel + ",1," + md.userTypeID + ")";
             dm.runquery(qry);
@@ -233,6 +310,12 @@ namespace SEMS.Controllers
         #region RE-ORAGANIZE ELECTORS
         public IActionResult ReOrganizeElectorsPanchayat()
         {
+            bool allOK = checkAuthorization(10);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count == 0)
@@ -315,6 +398,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ReOrganizeElectorsPanchayat(PanchayatHeaderModel md)
         {
+            bool allOK = checkAuthorization(10);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count == 0)
@@ -434,6 +523,12 @@ namespace SEMS.Controllers
         #region DRAFT ELECTORAL ROLL
         public IActionResult DraftRoll()
         {
+            bool allOK = checkAuthorization(14);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string panMun = HttpContext.Session.GetString("electionType");
             if (panMun == "P")
             {
@@ -465,6 +560,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult DraftRoll(RepDraftRollModel md)
         {
+            bool allOK = checkAuthorization(14);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string panMun = HttpContext.Session.GetString("electionType");
             if (panMun == "P")
             {
@@ -509,7 +610,7 @@ namespace SEMS.Controllers
         #region GENERATE SERIAL NUMBERS
         public IActionResult Serialize()
         {
-            bool allOK = checkAuthorization(24);
+            bool allOK = checkAuthorization(11);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
@@ -563,7 +664,7 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult Serialize(PanchayatHeaderModel md)
         {
-            bool allOK = checkAuthorization(24);
+            bool allOK = checkAuthorization(11);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
@@ -617,6 +718,12 @@ namespace SEMS.Controllers
 
         public IActionResult GenerateSlNo(PanchayatHeaderModel md)
         {
+            bool allOK = checkAuthorization(11);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string panMun = HttpContext.Session.GetString("electionType");
             if (md.radio == 'I')
             {
@@ -658,13 +765,14 @@ namespace SEMS.Controllers
         #region FORM PROCESSING
         public IActionResult ListForms()
         {
-            ProcessFormModel md = new ProcessFormModel();
-            bool allOK = checkAuthorization(25);
+            bool allOK = checkAuthorization(12);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
+            ProcessFormModel md = new ProcessFormModel();
+            
             qry = "SELECT *FROM FREEZE_MASTER WHERE F_ID=22";
             ds = dm.create_dataset(qry);
             if (ds.Tables[0].Rows.Count == 0)
@@ -722,7 +830,7 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult ListForms(ProcessFormModel md)
         {
-            bool allOK = checkAuthorization(25);
+            bool allOK = checkAuthorization(12);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
@@ -781,20 +889,21 @@ namespace SEMS.Controllers
         }
         public IActionResult ProcessForm()
         {
-            ProcessFormModel md = new ProcessFormModel();
-            bool allOK = checkAuthorization(25);
+            bool allOK = checkAuthorization(12);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
+            ProcessFormModel md = new ProcessFormModel();
+            
             return View(md);
         }
         [HttpPost]
         public IActionResult ProcessForm(ProcessFormModel md)
         {
             {//Checking Authorization and Authenticity
-                bool allOK = checkAuthorization(25);
+                bool allOK = checkAuthorization(12);
                 if (!allOK)
                 {
                     HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
@@ -998,7 +1107,12 @@ namespace SEMS.Controllers
         }
         public IActionResult SendForVerification(ProcessFormModel md)
         {
-           
+            bool allOK = checkAuthorization(12);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             SqlConnection con = new SqlConnection();
             try
             {
@@ -1046,6 +1160,12 @@ namespace SEMS.Controllers
 
         public IActionResult ForwardForm(ProcessFormModel md)
         {
+            bool allOK = checkAuthorization(12);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             SqlConnection con = new SqlConnection();
             try
             {
@@ -1090,6 +1210,12 @@ namespace SEMS.Controllers
 
         public IActionResult AcceptReject(int id,ProcessFormModel md)
         {
+            bool allOK = checkAuthorization(12);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string status="";
             if (id == 1)
             {
@@ -1140,6 +1266,12 @@ namespace SEMS.Controllers
         }
         public IActionResult RevertForm(ProcessFormModel md)
         {
+            bool allOK = checkAuthorization(12);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             SqlConnection con = new SqlConnection();
             try
             {
@@ -1173,6 +1305,12 @@ namespace SEMS.Controllers
         #region FINAL ELECTORAL ROLL
         public IActionResult FinalRoll()
         {
+            bool allOK = checkAuthorization(14);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string panMun = HttpContext.Session.GetString("electionType");
             if (panMun == "P")
             {
@@ -1204,6 +1342,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult FinalRoll(RepDraftRollModel md)
         {
+            bool allOK = checkAuthorization(14);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             string panMun = HttpContext.Session.GetString("electionType");
             if (panMun == "P")
             {
@@ -1236,6 +1380,12 @@ namespace SEMS.Controllers
         #region EROLL REPORTS
         public IActionResult ErollReports()
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             return View();
         }
         #endregion
@@ -1243,6 +1393,12 @@ namespace SEMS.Controllers
         #region PS-WISE ELECTOR DETAILS
         public IActionResult PSWiseElectors()
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             PSWiseElectorsModel md = new PSWiseElectorsModel();
             md.reportLevel = "1";
             return View(md);
@@ -1250,6 +1406,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult PSWiseElectors(PSWiseElectorsModel md)
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             if (md.reportLevel!="1")
             {
                 qry = "SELECT * FROM DISTRICT ORDER BY DIST_NAME";
@@ -1279,6 +1441,12 @@ namespace SEMS.Controllers
         #region PANCHAYAT-WISE ELECTOR DETAILS
         public IActionResult PanchayatWiseElectors()
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             PSWiseElectorsModel md = new PSWiseElectorsModel();
             md.reportLevel = "1";
             return View(md);
@@ -1286,6 +1454,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult PanchayatWiseElectors(PSWiseElectorsModel md)
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             if (md.reportLevel != "1")
             {
                 qry = "SELECT * FROM DISTRICT ORDER BY DIST_NAME";
@@ -1316,6 +1490,12 @@ namespace SEMS.Controllers
 
         public IActionResult PSWiseElectorChanges()
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             PSWiseElectorsModel md = new PSWiseElectorsModel();
             md.reportLevel = "1";
             return View(md);
@@ -1323,6 +1503,12 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult PSWiseElectorChanges(PSWiseElectorsModel md)
         {
+            bool allOK = checkAuthorization(21);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             if (md.reportLevel != "1")
             {
                 qry = "SELECT * FROM DISTRICT ORDER BY DIST_NAME";
@@ -1349,11 +1535,12 @@ namespace SEMS.Controllers
 
         #endregion
 
-        #region
+        #region UPDATE FORMS TO ROLL
         public IActionResult UpdateToRoll()
         {
+            
             ProcessFormModel md = new ProcessFormModel();
-            bool allOK = checkAuthorization(28);
+            bool allOK = checkAuthorization(13);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
@@ -1416,7 +1603,7 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult UpdateToRoll(ProcessFormModel md)
         {
-            bool allOK = checkAuthorization(28);
+            bool allOK = checkAuthorization(13);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
@@ -1476,6 +1663,12 @@ namespace SEMS.Controllers
         }
         public IActionResult UpdateRoll(ProcessFormModel md)
         {
+            bool allOK = checkAuthorization(13);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError", "Home");
+            }
             try
             {
                 if (md.formType=="A")

@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Hosting;
 //using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Reflection;
+using SEMS.Models.Counting;
+using SEMS.Models.Result;
 
 namespace SEMS.Controllers
 {
@@ -884,6 +886,178 @@ namespace SEMS.Controllers
         public IActionResult CitizenMessage()
         {
             return View();
+        }
+        #endregion
+
+        #region DISPLAY RESULTS
+        public IActionResult ViewResults()
+        {
+            return RedirectToAction("DisplayResults");
+        }
+        public IActionResult DisplayResults()
+        {
+            ResultModel md = new ResultModel();
+            md.panMun = "P";
+            qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "'";
+            ds = dm.create_dataset(qry);
+            ViewBag.constTypes = ds;
+            md.constType = ds.Tables[0].Rows[0][0].ToString();
+            md.constType = ds.Tables[0].Rows[0]["TYPE_CODE"].ToString();
+            qry = "SELECT DIST_CODE,DIST_NAME FROM DISTRICT ORDER BY DIST_CODE";
+            ds = dm.create_dataset(qry);
+            ViewBag.districts = ds;
+            qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.tehsils = ds;
+            md.tehsil = ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.panchayats = ds;
+            md.panchayat = ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+            qry += " AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.constituencies = ds;
+            md.constCode = ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT PSCODE,PS_NAME FROM POLLING_STATION AS PS JOIN CONSTITUENCY AS C ON PS.CONST_NO=C.CONST_NO ";
+            qry += "AND PS.PAN_MUN=C.PAN_MUN AND C.PAN_MUN='" + md.panMun + "' WHERE C.CONST_NO=(SELECT CONST_NO FROM CONSTITUENCY WHERE ";
+            qry += "CONST_CODE=" + md.constCode + ")";
+            ds = dm.create_dataset(qry);
+            ViewBag.pollingStations = ds;
+            qry = "SELECT COUNT(*) FROM POLLING_STATION WHERE PAN_MUN='" + md.panMun + "'";
+            ViewBag.psCnt = dm.create_scalar(qry);
+            qry = "SELECT N.CAND_NAME,P.SHORT_NAME,N.VOTES,N.MARGIN,N.WIN_STATUS FROM NOMINATIONS AS N JOIN PARTY AS P ON ";
+            qry += "N.PACODE=P.PACODE WHERE CONST_CODE=" + md.constCode + " ORDER BY VOTES DESC";
+            ds = dm.create_dataset(qry);
+            ViewBag.resultList = ds;
+            //List<string> label = new List<string>();
+            //List<string> mydata = new List<string>();
+            int candCnt = ds.Tables[0].Rows.Count;
+            string[] colors = { "red", "green", "blue", "orange", "yellow", "brown", "violet", "darkcyan", "pink", "indigo", "maroon", "purple", "navy", "skyblue", "yellowgreen", "wheat" };
+            string[] label = new string[candCnt], mydata = new string[candCnt],bgcolors = new string[candCnt];
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+                {
+                    label[i] = ds.Tables[0].Rows[i]["CAND_NAME"].ToString();
+                    mydata[i] = ds.Tables[0].Rows[i]["VOTES"].ToString();
+                    bgcolors[i] = colors[i];
+                }
+            }
+            ViewBag.labels = label;
+            ViewBag.mydata = mydata;
+            ViewBag.bgcolors = bgcolors;
+            return View(md);
+
+        }
+
+        [HttpPost]
+        public IActionResult DisplayResults(ResultModel md)
+        {
+           
+            qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "' ORDER BY TYPE_NAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.constTypes = ds;
+            qry = "SELECT DIST_CODE,DIST_NAME FROM DISTRICT ORDER BY DIST_CODE";
+            ds = dm.create_dataset(qry);
+            ViewBag.districts = ds;
+            if (md.postCause == "divConstType")
+                md.district= ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT TCODE,TNAME FROM TEHSIL WHERE E_ROLL=1 ORDER BY TNAME";
+            ds = dm.create_dataset(qry);
+            ViewBag.tehsils = ds;
+            if (md.postCause == "divConstType")
+                md.tehsil = ds.Tables[0].Rows[0][0].ToString();
+            qry = "SELECT PNO,PAN_NAME FROM PANCHAYAT WHERE TCODE=" + md.tehsil + " ORDER BY PAN_NAME";
+            ds = dm.create_dataset(qry);
+            if (md.postCause == "divTehsil")
+                md.panchayat = ds.Tables[0].Rows[0][0].ToString();
+            ViewBag.panchayats = ds;
+            if (md.panMun == "P")
+            {
+                if (md.constType == "1")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+                    qry += " AND PCODE=" + md.panchayat + " ORDER BY CONST_NAME";
+                }
+                else if (md.constType == "2")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+                    qry += " AND TCODE=" + md.tehsil + " ORDER BY CONST_NAME";
+                }
+                else if (md.constType == "3")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+                    qry += " AND TCODE=" + md.tehsil + " ORDER BY CONST_NAME";
+                }
+                else if (md.constType == "4")
+                {
+                    qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+                    qry += " AND ZILLA_CODE=" + md.district + " ORDER BY CONST_NAME";
+                }
+                ds = dm.create_dataset(qry);
+                ViewBag.constituencies = ds;
+                if (md.postCause != "ddwnConstituency")
+                    md.constCode = ds.Tables[0].Rows[0][0].ToString();
+                if (md.constType == "4")
+                {
+                    qry = "SELECT PSCODE,PS_NAME FROM POLLING_STATION AS PS JOIN CONSTITUENCY AS C ON PS.CONST_NO=C.CONST_NO ";
+                    qry += "AND PS.PAN_MUN=C.PAN_MUN WHERE C.PAN_MUN='" + md.panMun + "' AND ZILLA_CODE=(SELECT CONST_NO FROM ";
+                    qry += "CONSTITUENCY WHERE CONST_CODE=" + md.constCode + ")";
+                }
+                else if (md.constType == "1")
+                {
+                    qry = "SELECT PSCODE,PS_NAME FROM POLLING_STATION AS PS JOIN CONSTITUENCY AS C ON PS.CONST_NO=C.CONST_NO ";
+                    qry += "AND PS.PAN_MUN=C.PAN_MUN AND C.PAN_MUN='" + md.panMun + "' AND PCODE=" + md.panchayat;
+                }
+                else
+                {
+                    qry = "SELECT PSCODE,PS_NAME FROM POLLING_STATION AS PS JOIN CONSTITUENCY AS C ON PS.CONST_NO=C.CONST_NO ";
+                    qry += "AND PS.PAN_MUN=C.PAN_MUN AND C.PAN_MUN='" + md.panMun + "' AND PCODE=(SELECT CONST_NO FROM CONSTITUENCY WHERE CONST_CODE=" + md.constCode + ")";
+                }
+                ds = dm.create_dataset(qry);
+                ViewBag.pollingStations = ds;
+            }
+            else if (md.panMun == "M")
+            {
+                qry = "SELECT CONST_CODE,CONST_NAME FROM CONSTITUENCY WHERE TYPE_CODE LIKE " + md.constType;
+                qry += " ORDER BY CONST_NO";
+                ds = dm.create_dataset(qry);
+                ViewBag.constituencies = ds;
+                qry = "SELECT PSCODE,PS_NAME FROM POLLING_STATION AS PS JOIN CONSTITUENCY AS C ON PS.CONST_NO=C.CONST_NO ";
+                qry += "AND PS.PAN_MUN=C.PAN_MUN AND C.PAN_MUN='" + md.panMun + "' WHERE C.CONST_NO=(SELECT CONST_NO FROM CONSTITUENCY WHERE ";
+                qry += "CONST_CODE=" + md.constCode + ")";
+                ds = dm.create_dataset(qry);
+                ViewBag.pollingStations = ds;
+            }
+            else
+            {
+                md.panMun = "P";
+            }
+            if (md.postCause == "ddwnConstituency")
+                md.constCode = HttpContext.Request.Form["constCode"];
+            qry = "SELECT N.CAND_NAME,P.SHORT_NAME,N.VOTES,N.MARGIN,N.WIN_STATUS FROM NOMINATIONS AS N JOIN PARTY AS P ON ";
+            qry += "N.PACODE=P.PACODE WHERE CONST_CODE=" + md.constCode + " ORDER BY VOTES DESC";
+            ds = dm.create_dataset(qry);
+            ViewBag.resultList = ds;
+            int candCnt = ds.Tables[0].Rows.Count;
+            string[] colors = { "red", "green", "blue",  "indigo", "hotpink", "violet", "brown", "darkcyan", "orange", "yellow", "maroon", "purple", "navy", "skyblue", "yellowgreen", "wheat" };
+            string[] label = new string[candCnt], mydata = new string[candCnt], bgcolors = new string[candCnt];
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i <= ds.Tables[0].Rows.Count - 1; i++)
+                {
+                    label[i] = ds.Tables[0].Rows[i]["CAND_NAME"].ToString();
+                    mydata[i] = ds.Tables[0].Rows[i]["VOTES"].ToString();
+                    bgcolors[i] = colors[i];
+                }
+            }
+            ViewBag.labels = label;
+            ViewBag.mydata = mydata;
+            ViewBag.bgcolors = bgcolors;
+            
+
+            return View(md);
         }
         #endregion
     }

@@ -76,6 +76,9 @@
                                     {
                                         string chkID = "chk" + fr["FUNCTION_ID"].ToString();
                                         string hidID = "hid" + fr["FUNCTION_ID"].ToString();
+                                        string endis = "";
+                                        if (Model.userType == "1" && fr["MODULE_ID"].ToString() == "1")
+                                            endis = "disabled";
                                         <li style="list-style-type:none;">
                                             <table>
                                                 <tr>
@@ -83,11 +86,11 @@
 
                                                         if (fr[3].ToString() == "1")
                                                         {
-                                                            <td style="text-align:left;"><input type="hidden" id="@hidID" name="@hidID" value="@fr[3]" /><input id="@chkID" name="@chkID" type="checkbox" onchange="setHiddenValue('@fr["FUNCTION_ID"]');" checked /></td>
+                                                            <td style="text-align:left;"><input type="hidden" id="@hidID" name="@hidID" value="@fr[3]" /><input id="@chkID" name="@chkID" type="checkbox" onchange="setHiddenValue('@fr["FUNCTION_ID"]');" endis checked /></td>
                                                         }
                                                         else
                                                         {
-                                                            <td style="text-align:left;"><input type="hidden" id="@hidID" name="@hidID" value="@fr[3]" /><input id="@chkID" name="@chkID" type="checkbox" onchange="setHiddenValue('@fr["FUNCTION_ID"]');" /></td>
+                                                            <td style="text-align:left;"><input type="hidden" id="@hidID" name="@hidID" value="@fr[3]" /><input id="@chkID" name="@chkID" type="checkbox" onchange="setHiddenValue('@fr["FUNCTION_ID"]');" endis /></td>
                                                         }
                                                     }
 

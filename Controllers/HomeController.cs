@@ -111,6 +111,12 @@ namespace SEMS.Controllers
         #region Manage Users
         public IActionResult ManageUsers()
         {
+            bool allOK = checkAuthorization(1);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             if (HttpContext.Session.GetString("logUserType")=="ADMIN")
             {
                 qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE WHERE STATUS=1 ORDER BY USER_TYPE";
@@ -215,11 +221,11 @@ namespace SEMS.Controllers
         #region BACKUP DATABASE
         public ActionResult BackupDB()
         {
-            bool allOK = checkAuthorization(3);
+            bool allOK = checkAuthorization(9);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
-                return RedirectToAction("AuthorizationError");
+                return RedirectToAction("AuthorizationError","Home");
             }
             if (TempData.ContainsKey("backup"))
             {
@@ -231,6 +237,12 @@ namespace SEMS.Controllers
         public ActionResult DoBackupDB()
         {
 
+            bool allOK = checkAuthorization(9);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             string qry, bkupPath = System.IO.Directory.GetCurrentDirectory();
             string bkupPath1 = bkupPath + "\\Database\\STATEELECTION.BAK";
             string bkupPath2 = bkupPath + "\\Database\\SEROLL.BAK";
@@ -269,6 +281,12 @@ namespace SEMS.Controllers
              var fileName1 = "SE_EROLL.bak";
              var res1 = File(content, contentType, fileName1);
              return res;*/
+            bool allOK = checkAuthorization(9);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             string bkupPath = System.IO.Directory.GetCurrentDirectory();
             bkupPath += "\\Database\\STATEELECTION.BAK";
             var net = new System.Net.WebClient();
@@ -286,11 +304,11 @@ namespace SEMS.Controllers
         public ActionResult FreezeData()
         {
             string qry;
-            bool allOK = checkAuthorization(4);
+            bool allOK = checkAuthorization(6);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
-                return RedirectToAction("AuthorizationError");
+                return RedirectToAction("AuthorizationError","Home");
             }
             if (TempData.ContainsKey("freezeSuccess"))
             {
@@ -311,6 +329,12 @@ namespace SEMS.Controllers
         }
         public ActionResult FreezeItem()
         {
+            bool allOK = checkAuthorization(6);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             string qry;
             bool passwordMatched = false;
             qry = "SELECT PASSWORD FROM USERS WHERE TYPE_ID=1";
@@ -338,6 +362,12 @@ namespace SEMS.Controllers
         }
         public ActionResult UnfreezeItem()
         {
+            bool allOK = checkAuthorization(6);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
             string qry;
             bool passwordMatched = false;
             qry = "SELECT PASSWORD FROM USERS WHERE TYPE_ID=1";
@@ -369,15 +399,15 @@ namespace SEMS.Controllers
         #region GRANT/REVOKE APPLICATION FEATURES
         public IActionResult GrantRevoke()
         {
-            bool allOK = checkAuthorization(6);
+            bool allOK = checkAuthorization(8);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
-                return RedirectToAction("AuthorizationError");
+                return RedirectToAction("AuthorizationError","Home");
             }
             GrantRevokeModel md = new GrantRevokeModel();
             string qry = "";
-            qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE WHERE USER_TYPE NOT LIKE 'ADMIN' ORDER BY USER_TYPE";
+            qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE  ORDER BY USER_TYPE";
            
             ds = dm.create_dataset(qry);
             ViewBag.userTypeList = ds;
@@ -391,7 +421,7 @@ namespace SEMS.Controllers
             ds = dm.create_dataset(qry);
             ViewBag.moduleList = ds;
             qry = "SELECT U.FUNCTION_ID,FM.FUNCTION_NAME,FM.MODULE_ID,CASE U.STATUS WHEN 1 then '1' ELSE '0' END AS STATUS FROM USER_FUNCTION_MAPPING AS U JOIN FUNCTION_MASTER";
-            qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
+            qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " AND FM.FUNCTION_ID<>8 ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
             ds = dm.create_dataset(qry);
             ViewBag.featureList = ds;
             return View(md);
@@ -399,14 +429,14 @@ namespace SEMS.Controllers
         [HttpPost]
         public IActionResult GrantRevoke(GrantRevokeModel md)
         {
-            bool allOK = checkAuthorization(6);
+            bool allOK = checkAuthorization(8);
             if (!allOK)
             {
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
-                return RedirectToAction("AuthorizationError");
+                return RedirectToAction("AuthorizationError","Home");
             }
             string qry = "";
-            qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE WHERE USER_TYPE NOT LIKE 'ADMIN' ORDER BY USER_TYPE";
+            qry = "SELECT TYPE_ID,USER_TYPE FROM USER_TYPE  ORDER BY USER_TYPE";
             
             ds = dm.create_dataset(qry);
             ViewBag.userTypeList = ds;
@@ -424,7 +454,7 @@ namespace SEMS.Controllers
             ViewBag.moduleList = ds;
             
                 qry = "SELECT U.FUNCTION_ID,FM.FUNCTION_NAME,FM.MODULE_ID,CASE U.STATUS WHEN 1 then '1' ELSE '0' END AS STATUS FROM USER_FUNCTION_MAPPING AS U JOIN FUNCTION_MASTER";
-                qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
+                qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " AND FM.FUNCTION_ID<>8 ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
             
 
             
@@ -432,10 +462,43 @@ namespace SEMS.Controllers
             ViewBag.featureList = ds;
             return View(md);
         }
+        public ActionResult UpdateFeaturesGrant(GrantRevokeModel md)
+        {
+            bool allOK = checkAuthorization(8);
+            if (!allOK)
+            {
+                HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
+                return RedirectToAction("AuthorizationError","Home");
+            }
+            string qry = "";
+
+            qry = "SELECT U.FUNCTION_ID,FM.FUNCTION_NAME,FM.MODULE_ID,CASE U.STATUS WHEN 1 then '1' ELSE '0' END AS STATUS FROM USER_FUNCTION_MAPPING AS U JOIN FUNCTION_MASTER";
+            qry += " AS FM ON U.FUNCTION_ID = FM.FUNCTION_ID WHERE U.USER_TYPE_ID=" + md.userType + " AND FM.FUNCTION_ID<>8 ORDER BY FM.MODULE_ID,U.FUNCTION_ID";
 
 
-            #endregion
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        
+            ds = dm.create_dataset(qry);
+            foreach (DataRow row in ds.Tables[0].Rows)
+            {
+                string chkID = "hid" + row["FUNCTION_ID"].ToString();
+                //sqlquery = HttpContext.Request.Form[chkID].ToString();
+                //return RedirectToAction("Sample");
+
+                qry = "UPDATE USER_FUNCTION_MAPPING SET STATUS=" + HttpContext.Request.Form[chkID].ToString() + " WHERE USER_TYPE_ID=";
+                qry += md.userType + " AND FUNCTION_ID=" + row["FUNCTION_ID"].ToString();
+                //sqlquery = qry;
+                //return RedirectToAction("Sample");
+               
+                dm.runquery(qry);
+
+            }
+
+            TempData["grantsupdated"] = "Y";
+            return RedirectToActionPreserveMethod("GrantRevoke");
+        }
+
+        #endregion
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
