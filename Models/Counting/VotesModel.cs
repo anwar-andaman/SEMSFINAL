@@ -18,5 +18,6 @@
         public int tendered { get; set; }
         public int maxVotes { get; set; } = 0;
         public int keyValue { get; set; }
+        public string pwd { get; set; }
     }
 }

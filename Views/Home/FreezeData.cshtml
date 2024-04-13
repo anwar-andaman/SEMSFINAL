@@ -1,4 +1,5 @@
-﻿@using System.Data;
+﻿@model FreezeModel
+@using System.Data;
 @{
     ViewData["Title"] = "FreezeData";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -34,11 +35,7 @@
     }
     <div class="container">
         <h2 class="pageheading">Freeze/Unfreeze Data</h2>
-        <div class="row">
-            <div class="col-sm-6">
-                <label for="ddwnFreezeItem" class="form-label">Freeze Item</label>
-            </div>
-        </div>
+       
         <!-- Modal -->
         <div class="modal fade" id="ModalFreezePassword" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -76,61 +73,57 @@
                 </div>
             </div>
         </div>
-
+        <input type="hidden" id="hidKeyValue" asp-for="keyValue" />
+       
+        
         <div class="row">
-            <div class="col-sm-6">
-                @{
-                    List<SelectListItem> items = new List<SelectListItem>();
-                    foreach (DataRow row in freezeItemList.Tables[0].Rows)
-                    {
-                        SelectListItem s = new SelectListItem();
-                        s.Text = row["FREEZE_ITEM"].ToString();
-                        s.Value = row["F_ID"].ToString();
-                        s.Selected = row["F_ID"].ToString() == (string)ViewBag.freezeItem ? true : false;
-                        items.Add(s);
-                    }
-                }
-                <select id="ddwnFreezeItem" name="ddwnFreezeItem" class="form-select" asp-items="@items" onchange="document.getElementById('frmFreezeData').submit();"></select>
-            </div>
-        </div>
-        <div class="row" style="margin-top:10px;">
-            <div class="col-sm-6">
-                <div class="row">
-                    <div class="col-sm-4"></div>
-                    <div class="col-sm-4">
-                        @{
-                            bool freezed = false;
-                            bool itemCreated = false;
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <th>S. No.</th>
+                        <th>Item</th>
+                        <th>Freeze Status</th>
+                        <th></th>
+                    </thead>
+                    @{
+                        int cnt = 0;
 
-                            if (Context.Request.Method == "POST")
-                            {
-                                foreach (DataRow row in freezeItemList.Tables[0].Rows)
-                                {
-                                    if (row["F_ID"].ToString() == Context.Request.Form["ddwnFreezeItem"].ToString() && (bool)row["FREEZED"])
+                        foreach (DataRow row in freezeItemList.Tables[0].Rows)
+                        {
+                            cnt++;
+                            
+                            <tr class="mycontrol">
+                                <td>@cnt</td>
+                                <td>@row["FREEZE_ITEM"]</td>
+                                @{
+                                    if ((bool)row["FREEZED"] == true)
                                     {
-                                        <input type="button" class="btn btn-info form-control" value="Unfreeze Data" id="btnFreeze" data-bs-toggle="modal" data-bs-target="#ModalUnfreezePassword" />
-                                        itemCreated = true;
-                                        break;
+                                        <td style="color:red">Yes</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="color:green">No</td>
                                     }
                                 }
-                            }
-                            else
-                            {
-                                if ((bool)freezeItemList.Tables[0].Rows[0][2])
-                                {
-                                    freezed = true;
-                                    <input type="button" class="btn btn-info form-control" value="Unfreeze Data" id="btnFreeze" data-bs-toggle="modal" data-bs-target="#ModalUnfreezePassword" />
-                                    itemCreated = true;
-                                }
-                            }
-                            if (!itemCreated)
-                            {
-                                <input type="button" class="btn btn-danger form-control" value="Freeze Data" id="btnFreeze" data-bs-toggle="modal" data-bs-target="#ModalFreezePassword" />
-                            }
+                                
+                                <td>
+                                    @{
+                                        if ((bool)row["FREEZED"] == true)
+                                        {
+                                            <button type="button" class="btn btn-link link-success " data-bs-toggle="modal" data-bs-target="#ModalUnfreezePassword" onclick="document.getElementById('hidKeyValue').value='@row["F_ID"]';">Unfreeze</button>
+                                            
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-link link-danger" data-bs-toggle="modal" data-bs-target="#ModalFreezePassword" onclick="document.getElementById('hidKeyValue').value='@row["F_ID"]';">Freeze</button>
+                                        }
+                                    }    
+                                
+                                </td>
+                            </tr>
                         }
-                    </div>
-                    <div class="col-sm-4"></div>
-                </div>
+                    }
+                </table>
             </div>
         </div>
     </div>

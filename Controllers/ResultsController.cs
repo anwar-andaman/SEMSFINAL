@@ -205,6 +205,9 @@ namespace SEMS.Controllers
             VotesModel md = new VotesModel();
             if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
                 return RedirectToAction("Login", "Home");
+            qry = "SELECT PASSWORD FROM USERS WHERE UID=" + HttpContext.Session.GetString("logUserID");
+            ds = dm.create_dataset(qry);
+            md.pwd = ds.Tables[0].Rows[0][0].ToString();
             md.panMun = HttpContext.Session.GetString("electionType");
             md.mode = "A";
             qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "'";
@@ -248,6 +251,9 @@ namespace SEMS.Controllers
             }
             if (HttpContext.Session.GetString("electionType").IsNullOrEmpty())
                 return RedirectToAction("Login", "Home");
+            qry = "SELECT PASSWORD FROM USERS WHERE UID=" + HttpContext.Session.GetString("logUserID");
+            ds = dm.create_dataset(qry);
+            md.pwd = ds.Tables[0].Rows[0][0].ToString();
             qry = "SELECT TYPE_CODE,TYPE_NAME FROM CONST_TYPE_MASTER WHERE PAN_MUN='" + md.panMun + "' ORDER BY TYPE_NAME";
             ds = dm.create_dataset(qry);
             ViewBag.constTypes = ds;

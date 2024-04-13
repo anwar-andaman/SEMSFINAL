@@ -15,27 +15,28 @@
         <div class="flex-container">
            
             <div class="row">
-                <div class="row" style="background-image:url('../images/headerbg.png');">
-                    <div class="col-sm-1">
-                        <a href="https://www.andaman.gov.in"><img src="~/images/andamanlogo.png" style="margin-left:auto;margin-right:auto; " /></a>
-                    </div>
+                <div class="row" style="background-image:url('../images/headerbg1.jpg'); background-repeat:no-repeat; background-size:cover;">
+
                     <div class="col">
-                        <h1 class="aligncenter" style="color:darkred;">State Election Commission</h1>
-                        <h2 class="aligncenter" style="color:maroon;">Andaman & Nicobar Islands</h2>
+
+                        <h1 class="aligncenter" style="color:white;">State Election Commission</h1>
+                        <h2 class="aligncenter" style="color:white;">Andaman & Nicobar Islands</h2>
                     </div>
 
                 </div>
             </div>
-            <div class="row" style="background-color:green; color:white; font-size:larger; font-display:block; background-image:url('../images/scrollingdiv.jpg');">
-                <marquee><span style="font-weight:bold;">State Election Management System</span></marquee>
+            <div class="row" style="background-image:url('../images/headerbg2.jpg');background-color:darkcyan; color:white; font-size:larger; font-display:block;">
+                <marquee style="color:greenyellow"><i><b>State Election Management System</b></i></marquee>
+
             </div>
         </div>
 
-    </header>
+    </header>   
 
     <div class="flex-container" style="min-height:100vh; ">
         <div class="row">
-            <div class="col-sm-2" style="min-height:100vh; background-color:skyblue; ">
+            <div class="col-sm-2" style="min-height:100vh;background-image:url('../images/headerbg1.jpg'); background-color:darkcyan; ">
+              
                 <div class="btn-group-vertical dropend d-flex" role="group">
 
                     @{
@@ -56,7 +57,8 @@
                         <a class="dropdown-item mymenuitem" href="/Home/ManageUsers">Manage Users </a>
                         <a class="dropdown-item mymenuitem" href="/ERoll/FlowSettings">Form Flow Settings </a>
                         <a class="dropdown-item mymenuitem" href="/ERoll/ScheduleRevision">Schedule E-Roll Revision </a>
-                        
+                        <a class="dropdown-item mymenuitem" href="/Home/ManageParties">Manage Political Parties</a>
+                        <a class="dropdown-item mymenuitem" href="/Home/ManageSymnbols">Manage Symbols</a>
                         <a class="dropdown-item mymenuitem" href="/Home/FreezeData">Freeze/Unfreeze Data</a>
                         <a class="dropdown-item mymenuitem" href="/Home/GrantRevoke">Grant/Revoke Application Features</a>
                         <a class="dropdown-item mymenuitem" href="/Home/BackupDB">Backup Database</a>
@@ -123,13 +125,13 @@
                 <div class="btn-group-vertical dropend d-flex" role="group">
                     
                     <a id="btnGroupDrop6" href="/Home/Login" type="button" class="btn btn-outline-primary menubutton " aria-haspopup="true" aria-expanded="false">
-                        <span style="color:purple">Log Out</span>
+                        <span style="color:greenyellow">Log Out</span>
                     </a>
 
                 </div>
               
             </div>
-            <div class="col-10" >
+            <div class="col-10" style="background-color:WHITE">
                 <main role="main" class="pb-3">
                     @RenderBody()
                 </main>

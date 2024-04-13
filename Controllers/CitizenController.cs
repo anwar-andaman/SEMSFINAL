@@ -926,7 +926,7 @@ namespace SEMS.Controllers
             ViewBag.pollingStations = ds;
             qry = "SELECT COUNT(*) FROM POLLING_STATION WHERE PAN_MUN='" + md.panMun + "'";
             ViewBag.psCnt = dm.create_scalar(qry);
-            qry = "SELECT N.CAND_NAME,P.SHORT_NAME,N.VOTES,N.MARGIN,N.WIN_STATUS FROM NOMINATIONS AS N JOIN PARTY AS P ON ";
+            qry = "SELECT N.CAND_NAME,CASE N.INDEPENDENT WHEN 1 THEN 'Independent' ELSE P.SHORT_NAME END AS SHORT_NAME,N.VOTES,N.MARGIN,N.WIN_STATUS FROM NOMINATIONS AS N LEFT JOIN PARTY AS P ON ";
             qry += "N.PACODE=P.PACODE WHERE CONST_CODE=" + md.constCode + " ORDER BY VOTES DESC";
             ds = dm.create_dataset(qry);
             ViewBag.resultList = ds;
@@ -1036,7 +1036,7 @@ namespace SEMS.Controllers
             }
             if (md.postCause == "ddwnConstituency")
                 md.constCode = HttpContext.Request.Form["constCode"];
-            qry = "SELECT N.CAND_NAME,P.SHORT_NAME,N.VOTES,N.MARGIN,N.WIN_STATUS FROM NOMINATIONS AS N JOIN PARTY AS P ON ";
+            qry = "SELECT N.CAND_NAME,CASE N.INDEPENDENT WHEN 1 THEN 'Independent' ELSE P.SHORT_NAME END AS SHORT_NAME,N.VOTES,N.MARGIN,N.WIN_STATUS FROM NOMINATIONS AS N LEFT JOIN PARTY AS P ON ";
             qry += "N.PACODE=P.PACODE WHERE CONST_CODE=" + md.constCode + " ORDER BY VOTES DESC";
             ds = dm.create_dataset(qry);
             ViewBag.resultList = ds;

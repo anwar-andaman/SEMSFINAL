@@ -47,6 +47,7 @@
         public string reason { get; set; }
         public string delPanchayat { get; set; }
         public string delWard { get; set; }
+        public string formStage { get; set; }
 
     }
 }

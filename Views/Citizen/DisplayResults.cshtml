@@ -61,8 +61,6 @@
             var labels = @Html.Raw(Json.Serialize(labels));
             var mydata = @Html.Raw(Json.Serialize(mydata));
             var bgcolors = @Html.Raw(Json.Serialize(bgcolors));
-            
-           
             const resultChart = new Chart("resultChart", 
             {
                 type: "pie",
@@ -76,8 +74,26 @@
                 },
                 options: {
                     // Customize chart options here
+                        plugins: { title: { display: true, text: 'Election Result' } }
                 }
             });
+            const barChart = new Chart("barChart",
+                {
+                    type: "bar",
+                    data:
+                    {
+                        labels: labels,
+                        
+                        datasets: [{
+                            backgroundColor: bgcolors,
+                            data: mydata
+                        }]
+                    },
+                    options: {
+                        // Customize chart options here
+                        plugins: { title: { display: true, text: 'Election Result' } }
+                    }
+                });
 
         }
         function SubmitForm(item) {
@@ -110,7 +126,7 @@
                 <div class="col-sm-3">
                     <label class="form-switch">
                         <input id="chkRefresh" type="checkbox"  asp-for="autoRefresh">
-                        <span>Auto Refresh</span>
+                        <span style="color:white;">Auto Refresh</span>
                     </label>
                 </div>
 
@@ -251,6 +267,12 @@
 
                     </canvas>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6" style="text-align:center">
+                    <canvas id="barChart"></canvas>
+                </div>
+
             </div>
         </div>
 

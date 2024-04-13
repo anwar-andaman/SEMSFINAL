@@ -3,7 +3,8 @@
     @using System.Data;
     ViewData["Title"] = "ProcessForm";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    DataSet forms = ViewBag.forms;
+    DataSet forms = ViewBag.forms,formStages=ViewBag.formStages;
+    
   
 }
 <script>
@@ -39,8 +40,9 @@
     function GoNext() { 
         var curr = Number(document.getElementById('hidFirstRow').value);
         var last = Number(document.getElementById('hidLastRow').value);
+        var lst = last - 1;
         var t = curr + 10;
-        if (t >= last) {
+        if (t > last) {
             
         }
         else {
@@ -93,13 +95,29 @@
     <div class="container">
         <h2 class="pageheading">Form Processing </h2>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-2">
                 <label class="form-label mylabel" for="ddwnFormType">Form Type</label>
                 <select id="ddwnFormType" class="form-select mycontrol" onchange="SubmitForm();" asp-for="formType">
                     <option value="A">Addition</option>
                     <option value="D">Deletion</option>
                     <option value="C">Correction</option>
                     <option value="T">Shifting</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                @{
+                    List<SelectListItem> items = new List<SelectListItem>();
+                    foreach (DataRow row in formStages.Tables[0].Rows)
+                    {
+                        SelectListItem s = new SelectListItem();
+                        s.Text = row["STAGE"].ToString();
+                        s.Value = row["STAGE_ID"].ToString();
+                        items.Add(s);
+                    }
+                }
+                <label class="form-label mylabel" for="ddwnFormStage">Form Stage</label>
+                <select id="ddwnFormStage" class="form-select mycontrol" asp-for="formStage" asp-items="@items" onchange="SubmitForm();">
+                    
                 </select>
             </div>
             <div class="col-sm-2">
@@ -123,23 +141,23 @@
             @{
                 if (Model.rowCount != 0)
                 {
-                        <table class="table table-bordered" style="text-align:center">
-                            <tr style="text-align:center">
-                                <th>S. No</th>
-                                <th>Form No.</th>
-                                <th>Panchayat</th>
-                                <th>Ward</th>
-                                <th>Elector Name</th>
-                                <th>Relative Name</th>
-                                @{
+                            <table class="table table-bordered" style="text-align:center">
+                                <tr style="text-align:center">
+                                    <th>S. No</th>
+                                    <th>Form No.</th>
+                                    <th>Panchayat</th>
+                                    <th>Ward</th>
+                                    <th>Elector Name</th>
+                                    <th>Relative Name</th>
+                                    @{
                                 if (Model.formType != "A")
                                 {
-                                            <th>Voter ID. No.</th>
+                                                    <th>Voter ID. No.</th>
                                 }
-                                }
-                                <th></th>
-                            </tr>
-                            @{
+                                    }
+                                    <th></th>
+                                </tr>
+                                @{
                             string formno;
                             DateTime formdate;
                             int cnt=0;
@@ -158,48 +176,48 @@
                                 {
                                     disp = "none";
                                 }
-                                        <tr class="mycontrol" id="@rowid" style="display:@disp">
-                                            <td>@row["SNO"]</td>
-                                            <td>@formno</td>
-                                            <td>@row["PAN_NAME"]</td>
-                                            <td>@row["PART_NAME"]</td>
-                                            <td>@row["ENAME"]</td>
-                                            <td>@row["RLN_NAME"]</td>
-                                            @{
+                                                <tr class="mycontrol" id="@rowid" style="display:@disp">
+                                                    <td>@row["SNO"]</td>
+                                                    <td>@formno</td>
+                                                    <td>@row["PAN_NAME"]</td>
+                                                    <td>@row["PART_NAME"]</td>
+                                                    <td>@row["ENAME"]</td>
+                                                    <td>@row["RLN_NAME"]</td>
+                                                    @{
                                         if (Model.formType != "A")
                                         {
-                                                        <td>@row["EPIC_NO"]</td>
+                                                                    <td>@row["EPIC_NO"]</td>
                                         }
-                                                                                            }
-                                           
-                                            <td><input type="submit" class="btn btn-link" value="Process" style="padding:0px;" asp-action="ProcessForm" onclick="SetFormValue('@row["FORMID"]');"></input></td>
+                                                                                                    }
+                                                   
+                                                    <td><input type="submit" class="btn btn-link" value="Process" style="padding:0px;" asp-action="ProcessForm" onclick="SetFormValue('@row["FORMID"]');"></input></td>
 
-                                        </tr>
+                                                </tr>
                             }
-                            }
-                            <tr style="text-align:center">
-                                <td colspan="8">
-                                    <button id="btnFirst" type="button" disabled>First</button>
-                                    <button id="btnPrev" type="button" disabled onclick="GoPrev();">Prev</button>
-                                                            
-                                    @{
+                                }
+                                <tr style="text-align:center">
+                                    <td colspan="8">
+                                        <button id="btnFirst" type="button" disabled>First</button>
+                                        <button id="btnPrev" type="button" disabled onclick="GoPrev();">Prev</button>
+                                                                
+                                        @{
                                     if (cnt<=10)
                                     {
-                                                <button id="btnNext" type="button" onclick="GoNext();" disabled>Next</button>
-                                                <button id="btnLast" type="button" disabled>Last</button>
+                                                        <button id="btnNext" type="button" onclick="GoNext();" disabled>Next</button>
+                                                        <button id="btnLast" type="button" disabled>Last</button>
                                     }
                                     else
                                     {
-                                                <button id="btnNext" type="button" onclick="GoNext();">Next</button>
-                                                <button id="btnLast" type="button">Last</button>
+                                                        <button id="btnNext" type="button" onclick="GoNext();">Next</button>
+                                                        <button id="btnLast" type="button">Last</button>
                                     }
-                                    }
-                                                           
-                                </td>
-                            </tr>
-                        </table>
-                        <input id="hidFirstRow" type="hidden" value="1" />
-                        <input id="hidLastRow" type="hidden" value="@cnt" />
+                                        }
+                                                               
+                                    </td>
+                                </tr>
+                            </table>
+                            <input id="hidFirstRow" type="hidden" value="1" />
+                            <input id="hidLastRow" type="hidden" value="@cnt" />
                 }
             }
 

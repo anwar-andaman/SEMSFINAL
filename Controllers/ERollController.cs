@@ -530,6 +530,9 @@ namespace SEMS.Controllers
                 return RedirectToAction("AuthorizationError", "Home");
             }
             string panMun = HttpContext.Session.GetString("electionType");
+            qry = "SELECT DISTINCT REVISIONYEAR FROM SE_EROLL.DBO.REVISIONS ORDER BY REVISIONYEAR DESC";
+            ds = dm.create_dataset(qry);
+            ViewBag.revisionYears = ds;
             if (panMun == "P")
             {
                 qry = "SELECT PCODE,PAN_NAME FROM PANCHAYAT ORDER BY PAN_NAME";
@@ -538,9 +541,7 @@ namespace SEMS.Controllers
                 qry = "SELECT PART_NO AS CONST_NO,PART_NAME AS WARD_NAME FROM SE_EROLL.DBO.PARTLIST WHERE PAN_MUN='" + panMun + "' AND PCODE=" + ds.Tables[0].Rows[0]["PCODE"] + " ORDER BY WARD_NAME";
                 ds = dm.create_dataset(qry);
                 ViewBag.wards = ds;
-                qry = "SELECT DISTINCT REVISIONYEAR FROM SE_EROLL.DBO.REVISIONS ORDER BY REVISIONYEAR DESC";
-                ds = dm.create_dataset(qry);
-                ViewBag.revisionYears = ds;
+               
             }
             else if (panMun == "M")
             {
@@ -550,9 +551,7 @@ namespace SEMS.Controllers
                 qry = "SELECT PART_NO AS CONST_NO,PART_NAME AS WARD_NAME FROM SE_EROLL.DBO.PARTLIST WHERE PAN_MUN='" + panMun + "' AND PCODE=" + ds.Tables[0].Rows[0]["PCODE"] + " ORDER BY WARD_NAME";
                 ds = dm.create_dataset(qry);
                 ViewBag.wards = ds;
-                qry = "SELECT DISTINCT REVISIONYEAR FROM SE_EROLL.DBO.REVISIONS ORDER BY REVISIONYEAR DESC";
-                ds = dm.create_dataset(qry);
-                ViewBag.revisionYears = ds;
+               
             }
 
             return View();
@@ -788,6 +787,12 @@ namespace SEMS.Controllers
             md.panMun = HttpContext.Session.GetString("electionType");
             string userType = HttpContext.Session.GetString("logUserType");
             md.formType = "A";
+            if (userType=="AERO")
+                md.formStage = "1";
+            else if (userType=="FVO")
+                md.formStage = "2";
+            else if (userType=="ERO")
+                md.formStage = "5";
             if (userType == "AERO" || userType == "ERO" || userType == "FVO")
             {
                 if (md.panMun == "P")
@@ -798,6 +803,7 @@ namespace SEMS.Controllers
                     qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
                     qry += "JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='P' AND FH.STAGE_ID ";
                     qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
+                    qry += " AND FH.STAGE_ID=" + md.formStage;
                 }
                 else if (md.panMun == "M")
                 {
@@ -806,6 +812,7 @@ namespace SEMS.Controllers
                     qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
                     qry += "JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='m' AND FH.STAGE_ID ";
                     qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
+                    qry += " AND FH.STAGE_ID=" + md.formStage;
                 }
                 ds = dm.create_dataset(qry);
                 DataColumn dc = new DataColumn("SNO");
@@ -824,8 +831,11 @@ namespace SEMS.Controllers
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
+            qry = "SELECT STAGE_ID,STAGE FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "')";
+            ds=dm.create_dataset(qry);
+            ViewBag.formStages = ds;
             return View(md);
-            return View(md);
+            
         }
         [HttpPost]
         public IActionResult ListForms(ProcessFormModel md)
@@ -859,6 +869,7 @@ namespace SEMS.Controllers
                         qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
                         qry += "JOIN PANCHAYAT AS P ON PL.PCODE=P.PCODE WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='P' AND FH.STAGE_ID ";
                         qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
+                        qry += " AND FH.STAGE_ID=" + md.formStage;
                 }
                 else if (md.panMun == "M")
                 {
@@ -867,6 +878,7 @@ namespace SEMS.Controllers
                     qry += "JOIN SE_EROLL.DBO.FORMS AS F ON FH.FORMID=F.FORMID  JOIN SE_EROLL.DBO.PARTLIST AS PL ON F.PART_NO=PL.PART_NO AND F.PAN_MUN=PL.PAN_MUN ";
                     qry += "JOIN MUN_WARD AS P ON PL.PCODE=P.WARD_NO WHERE FH.LATEST=1 AND F.FORM_TYPE='" + md.formType + "' AND PL.PAN_MUN='m' AND FH.STAGE_ID ";
                     qry += "IN(SELECT STAGE_ID FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "'))";
+                    qry += " AND FH.STAGE_ID=" + md.formStage;
                 }
                 ds = dm.create_dataset(qry);
                 DataColumn dc = new DataColumn("SNO");
@@ -885,6 +897,9 @@ namespace SEMS.Controllers
                 HttpContext.Session.SetString("errorMessage", "You are not authorized to access this page. Please contact Administrator.......");
                 return RedirectToAction("AuthorizationError", "Home");
             }
+            qry = "SELECT STAGE_ID,STAGE FROM SE_EROLL.DBO.FORM_STAGES WHERE USERTYPEID=(SELECT TYPE_ID FROM USER_TYPE WHERE USER_TYPE='" + userType + "')";
+            ds = dm.create_dataset(qry);
+            ViewBag.formStages = ds;
             return View(md);
         }
         public IActionResult ProcessForm()

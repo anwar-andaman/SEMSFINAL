@@ -327,7 +327,7 @@ namespace SEMS.Controllers
             }
             return View();
         }
-        public ActionResult FreezeItem()
+        public ActionResult FreezeItem(FreezeModel md)
         {
             bool allOK = checkAuthorization(6);
             if (!allOK)
@@ -344,7 +344,7 @@ namespace SEMS.Controllers
             {
                 if (HttpContext.Request.Form["txtFreezePassword"].ToString() == row[0].ToString())
                 {
-                    qry = "UPDATE FREEZE_MASTER SET FREEZED=1 WHERE F_ID=" + HttpContext.Request.Form["ddwnFreezeItem"];
+                    qry = "UPDATE FREEZE_MASTER SET FREEZED=1 WHERE F_ID=" + md.keyValue;
                     dm.runquery(qry);
                     passwordMatched = true;
                     break;
@@ -360,7 +360,7 @@ namespace SEMS.Controllers
             }
             return RedirectToActionPreserveMethod("FreezeData");
         }
-        public ActionResult UnfreezeItem()
+        public ActionResult UnfreezeItem(FreezeModel md)
         {
             bool allOK = checkAuthorization(6);
             if (!allOK)
@@ -376,7 +376,7 @@ namespace SEMS.Controllers
             {
                 if (HttpContext.Request.Form["txtunFreezePassword"].ToString() == row[0].ToString())
                 {
-                    qry = "UPDATE FREEZE_MASTER SET FREEZED=0 WHERE F_ID=" + HttpContext.Request.Form["ddwnFreezeItem"];
+                    qry = "UPDATE FREEZE_MASTER SET FREEZED=0 WHERE F_ID=" + md.keyValue;
                     dm.runquery(qry);
                     passwordMatched = true;
                     break;
