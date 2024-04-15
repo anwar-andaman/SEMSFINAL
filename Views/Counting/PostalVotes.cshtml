@@ -15,6 +15,22 @@
         document.getElementById("hidPostCause").value = pc;
         document.getElementById('frmPostalVotes').submit();
     }
+    function PopulateConstNo() {
+        //var conType = document.getElementById('ddwnConstType').value;
+        // if (conType == "1") {
+        //     var conNo = document.getElementById('ddwnConstituency').value;
+        //     document.getElementById('numPS').value == conNo;
+        // }
+        // else
+        //{
+        var psNo = document.getElementById('ddwnPS').value;
+       
+        document.getElementById('numPS').value = psNo;
+        //}
+
+
+
+    }
 </script>
 <form id="frmPostalVotes" method="post">
     <input type="hidden" id="hidPostCause" asp-for="postCause" />
@@ -120,16 +136,16 @@
                         items.Add(s);
                     }
                 }
-                <label class="form-label mylabel" for="divPS">Polling Station</label>
-                <select class="form-select mycontrol" asp-for="pollingStation" asp-items="@items"></select>
+                <label class="form-label mylabel" for="ddwnPS">Polling Station</label>
+                <select class="form-select mycontrol" id="ddwnPS" asp-for="pollingStation" asp-items="@items" onchange="PopulateConstNo();"></select>
             </div>
             <div class="col-sm-2" id="divPSNo" >
                 <label class="form-label mylabel" for="numPS">Polling Station No.</label>
                 <input type="number" class="form-control mycontrol" id="numPS" asp-for="psNo" min="1" max="@ViewBag.psCnt" style="text-align:center;"  required />
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                <label class="form-label">.</label>
-               <button id="btnFetch" class="btn btn-danger form-control" onclick="document.getElementById('hidPostCause').value='btnFetch';">Fetch List</button>
+               <button id="btnFetch" class="btn btn-success form-control" onclick="document.getElementById('hidPostCause').value='btnFetch';">Fetch Candidate List</button>
             </div>
             
         </div>
@@ -249,7 +265,7 @@
             document.getElementById('divPS').style.display = "none";
             document.getElementById('numPS').disabled = false;
         }
-
+        PopulateConstNo();
     </script>
 </form>
 

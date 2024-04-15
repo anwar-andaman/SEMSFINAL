@@ -14,6 +14,22 @@
         document.getElementById("hidPostCause").value = pc;
         document.getElementById('frmNormalVotes').submit();
     }
+    function PopulateConstNo()
+    {
+        var conType = document.getElementById('ddwnConstType').value;
+        // if (conType == "1") {
+        //     var conNo = document.getElementById('ddwnConstituency').value;
+        //     document.getElementById('numPS').value == conNo;
+        // }
+        // else 
+        //{ 
+            var psNo = document.getElementById('ddwnPS').value;
+            document.getElementById('numPS').value = psNo;
+        //}
+        
+        
+        
+    }
 </script>
 <form id="frmNormalVotes" method="post">
     <input type="hidden" id="hidPostCause" asp-for="postCause" />
@@ -40,7 +56,7 @@
         }
         <div class="row">
             <div class="col-sm-4">
-                <label class="form-label mylabel" for="divConstType">Constituency Type</label>
+                <label class="form-label mylabel" for="ddwnConstType">Constituency Type</label>
                 @{
                     foreach (DataRow row in constTypes.Tables[0].Rows)
                     {
@@ -50,7 +66,7 @@
                         items.Add(s);
                     }
                 }
-                <select class="form-select mycontrol" id="divConstType" asp-for="constType" asp-items="@items" onchange="SubmitForm(this);"></select>
+                <select class="form-select mycontrol" id="ddwnConstType" asp-for="constType" asp-items="@items" onchange="SubmitForm(this);"></select>
             </div>
             <div class="col-sm-4" id="divDistrict">
                 @{
@@ -63,8 +79,8 @@
                         items.Add(s);
                     }
                 }
-                <label class="form-label mylabel" for="divDistrict">District</label>
-                <select class="form-select mycontrol" id="divDistrict" asp-for="district" asp-items="@items" onchange="SubmitForm(this);"></select>
+                <label class="form-label mylabel" for="ddwnDistrict">District</label>
+                <select class="form-select mycontrol" id="ddwnDistrict" asp-for="district" asp-items="@items" onchange="SubmitForm(this);"></select>
             </div>
             <div class="col-sm-4" id="divTehsil">
                 @{
@@ -77,8 +93,8 @@
                         items.Add(s);
                     }
                 }
-                <label class="form-label mylabel" for="divTehsil">Tehsil</label>
-                <select class="form-select mycontrol" id="divTehsil" asp-for="tehsil" asp-items="@items" onchange="SubmitForm(this);"></select>
+                <label class="form-label mylabel" for="ddwnTehsil">Tehsil</label>
+                <select class="form-select mycontrol" id="ddwnTehsil" asp-for="tehsil" asp-items="@items" onchange="SubmitForm(this);"></select>
             </div>
             <div class="col-sm-4" id="divPanchayat">
                 @{
@@ -91,8 +107,8 @@
                         items.Add(s);
                     }
                 }
-                <label class="form-label mylabel" for="divPanchayat">Panchayat</label>
-                <select class="form-select mycontrol" id="divPanchayat" asp-for="panchayat" asp-items="@items" onchange="SubmitForm(this);"></select>
+                <label class="form-label mylabel" for="ddwnPanchayat">Panchayat</label>
+                <select class="form-select mycontrol" id="ddwnPanchayat" asp-for="panchayat" asp-items="@items" onchange="SubmitForm(this);"></select>
             </div>
             <div class="col-sm-4" id="divConstituency">
                 @{
@@ -105,8 +121,8 @@
                         items.Add(s);
                     }
                 }
-                <label class="form-label mylabel" for="divConstituency">Constituency</label>
-                <select class="form-select mycontrol" asp-for="constName" asp-items="@items" onchange="SubmitForm(this);"></select>
+                <label class="form-label mylabel" for="ddwnConstituency">Constituency</label>
+                <select class="form-select mycontrol" id="ddwnConstituency" asp-for="constName" asp-items="@items" onchange="PopulateConstNo(); SubmitForm(this);"></select>
             </div>
             <div class="col-sm-4" id="divPS">
                 @{
@@ -119,8 +135,8 @@
                         items.Add(s);
                     }
                 }
-                <label class="form-label mylabel" for="divPS">Polling Station</label>
-                <select class="form-select mycontrol" asp-for="pollingStation" asp-items="@items"></select>
+                <label class="form-label mylabel" for="ddwnPS">Polling Station</label>
+                <select class="form-select mycontrol" id="ddwnPS" asp-for="pollingStation" asp-items="@items" onchange="PopulateConstNo();"></select>
             </div>
             <div class="col-sm-2" id="divPSNo">
                 <label class="form-label mylabel" for="numPS">Polling Station No.</label>
@@ -128,7 +144,7 @@
             </div>
             <div class="col-sm-3">
                 <label class="form-label">.</label>
-                <button id="btnFetch" class="btn btn-danger form-control" onclick="document.getElementById('hidPostCause').value='btnFetch';">Fetch Candidate List</button>
+                <button id="btnFetch" class="btn btn-success form-control" onclick="document.getElementById('hidPostCause').value='btnFetch';">Fetch Candidate List</button>
             </div>
 
         </div>
@@ -138,17 +154,17 @@
             @{
                 if (Model.postCause == "btnFetch")
                 {
-                    <div class="col-sm-10">
+                            <div class="col-sm-10">
 
-                        <table class="table mylabel table-bordered" style="text-align:center">
-                            <th>S. No.</th>
-                            <th>Candidate Name</th>
-                            <th>Gender</th>
-                            <th>Party </th>
-                            <th>Symbol</th>
-                            <th>No. of Votes</th>
+                                <table class="table mylabel table-bordered" style="text-align:center">
+                                    <th>S. No.</th>
+                                    <th>Candidate Name</th>
+                                    <th>Gender</th>
+                                    <th>Party </th>
+                                    <th>Symbol</th>
+                                    <th>No. of Votes</th>
 
-                            @{
+                                    @{
                                 int rowCnt = 0;
                                 foreach (DataRow row in candidateList.Tables[0].Rows)
                                 {
@@ -160,39 +176,39 @@
                                     {
                                         img = (byte[])row["SYMBOL"];
                                     }
-                                    <tr class="mycontrol">
-                                        <td>@row["CAND_SL_NO"]</td>
-                                        <td style="text-align:left">@row["CAND_NAME"]</td>
-                                        <td>@row["GENDER"]</td>
-                                        <td>@row["PANAME"]</td>
-                                        <td> <img src="data:image/jpeg;base64,@Convert.ToBase64String(img)" style="width:65px;height:65px;" /></td>
-                                        <td>
-                                            <input type="number" id="@id" name="@id" class="form-control mycontrol" min="0" max="1500" style="text-align:center;" value="@row["VOTES"]" required />
-                                        </td>
-                                    </tr>
+                                                    <tr class="mycontrol">
+                                                        <td>@row["CAND_SL_NO"]</td>
+                                                        <td style="text-align:left">@row["CAND_NAME"]</td>
+                                                        <td>@row["GENDER"]</td>
+                                                        <td>@row["PANAME"]</td>
+                                                        <td> <img src="data:image/jpeg;base64,@Convert.ToBase64String(img)" style="width:65px;height:65px;" /></td>
+                                                        <td>
+                                                            <input type="number" id="@id" name="@id" class="form-control mycontrol" min="0" max="1500" style="text-align:center;" value="@row["VOTES"]" required />
+                                                        </td>
+                                                    </tr>
                                 }
-                            }
-                        </table>
-                    </div>
-                    <div class="col-sm-2">
-
-                        <div class="row border">
-                            <div class="col-12">
-                                <label class="form-label mylabel">Rejected Votes</label>
-                                <input class="form-control mycontrol" type="number" id="txtRejected" asp-for="rejected" min="0" max="1500" style="text-align:center;" value="@ViewBag.rejVotes" required />
+                                    }
+                                </table>
                             </div>
-                            <div class="col-12">
-                                <label class="form-label mylabel">Tendered Votes</label>
-                                <input class="form-control mycontrol" type="number" id="txtTendered" asp-for="tendered" min="0" max="1500" style="text-align:center;" value="@ViewBag.tenderedVotes" required />
-                            </div>
-                            <div class="col" style="margin-top:50px;">
-                                <button class="btn btn-primary form-control" style="height:60px;" asp-action="UpdateNormalVotes">Update</button>
-                            </div>
-                            <p></p>
-                        </div>
+                            <div class="col-sm-2">
+
+                                <div class="row border">
+                                    <div class="col-12">
+                                        <label class="form-label mylabel">Rejected Votes</label>
+                                        <input class="form-control mycontrol" type="number" id="txtRejected" asp-for="rejected" min="0" max="1500" style="text-align:center;" value="@ViewBag.rejVotes" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label mylabel">Tendered Votes</label>
+                                        <input class="form-control mycontrol" type="number" id="txtTendered" asp-for="tendered" min="0" max="1500" style="text-align:center;" value="@ViewBag.tenderedVotes" required />
+                                    </div>
+                                    <div class="col" style="margin-top:50px;">
+                                        <button class="btn btn-primary form-control" style="height:60px;" asp-action="UpdateNormalVotes">Update</button>
+                                    </div>
+                                    <p></p>
+                                </div>
 
 
-                    </div>
+                            </div>
                 }
 
             }
@@ -251,7 +267,7 @@
             document.getElementById('divPS').style.display = "none";
             document.getElementById('numPS').disabled = false;
         }
-
+        PopulateConstNo()
     </script>
 </form>
 
