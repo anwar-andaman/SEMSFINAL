@@ -383,20 +383,27 @@ namespace SEMS.Controllers
             SqlParameter ageParam = new SqlParameter("ageparam", ageData);
             SqlParameter addParam = new SqlParameter("addparam", addData);
             SqlParameter photoParam = new SqlParameter("photoparam", photoData);
-            qry = "INSERT INTO SE_EROLL.DBO.FORMS(FORM_TYPE,ONLINE_FORM,PAN_MUN,PART_NO,ENAME,RLN_TYPE,RLN_NAME,HOUSE_NO,ADDRESS_LINE1,";
-            qry += "ADDRESS_LINE2,POSTOFF,VCODE,GENDER,AGE,DOB,REVISIONNO,REVISIONYEAR,MOBILENO,EMAIL,ADDRESS_PROOF,AGE_PROOF,PHOTO) VALUES('A',1,'" + panMun;
-            qry += "'," + md.ward + ",'" + md.ename + "','" + md.rlnType + "','" + md.rlnName + "','" + md.houseNo + "',";
-            qry += addline1 + "," + addline2 + "," + post + "," + vcode + ",'" + md.gender + "'," + age;
-            qry += "," + dob + "," + md.revisionNo + "," + md.revisionYear + "," + mobile + "," + email + "," + "@ageparam" + "," + "@addparam" + "," + "@photoparam" + ") SELECT @@IDENTITY";
-            decimal formid = dm.create_scalar_with_image(qry, ageParam, addParam, photoParam);
-            qry = "SELECT FORM_NO,FORM_DATE FROM SE_EROLL.DBO.FORMS WHERE FORMID=" + formid;
-            ds = dm.create_dataset(qry);
-            string formno = "";
-            formno = ds.Tables[0].Rows[0][0].ToString();
-            DateTime formDate = (DateTime)ds.Tables[0].Rows[0][1];
-            formno = "ON" + formDate.Day.ToString().PadLeft(2, '0') + formDate.Month.ToString().PadLeft(2, '0') + formDate.Year.ToString() + formno.PadLeft(5, '0');
-            TempData["message"] = "Form Successfully Submitted. Please note the Form No. for any future Reference. Your Form No. is: " + formno;
-            return RedirectToAction("CitizenMessage");
+            try
+            {
+                qry = "INSERT INTO SE_EROLL.DBO.FORMS(FORM_TYPE,ONLINE_FORM,PAN_MUN,PART_NO,ENAME,RLN_TYPE,RLN_NAME,HOUSE_NO,ADDRESS_LINE1,";
+                qry += "ADDRESS_LINE2,POSTOFF,VCODE,GENDER,AGE,DOB,REVISIONNO,REVISIONYEAR,MOBILENO,EMAIL,ADDRESS_PROOF,AGE_PROOF,PHOTO) VALUES('A',1,'" + panMun;
+                qry += "'," + md.ward + ",'" + md.ename + "','" + md.rlnType + "','" + md.rlnName + "','" + md.houseNo + "',";
+                qry += addline1 + "," + addline2 + "," + post + "," + vcode + ",'" + md.gender + "'," + age;
+                qry += "," + dob + "," + md.revisionNo + "," + md.revisionYear + "," + mobile + "," + email + "," + "@ageparam" + "," + "@addparam" + "," + "@photoparam" + ") SELECT @@IDENTITY";
+                decimal formid = dm.create_scalar_with_image(qry, ageParam, addParam, photoParam);
+                qry = "SELECT FORM_NO,FORM_DATE FROM SE_EROLL.DBO.FORMS WHERE FORMID=" + formid;
+                ds = dm.create_dataset(qry);
+                string formno = "";
+                formno = ds.Tables[0].Rows[0][0].ToString();
+                DateTime formDate = (DateTime)ds.Tables[0].Rows[0][1];
+                formno = "ON" + formDate.Day.ToString().PadLeft(2, '0') + formDate.Month.ToString().PadLeft(2, '0') + formDate.Year.ToString() + formno.PadLeft(5, '0');
+                TempData["message"] = "Form Successfully Submitted. Please note the Form No. for any future Reference. Your Form No. is: " + formno;
+            }
+            catch (Exception ex)
+            {
+                TempData["message"] = ex.Message;
+            }
+           return RedirectToAction("CitizenMessage");
         }
         
            

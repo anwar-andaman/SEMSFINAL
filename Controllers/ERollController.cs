@@ -1157,8 +1157,9 @@ namespace SEMS.Controllers
                 
                 dm.do_transaction(qry, ref con, t);
                 qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID,ELECTOR_FOUND,REMARKS) VALUES(" + md.formid + "," + stageNo;
-                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
+                qry += "," + stageID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
                 qry += ",'" + md.remarks + "')";
+               
                 dm.do_transaction(qry,ref con,t);
                 t.Commit();
                 con.Close();
@@ -1167,6 +1168,7 @@ namespace SEMS.Controllers
             {
                 t.Rollback();
                 TempData["message"] = "Could Not complete the Transaction. Please Try Again!";
+                
             }
             
 
@@ -1209,7 +1211,7 @@ namespace SEMS.Controllers
                 dm.do_transaction(qry, ref con, t);
                 
                 qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID,ELECTOR_FOUND,REMARKS) VALUES(" + md.formid + "," + stageNo;
-                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
+                qry += "," + stageID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
                 qry += ",'" + md.remarks + "')";
                 dm.do_transaction(qry, ref con, t);
                 t.Commit();
@@ -1266,7 +1268,7 @@ namespace SEMS.Controllers
                 }
                 dm.do_transaction(qry, ref con, t);
                 qry = "INSERT INTO SE_EROLL.DBO.FORM_HISTORY(FORMID,STAGE_NO,STAGE_ID,STAGE_DATE,UID,ELECTOR_FOUND,REMARKS) VALUES(" + md.formid + "," + stageNo;
-                qry += "," + stageID + ",'" + DateTime.Now + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
+                qry += "," + stageID + ",'" + DateTime.Now.ToString("yyyy-MM-dd") + "'," + HttpContext.Session.GetString("logUserID") + ",NULL";
                 qry += ",'" + md.remarks + "')";
                 dm.do_transaction(qry, ref con, t);
                 t.Commit();
